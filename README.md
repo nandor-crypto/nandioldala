@@ -1,2 +1,2 @@
-# nandioldala
+# Nándi oldala
 Én ezeket programozom.
