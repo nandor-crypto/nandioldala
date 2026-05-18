@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Titkos weboldal</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial;
+        background-color: pink;
+    }
+    h1 {
+        background-color: #cb0f0f;
+        border-radius: 8px;
+    }
+
+
+    /* Maszk */
+    #maszk {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #hiba {
+        color: red;
+        margin-top: 10px;
+    }
+
+    #tartalom {
+        padding: 30px;
+    }
+
+
+        /* Általános mobil méret (600px alatt) */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 26px;
+                color: red;
+                /* Mobilodon piros lesz a főcím! */
+            }
+
+            /* Ide tehetsz még más mobil stílust is, pl: */
+            body {
+                font-size: 18px;
+            }
+                h1 {
+        
+    }  font-size: 20px;
+        }
+</style>
+</head>
+<body>
+
+<div id="maszk">
+    <h2>Adj meg a jelszót</h2>
+
+    <input type="password" id="jelszo">
+    <button onclick="ellenoriz()">Belépés</button>
+
+    <div id="hiba"></div>
+</div>
+
+<div id="tartalom">
+    <h1>Titkos weboldal</h1>
+    <h2><a target="_blank"
+        href="https://chat.google.com/room/AAQAs1SnTls?cls=7">
+        Gmail csevegés
+    </h2>
+
+    <img src="unnamed.png"
+    
+</div>
+
+<script>
+function ellenoriz() {
+    let beirt = document.getElementById("jelszo").value;
+
+    if (beirt === "#2016") {
+        document.getElementById("maszk").style.display = "none";
+    } else {
+        document.getElementById("hiba").innerText = "A jelszó helytelen!";
+    }
+}
+</script>
+
+</body>
+</html>
