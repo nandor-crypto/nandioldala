@@ -77,6 +77,19 @@
     transform: translateY(100%);
   }
 }
+.mask,
+.overlay,
+.hero::before {
+    pointer-events: none;
+    z-index: 0;
+}
+
+.content,
+.main,
+.text {
+    position: relative;
+    z-index: 2;
+        }
     </style>
 </head>
 
