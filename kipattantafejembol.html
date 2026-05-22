@@ -1,28 +1,88 @@
 <!DOCTYPE html>
 <html>
-<style>
-   h1 {
-      color: #0040ff;
-      background-color: #dae3fc;
-      border-radius: 7px;
-   }
+   <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <style>
+      h1 {
+         color: #0040ff;
+         background-color: #dae3fc;
+         border-radius: 7px;
+      }
+      p {
+          background-color: #ff4c4c;
+         border-radius: 7px;
+      }
 
-   h2 {
-      background-color: #ea0000;
-      border-radius: 10px;
-   }
+      h2 {
+         background-color: #ea0000;
+         border-radius: 10px;
+      }
 
-   body {
-      background-color: #c2b058;
-   }
+      body {
+         background-color: #c2b058;
+      }
 
-   h3 {
-      background-color: #ff4c4c;
-      border-radius: 7px;
-   }
-</style>
+      h3 {
+         background-color: #ff4c4c;
+         border-radius: 7px;
+      }
 
+      /* Általános mobil méret (600px alatt) */
+      @media screen and (max-width: 600px) {
+
+         body {
+            font-size: 18px;
+         }
+         h1{
+            font-size: 30px;
+         }
+         h2{
+            font-size: 25px;
+         }
+         h3 {
+            font-size: 16px;
+         }
+         p {
+            font-size: 16px;
+         }
+      }
+          .container {
+  position: relative;
+  width: 246px; /* kép mérete */
+  overflow: hidden;
+}
+
+.container img {
+  width: 100%;
+  display: block;
+}
+
+/* takaró réteg */
+.cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: #c2b058; /* háttér színe */
+
+  animation: reveal 4s ease forwards;
+}
+
+@keyframes reveal {
+  from {
+    transform: translateY(0%);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+   </style>
+   </head>
 <body>
+       <div class="container"></div>
    <h1>
       Ide azokat írom amiket fogalmazáson írtam és jó lett.
    </h1>
@@ -49,37 +109,26 @@
    <h3>
       igaz-mondta a kék.
    </h3>
-   <h3> -Én nem
-      is hallottad az
-      elejét!-Mondta kórusband.
+   <p><b>-Én nem is hallottad az elejét! – mondta a kórusband.</b></p>
 
-      lila és a narancssárgja.
-   </h3>
-   De, mert úgy kiabáltak, hogy a
+<p><b>lila és a narancssárga.</b></p>
 
-   dobozból hallak titteket.
+<p><b>De, mert úgy kiabáltak, hogy a dobozból is hallották őket.</b></p>
 
-   Exalatt felkerült a piros, a nózsaszín én a zöld dísz.
+<p><b>Ezalatt felkerült a piros, a rózsaszín és a zöld dísz.</b></p>
 
-   Ezijaz amit a lils mond!-Mand ta a xöll. De a pirosi
-
-   Dehogyis' Attól nem vagy
-
-   jol hogy... - Srakította felle a
-
-   Zoll-Del-
-   </h3>
+<p><b>Ezt mondta a zöld: "Ez az amit a lila mond!"</b></p>
    <h1>
       ÁT DOLGOZÁS ALATT LÉVŐ MESE!
    </h1>
    <h4>
       Légyszi várj amíg beírom a történeteket...
    </h4>
-</body>
-<h5>
-    <a target="_self"
-      href="index.html">
-      Irány a főmenü!
-</h5>
 
+<h5>
+   <a target="_self" href="index.html">
+      Irány a főmenü! </a>
+</h5>
+     <div class="cover"></div>
+</body>
 </html>
