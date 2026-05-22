@@ -41,13 +41,47 @@
 
             /* Ide tehetsz még más mobil stílust is, pl: */
             body {
-                font-size: 25px;
+                font-size: 18px;
             }
         }
+            .container {
+  position: relative;
+  width: 246px; /* kép mérete */
+  overflow: hidden;
+}
+
+.container img {
+  width: 100%;
+  display: block;
+}
+
+/* takaró réteg */
+.cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: #96d3c4; /* háttér színe */
+
+  animation: reveal 4s ease forwards;
+}
+
+@keyframes reveal {
+  from {
+    transform: translateY(0%);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
     </style>
 </head>
 
 <body>
+          <div class="container"></div>
     <h1>Itt találod a legjobb vicceket!</h1>
 
     <h2>Versenyautó</h2>
@@ -71,7 +105,8 @@
 
     <h4><a target="_self" href="index.html">Irány a főmenü! </a></h4>
     <h4>De itt még rengeteg viccet találsz:<a target="_blank" href="https://viccesviccek.hu">Vicces viccek </a></h4>
-    <h5>Várj amíg ideírom a vicceket...</h5>
+    <h5>Várj amíg ideírom a többi vicceket...</h5>
+         <div class="cover"></div>
 
 </body>
 
