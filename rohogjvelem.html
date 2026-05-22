@@ -66,6 +66,11 @@
   background: #96d3c4; /* háttér színe */
 
   animation: reveal 4s ease forwards;
+      z-index: 2;
+
+  animation: reveal 4s ease forwards;
+  pointer-events: none;
+}
 }
 
 @keyframes reveal {
@@ -77,19 +82,7 @@
     transform: translateY(100%);
   }
 }
-.mask,
-.overlay,
-.hero::before {
-    pointer-events: none;
-    z-index: 0;
-}
 
-.content,
-.main,
-.text {
-    position: relative;
-    z-index: 2;
-        }
     </style>
 </head>
 
