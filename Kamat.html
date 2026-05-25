@@ -8,6 +8,13 @@
   h1 {
     color: #009808;
   }
+     @media screen and (max-width: 600px) {
+
+      /* Ide tehetsz még más mobil stílust is, pl: */
+      body {
+        font-size: 18px;
+      }
+    }
   body {
     background-color: #abddae;
   }
@@ -31,19 +38,27 @@
   width: 100%;
   display: block;
 }
+ #maszk {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,1);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
 
-/* takaró réteg */
-.cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+        z-index: 9999;
+    }
 
-  background: #abddae; /* háttér színe */
+    #hiba {
+        color: red;
+        margin-top: 10px;
+    }
 
-  animation: reveal 4s ease forwards;
-}
 
 @keyframes reveal {
   from {
@@ -56,10 +71,19 @@
 }
 </style>
 <title>
-  Kamat Felvétel
+  kamat felvétele
 </title>
 
 <body>
+  <div id="maszk">
+    <h2>Adj meg a jelszót</h2>
+
+    <input type="password" id="jelszo">
+    <button onclick="ellenoriz()">Belépés</button>
+
+    <div id="hiba"></div>
+</div>
+
   <h1>
     Kamatfelvétel
   </h1>
@@ -67,13 +91,25 @@
     Kamatok:
   </h2>
   <h3>
-    Kamat 0% (1 000-4 000)
+    Kamat 0% (1 000-4 000 Ft)
   </h3>
   <h3>Kamat 1% ( 5 000-10 000 Ft)
   </h3>
   <h3>
-    Kamat 3% (11 000-20 000)
+    Kamat 3% (11 000-20 000 Ft)
   </h3>
+  <h3>
+    Kamat 1% (21 000-40 000 Ft)
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREfJO_8Yu0_qPDftBhZRwQv6XAqos0l9C2AA&s" width="40">
+  </h3>
+  <h2>
+    Döntöttél? Írj!
+  </h2>
+  <h4> <a target="_blank"
+      href= "https://mail.google.com/mail/?view=cm&fs=1&to=nandor.raffaynandor@budapest.school&su=Kamat felvétel&body=Ezt%20választottam:">
+    Kattints ide hogy írjál!
+    </a>
+  </h4>
   <div class="container"></div>
   <img src="https://play-lh.googleusercontent.com/1oHUFWJ5W7GhWWW2p9CB_0h8gB9kMdFtRPn95cg0z2FCV2Spq-ZVSaUNdsxVlZwHYnfz"  width="300" alt="">
   <div class="cover"></div>
@@ -89,4 +125,20 @@ Ja, és nincs csalás!</h4>
      <a target="_self" href="index.html">
       Irány a főmenü! </a>
 </h5>
+<h6>
+  Telefonon csinálod és valami nem működik? Menj és nézd meg
+  <a target="_self" href="telefon.html"> telefonon!</a>
+</h6>
 </body>
+<script>
+function ellenoriz() {
+    let beirt = document.getElementById("jelszo").value;
+
+    if (beirt === "Igazolom99") {
+        document.getElementById("maszk").style.display = "none";
+    } else {
+        document.getElementById("hiba").innerText = "A jelszó helytelen!";
+    }
+}
+</script>
+</html>
