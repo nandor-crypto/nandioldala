@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
+          <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Frijole&display=swap">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <title>Titkos weboldal</title>
@@ -10,11 +15,44 @@
         margin: 0;
         font-family: Arial;
         background-color: pink;
+        font-family: Arial, sans-serif;
+    padding: 20px;
     }
     h1 {
         background-color: #cb0f0f;
         border-radius: 8px;
     }
+    .tab-menu {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background: white;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 16px;
+}
+
+.tab-button.active {
+    background: #e0e0e0;
+    border-bottom-color: #0078d7;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+h2{
+    color: #2b2b2b;
+    font-family: Frijole;
+}
 
 
     /* Maszk */
@@ -63,7 +101,7 @@
 <body>
 
 <div id="maszk">
-    <h2>Adj meg a jelszót</h2>
+    <h1>Adj meg a jelszót!</h1>
 
     <input type="password" id="jelszo">
     <button onclick="ellenoriz()">Belépés</button>
@@ -72,16 +110,48 @@
 </div>
 
 <div id="tartalom">
-    <h1>Titkos weboldal</h1>
-    <h2><a target="_blank"
-        href="https://chat.google.com/room/AAQAs1SnTls?cls=7">
-        Gmail csevegés
+
+    <div class="tab-menu">
+        <button class="tab-button active" onclick="openTab('Információ', this)">Információk</button>
+        <button class="tab-button" onclick="openTab('media', this)">Médiatartalmak</button>
+        <button class="tab-button" onclick="openTab('Gmail csevegés & elérhetőség', this)">Gmail csevegés & elérhetőség</button>
+    </div>
+<h1>Titkos weboldal</h1>
+    <div id="Információ" class="tab-content active">
+        <h2>információk</h2>
+                <h2>
+<img src="https://marikabufe.hu/images/loading.gif" width="120">
+            </h2>
+        
+    </div>
+
+    <div id="media" class="tab-content">
+        <h2>Médiatartalmak</h2>
+        
+    <img src="V kész.jpg">
+
+    </div>
+
+    <div id="Gmail csevegés & elérhetőség" class="tab-content">  
+        <h2>
+            Elérhetőség</h2>
+    <h2>
+        <a target="_blank" href="https://chat.google.com/room/AAQAs1SnTls?cls=7">
+            Gmail csevegés
+        </a>
     </h2>
+    <h2>
+<a target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=rafynandi@gmail.com&su=+&body&tf=cm">Elérhetőség gyermek profillal: rafynandi@gmail.com </a>
+        </h2>
+        <h2>
+            <a target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=pammacska.yt@gmail.com&su=+&body&tf=cm">Elérhetőség felnőtt profillal: pammacska.yt@gmail.com </a>
+        </h2>
+        <h2>
+            <a target="_blank" href="https://mail.google.com/mail/u/0/?fs=1&to=nandor.raffay@budapest.school&su=+&body&tf=cm">Elérhetőség Budapest School-os profillal: nandor.raffay@budapest.school </a>
+            </h2>
+    </div>
 
-    <img src="V kész.jpg"
-    
 </div>
-
 <script>
 function ellenoriz() {
     let beirt = document.getElementById("jelszo").value;
@@ -91,6 +161,18 @@ function ellenoriz() {
     } else {
         document.getElementById("hiba").innerText = "A jelszó helytelen!";
     }
+}
+function openTab(tabId, button) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    document.getElementById(tabId).classList.add('active');
+    button.classList.add('active');
 }
 </script>
 
