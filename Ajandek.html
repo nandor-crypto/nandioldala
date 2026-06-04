@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+    <html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajándék Meglepetés</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+}
+#afterGift{
+    position:absolute;
+    left:50%;
+    top:140px;
+    transform:translateX(-50%);
+    display:none;
+    color:white;
+    text-align:center;
+}
+
+.scene{
+    position:relative;
+    width:300px;
+    height:350px;
+}
+
+.gift{
+    position:absolute;
+    left:50%;
+    top:140px;
+    transform:translateX(-50%);
+    cursor:pointer;
+}
+
+.box{
+    width:160px;
+    height:120px;
+    background:#e53935;
+    position:relative;
+    border-radius:8px;
+}
+
+.box::before{
+    content:"";
+    position:absolute;
+    left:70px;
+    top:0;
+    width:20px;
+    height:120px;
+    background:gold;
+}
+
+.lid{
+    width:180px;
+     height:35px;
+    background:#ff5252;
+    position:absolute;
+    left:-10px;
+    top:-25px;
+    border-radius:8px;
+    transform-origin:left center;
+}
+
+.lid::before{
+    content:"";
+    position:absolute;
+
+    left:50%;
+    top:-50px;
+    transform:translateX(-50%);
+
+    width:90px;
+    height:90px;
+
+    background-image:url("https://png.pngtree.com/png-clipart/20240227/original/pngtree-red-bow-symbol-png-image_14434066.png");
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+}
+.glow{
+    position:absolute;
+    width:250px;
+    height:250px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,
+        rgba(255,255,255,1) 0%,
+        rgba(255,255,255,0.8) 20%,
+        rgba(255,255,255,0) 70%);
+    opacity:0;
+    pointer-events:none;
+}
+
+.content{
+    position:absolute;
+    width:100%;
+    text-align:center;
+    top:-120px;
+    opacity:0;
+    transform:translateY(40px);
+    color:white;
+}
+
+.content h2{
+    font-size:32px;
+    text-shadow:0 0 15px white;
+}
+
+.content img{
+    width:180px;
+    border-radius:12px;
+    box-shadow:0 0 20px white;
+}
+
+.shake{
+    animation:shake 0.5s ease;
+}
+
+@keyframes shake{
+    0%{transform:translateX(-50%) rotate(0deg);}
+    20%{transform:translateX(-50%) rotate(-8deg);}
+    40%{transform:translateX(-50%) rotate(8deg);}
+    60%{transform:translateX(-50%) rotate(-8deg);}
+    80%{transform:translateX(-50%) rotate(8deg);}
+    100%{transform:translateX(-50%) rotate(0deg);}
+}
+
+.open .lid{
+    animation:openLid 1s forwards;
+}
+
+@keyframes openLid{
+    to{
+        transform:rotate(-120deg) translateY(-20px);
+    }
+}
+
+.open .glow{
+    animation:glow 1.5s forwards;
+}
+
+@keyframes glow{
+    0%{
+        opacity:0;
+        transform:translate(-50%,-50%) scale(0.2);
+    }
+    100%{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(1.5);
+    }
+}
+
+.show{
+    animation:showContent 1s forwards;
+}
+
+@keyframes showContent{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+
+    <div class="content" id="content">
+        <h2>🎉 Meglepetés! 🎉</h2>
+
+        <!-- Szöveg helyett képet is használhatsz -->
+        <!-- <img src="kep.jpg" alt="Ajándék"> -->
+
+        <h1>Masszázs kupon!</h1>
+    </div>
+
+    <div class="gift" id="gift">
+        <div class="glow"></div>
+        <div class="lid"></div>
+        <div class="box"></div>
+    </div>
+
+</div>
+<div id="afterGift" style="display:none;">
+    <h2>Köszönöm, hogy kinyitottad! ❤️</h2>
+    <h2>Majd töltsd le! :-)</h2>
+    <h3>
+        Remélem tetszik!
+    </h3>
+
+    <button id="downloadBtn">
+        🎁 Kupon letöltése
+    </button>
+</div>
+
+
+<script>
+ const gift = document.getElementById("gift");
+const content = document.getElementById("content");
+const afterGift = document.getElementById("afterGift");
+
+gift.addEventListener("click", (e) => {
+
+    e.preventDefault()
+    if(gift.classList.contains("open")) return;
+
+    gift.classList.add("shake");
+    document.getElementById("downloadBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    const link = document.createElement("a");
+    link.href = "Massage";
+    link.download = "Massage";
+    link.click();
+});
+
+    setTimeout(() => {
+        gift.classList.remove("shake");
+        gift.classList.add("open");
+
+        setTimeout(() => {
+            content.classList.add("show");
+        }, 700);
+
+        setTimeout(() => {
+            gift.style.display = "none";
+            content.style.display = "none";
+            afterGift.style.display = "block";
+        }, 3540);
+
+    }, 500);
+});
+document.getElementById("downloadBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    const link = document.createElement("a");
+    link.href = "Massage.jpg";
+    link.download = "Massage.jpg";
+    link.click();
+});
+</script>
+</body>
+</html>
