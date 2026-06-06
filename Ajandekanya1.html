@@ -217,13 +217,6 @@ gift.addEventListener("click", (e) => {
     if(gift.classList.contains("open")) return;
 
     gift.classList.add("shake");
-    document.getElementById("downloadBtn").addEventListener("click", (e) => {
-    e.preventDefault();
-    const link = document.createElement("a");
-    link.href = "Massage";
-    link.download = "Massage";
-    link.click();
-});
 
     setTimeout(() => {
         gift.classList.remove("shake");
@@ -241,12 +234,14 @@ gift.addEventListener("click", (e) => {
 
     }, 500);
 });
-document.getElementById("downloadBtn").addEventListener("click", (e) => {
-    e.preventDefault();
+
+document.getElementById("downloadBtn").addEventListener("click", () => {
     const link = document.createElement("a");
-    link.href = "Massage.jpg";
+    link.href = "./Massage.jpg";
     link.download = "Massage.jpg";
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
 });
 </script>
 </body>
