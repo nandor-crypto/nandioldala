@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dino Run</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #f7f7f7;
+    font-family: Arial;
+}
+#textUnder { text-align: center;
+     margin-top: 10px;
+      font-size: 18px; 
+      color: #444;
+       font-family: Arial; }
+
+/* GAME */
+#game {
+    position: relative;
+    width: 100vw;
+    height: 300px;
+    border-bottom: 4px solid #333;
+    overflow: hidden;
+}
+
+/* DINO */
+#dino {
+    position: absolute;
+    left: 50px;
+    bottom: 0;
+    font-size: 40px;
+}
+
+/* SCORE */
+#score {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+}
+
+/* GAME OVER */
+#gameOver {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 100px;
+    font-size: 40px;
+    display: none;
+}
+
+/* BUTTONS */
+#jumpBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #2196f3;
+    color: white;
+    border: none;
+    font-size: 22px;
+}
+
+#restartBtn {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 220px;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 60px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 22px;
+}
+
+/* CACTUS */
+.cactus {
+    position: absolute;
+    bottom: 0;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+    <div id="score">0</div>
+    <div id="gameOver"></div>
+    <div id="dino">🦖</div>
+</div>
+
+<button id="jumpBtn">UGRÁS</button>
+<button id="restartBtn">ÚJRA</button>
+<div id="textUnder">
+Ez az én Dino játékom 🦖 | Pontszám gyűjtése!</div> <div id="textUnder"> Újra próbálkozás<img src="data:image/jpeg;base64,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"width="25"> F5 <div id="textUnder"> Ugrás<img src="data:image/jpeg;base64,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"width="25"> space </div> </div>
+<script>
+
+const dino = document.getElementById("dino");
+const game = document.getElementById("game");
+const scoreEl = document.getElementById("score");
+const gameOverEl = document.getElementById("gameOver");
+const restartBtn = document.getElementById("restartBtn");
+const jumpBtn = document.getElementById("jumpBtn");
+
+let jumping = false;
+let gameOver = false;
+let score = 0;
+
+/* JUMP */
+function jump() {
+    if (jumping || gameOver) return;
+
+    jumping = true;
+    let pos = 0;
+
+    const up = setInterval(() => {
+        if (pos >= 120) {
+            clearInterval(up);
+
+            const down = setInterval(() => {
+                if (pos <= 0) {
+                    clearInterval(down);
+                    jumping = false;
+                } else {
+                    pos -= 5;
+                    dino.style.bottom = pos + "px";
+                }
+            }, 20);
+
+        } else {
+            pos += 5;
+            dino.style.bottom = pos + "px";
+        }
+    }, 20);
+}
+
+jumpBtn.onclick = jump;
+document.addEventListener("keydown", e => {
+    if (e.code === "Space" || e.code === "ArrowUp") jump();
+});
+
+/* RESTART */
+restartBtn.onclick = () => location.reload();
+
+/* COLLISION */
+function isCollision(a, b) {
+    return !(
+        a.right < b.left ||
+        a.left > b.right ||
+        a.bottom < b.top ||
+        a.top > b.bottom
+    );
+}
+
+/* CACTUS */
+function createCactus() {
+    if (gameOver) return;
+
+    const cactus = document.createElement("div");
+    cactus.classList.add("cactus");
+    game.appendChild(cactus);
+
+    const type = Math.floor(Math.random() * 3);
+
+    if (type === 0) {
+        cactus.style.width = "25px";
+        cactus.style.height = "60px";
+        cactus.style.background = "green";
+    } else if (type === 1) {
+        cactus.style.width = "50px";
+        cactus.style.height = "30px";
+        cactus.style.background = "darkgreen";
+    } else {
+        cactus.style.width = "30px";
+        cactus.style.height = "80px";
+        cactus.style.background = "limegreen";
+    }
+
+    let left = window.innerWidth;
+    cactus.style.left = left + "px";
+
+    const move = setInterval(() => {
+
+        if (gameOver) {
+            clearInterval(move);
+            return;
+        }
+
+        left -= 6;
+        cactus.style.left = left + "px";
+
+        const dinoRect = dino.getBoundingClientRect();
+        const cactusRect = cactus.getBoundingClientRect();
+
+        if (isCollision(dinoRect, cactusRect)) {
+            gameOver = true;
+            gameOverEl.innerHTML = "VÉGE! Pontszám: " + score;
+            gameOverEl.style.display = "block";
+            restartBtn.style.display = "block";
+            clearInterval(move);
+        }
+
+        if (left < -50) {
+            cactus.remove();
+            clearInterval(move);
+            score++;
+            scoreEl.textContent = score;
+        }
+
+    }, 20);
+
+    setTimeout(createCactus, Math.random() * 1200 + 800);
+}
+
+createCactus();
+
+</script>
+
+</body>
+</html>
