@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vina Vásár</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    text-align:center;
+    margin-top:80px;
+}
+
+button{
+    padding:12px 20px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:white;
+    margin:10px;
+}
+
+.kek{
+    background:#2196F3;
+}
+
+.zold{
+    background:#4CAF50;
+}
+
+#emailResz,
+#koszonet{
+    display:none;
+}
+
+input{
+    padding:10px;
+    font-size:16px;
+    width:300px;
+}
+
+#folytatas{
+    position:fixed;
+    left:20px;
+    bottom:20px;
+    background:#555;
+}
+
+.kicsi{
+    font-size:14px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div id="kezdo">
+    <button class="kek" onclick="emailKeres()">
+        Kérek E-mailba egy üzenetet a blokkról
+    </button>
+
+    <button class="zold" onclick="nemKell()">
+        Nem kell blokk
+    </button>
+</div>
+
+<div id="emailResz">
+    <h3>Add meg az E-mail címed</h3>
+
+    <input type="email" id="email" placeholder="email@pelda.hu">
+
+    <button id="folytatas" onclick="kuldes()">
+        Folytatás
+    </button>
+</div>
+
+<div id="koszonet">
+    <h2>Köszönjük vásárlását!</h2>
+    <p id="szoveg" class="kicsi"></p>
+</div>
+
+<script>
+function emailKeres(){
+    document.getElementById("kezdo").style.display="none";
+    document.getElementById("emailResz").style.display="block";
+}
+
+function nemKell(){
+    document.getElementById("kezdo").style.display="none";
+    document.getElementById("koszonet").style.display="block";
+    document.getElementById("szoveg").innerHTML="";
+
+    setTimeout(ujrakezd, 10000);
+}
+
+function kuldes(){
+    let email = document.getElementById("email").value;
+
+    document.getElementById("emailResz").style.display="none";
+    document.getElementById("koszonet").style.display="block";
+
+    document.getElementById("szoveg").innerHTML =
+        "Mindjárt elküldjük " + email + " e-mail címére.";
+
+    setTimeout(ujrakezd, 10000);
+}
+
+function ujrakezd(){
+    document.getElementById("email").value="";
+    document.getElementById("kezdo").style.display="block";
+    document.getElementById("emailResz").style.display="none";
+    document.getElementById("koszonet").style.display="none";
+}
+</script>
+
+</body>
+</html>
+```
