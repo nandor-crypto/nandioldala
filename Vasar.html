@@ -114,6 +114,7 @@ function tovabbOsszeghez(){
 function nemKell(){
     document.getElementById("kezdo").style.display="none";
     document.getElementById("koszonet").style.display="block";
+
     document.getElementById("szoveg").innerHTML="";
 
     setTimeout(ujrakezd,10000);
@@ -145,8 +146,8 @@ function kuldes(){
 
     let uzenet =
         "Köszönjük, " + nev + ", hogy vásároltál!\n\n" +
-        "Költés: " + osszeg + " Ft"; +
-        "üdv.: Vina Vásár.kft";
+        "Költés: " + osszeg + " Ft\n\n" +
+        "Üdv.: Vina Vásár Kft.";
 
     window.location.href =
         "mailto:" + email +
