@@ -8,7 +8,7 @@
 
 <style>
 body{
-    font-family: Arial, sans-serif;
+    font-family: Arial,sans-serif;
     text-align:center;
     margin-top:80px;
 }
@@ -23,18 +23,9 @@ button{
     margin:10px;
 }
 
-.kek{
-    background:#2196F3;
-}
-
-.zold{
-    background:#4CAF50;
-}
-
-#emailResz,
-#koszonet{
-    display:none;
-}
+.kek{background:#2196F3;}
+.zold{background:#4CAF50;}
+.szurke{background:#555;}
 
 input{
     padding:10px;
@@ -42,11 +33,17 @@ input{
     width:300px;
 }
 
-#folytatas{
+#emailResz,
+#osszegResz,
+#koszonet{
+    display:none;
+}
+
+#folytatas,
+#veglegesites{
     position:fixed;
     left:20px;
     bottom:20px;
-    background:#555;
 }
 
 .kicsi{
@@ -55,7 +52,6 @@ input{
 }
 </style>
 </head>
-
 <body>
 
 <div id="kezdo">
@@ -73,8 +69,18 @@ input{
 
     <input type="email" id="email" placeholder="email@pelda.hu">
 
-    <button id="folytatas" onclick="kuldes()">
-        Folytatás
+    <button id="folytatas" class="szurke" onclick="tovabbOsszeghez()">
+        Tovább
+    </button>
+</div>
+
+<div id="osszegResz">
+    <h3>A kasszás írja be a végösszeget</h3>
+
+    <input type="number" id="osszeg" placeholder="Végösszeg (Ft)">
+
+    <button id="veglegesites" class="szurke" onclick="kuldes()">
+        Küldés
     </button>
 </div>
 
@@ -84,39 +90,64 @@ input{
 </div>
 
 <script>
+
+let email = "";
+let osszeg = "";
+
 function emailKeres(){
     document.getElementById("kezdo").style.display="none";
     document.getElementById("emailResz").style.display="block";
 }
 
+function tovabbOsszeghez(){
+    email = document.getElementById("email").value;
+
+    document.getElementById("emailResz").style.display="none";
+    document.getElementById("osszegResz").style.display="block";
+}
+
 function nemKell(){
     document.getElementById("kezdo").style.display="none";
     document.getElementById("koszonet").style.display="block";
+
     document.getElementById("szoveg").innerHTML="";
 
-    setTimeout(ujrakezd, 10000);
+    setTimeout(ujrakezd,10000);
 }
 
 function kuldes(){
-    let email = document.getElementById("email").value;
 
-    document.getElementById("emailResz").style.display="none";
+    osszeg = document.getElementById("osszeg").value;
+
+    document.getElementById("osszegResz").style.display="none";
     document.getElementById("koszonet").style.display="block";
 
     document.getElementById("szoveg").innerHTML =
-        "Mindjárt elküldjük " + email + " e-mail címére.";
+        "Az üzenetet elküldjük a(z) " +
+        email +
+        " címre.<br>Költés: " +
+        osszeg +
+        " Ft";
 
-    setTimeout(ujrakezd, 25000);
+    /*
+       IDE KELL MAJD AZ E-MAIL KÜLDÉS
+    */
+
+    setTimeout(ujrakezd,25000);
 }
 
 function ujrakezd(){
+
     document.getElementById("email").value="";
+    document.getElementById("osszeg").value="";
+
     document.getElementById("kezdo").style.display="block";
     document.getElementById("emailResz").style.display="none";
+    document.getElementById("osszegResz").style.display="none";
     document.getElementById("koszonet").style.display="none";
 }
+
 </script>
 
 </body>
 </html>
-```
