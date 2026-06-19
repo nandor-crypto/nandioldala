@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
+    <p id="eredmeny" style="font-size: 1.5em;"></p>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vina szerencse játék</title>
@@ -33,7 +34,18 @@
 <button onclick="ellenoriz()">Ellenőrzés</button>
 
 <p id="eredmeny"></p>
-
+<h3>
+    színek:
+</h3>
+    <h3>
+        kék: főnyeremény
+    </h3>
+    <h3>
+        zöld: egyéb nyeremény 
+    </h3>
+    <h3>
+        piros: nem nyertél
+    </h3>
 <script>
 function ellenoriz() {
     let kod = document.getElementById("kod").value.toLowerCase().trim();
@@ -48,6 +60,15 @@ function ellenoriz() {
     else {
         eredmeny.textContent = "Ön nem nyert semmit.";
     }
+    if (kod === "kjha0937") {
+    eredmeny.innerHTML = "<h3 style='color:blue'>Nyertél egy extra jegyet!</h3>";
+}
+else if (kod === "hgnd7284") {
+    eredmeny.innerHTML = "<h3 style='color:green'>Nyertél egy plüssöt!</h3>";
+}
+else {
+    eredmeny.innerHTML = "<h3 style='color:red'>Ön nem nyert semmit.</h3>";
+}
 }
 </script>
 
