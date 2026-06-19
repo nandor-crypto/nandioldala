@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vina szerencse játék</title>
+</head>
+<body>
+
+<h1>Vina szerencse játék</h1>
+<h4>Zsákba macska (ez egy szerencse játék)</h4>
+
+<input type="text" id="kod" placeholder="Írd be a 4 betűt és 4 számot">
+<button onclick="ellenoriz()">Ellenőrzés</button>
+
+<p id="eredmeny"></p>
+
+<script>
+function ellenoriz() {
+    let kod = document.getElementById("kod").value.toLowerCase().trim();
+    let eredmeny = document.getElementById("eredmeny");
+
+    if (kod === "kjha0937") {
+        eredmeny.textContent = "Nyertél egy extra jegyet!";
+    } 
+    else if (kod === "hgnd7284") {
+        eredmeny.textContent = "Nyertél egy plüssöt!";
+    } 
+    else {
+        eredmeny.textContent = "Ön nem nyert semmit.";
+    }
+}
+</script>
+
+</body>
+</html>
