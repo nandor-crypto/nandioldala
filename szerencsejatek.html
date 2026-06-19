@@ -29,23 +29,23 @@
 
 <h1>Vina szerencse játék</h1>
 <h4>Zsákba macska</h4>
+    <h5>
+    színek:
+</h5>
+    <h5>
+        kék: főnyeremény
+    </h5>
+    <h5>
+        zöld: egyéb nyeremény 
+    </h5>
+    <h5>
+        piros: nem nyertél
+    </h5>
 
 <input type="text" id="kod" placeholder="Írd be a 4 betűt és 4 számot">
 <button onclick="ellenoriz()">Ellenőrzés</button>
 
 <p id="eredmeny"></p>
-<h3>
-    színek:
-</h3>
-    <h3>
-        kék: főnyeremény
-    </h3>
-    <h3>
-        zöld: egyéb nyeremény 
-    </h3>
-    <h3>
-        piros: nem nyertél
-    </h3>
 <script>
 function ellenoriz() {
     let kod = document.getElementById("kod").value.toLowerCase().trim();
