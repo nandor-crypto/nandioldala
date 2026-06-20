@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    font-family: Arial;
+  }
+
+  .folder {
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+  }
+
+  .files {
+    display: none;
+    margin-left: 20px;
+  }
+
+  .file {
+    margin: 5px 0;
+    color: blue;
+  }
+</style>
+</head>
+<body>
+
+<div class="folder" onclick="toggle()">📁 Mese</div>
+
+<div class="files" id="files">
+  <div class="file">📄 mesenap.html</div>
+  <div class="file">📄 mesengedel.html</div>
+</div>
+
+<script>
+function toggle() {
+  const f = document.getElementById("files");
+  if (f.style.display === "none" || f.style.display === "") {
+    f.style.display = "block";
+  } else {
+    f.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
