@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+        <meta charset="UTF-8">
+    <link rel="icon" ... link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Belanosima&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Fotó vállalkozás</title>
+
+<style>
+    body{
+        background-color:azure;
+    }
+        .tab-menu {
+        display: flex;
+    justify-content: center; /* Középre igazítja a gombokat */
+    border-bottom: 2px solid #ccc;
+}
+    .betutipus{
+font-family: "Belanosima", cursive;
+    }
+    .tab-content.active {
+    display: block;
+}
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+    .tab-menu {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+}
+.tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background: white;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 16px;
+}
+.tab-button.active {
+    background: #e0e0e0;
+    border-bottom-color: #0078d7;
+}
+
+    h1 {
+         text-align: center;
+    margin-top: 20px;
+    }
+    h2{
+        text-align: center;
+    margin-top: 20px;
+        font-size: 30px;
+    }
+    h4{
+        text-align: center;
+    margin-top: 20px;
+    }
+    h3{
+        text-align: center;
+    margin-top: 20px;
+        color: green;
+        font-size:24px;
+    }
+    .mail-button {
+    display: block;
+    padding: 12px 20px;
+    background-color: #0078d7;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-family: "Belanosima", cursive;
+    transition: background-color 0.3s;
+    width: fit-content;
+    margin: 20px auto;
+}
+@media screen and (max-width: 600px) {
+
+            body {
+                font-size: 18px;
+            }
+        }
+.mail-button:hover {
+    background-color: #005fa3;
+}
+    </style>
+    <body>
+        <h1 class=betutipus >
+        Fotó vállalkozás
+        </h1>
+           <div class="tab-menu">
+        <button class="tab-button active" onclick="openTab('Információ', this)">Információk</button>
+            <button class="tab-button" onclick="openTab('elérhetőség', this)">elérhetőség</button>
+        <button class="tab-button" onclick="openTab('media', this)">Fotók & videók formátumban</button>
+        </div>
+        <div id="Információ" class="tab-content active">
+    <h2 style="color: #5b5b5b"; > </h2>
+    <img src="https://i.sstatic.net/kOnzy.gif" width="210" alt="">
+</div>
+
+<div id="media" class="tab-content">
+    <h2 style="color: #5b5b5b"; >Ilyen formátumu képeket & videókat tudok csinálni</h2>
+    <h3>Fotók 360°-ba</h3>
+    <h4>
+        360° foto
+    </h4>
+    <h4>
+        360° active HDR foto
+    </h4>
+    <h4>
+        360° interval
+    </h4>
+    <h4>
+        360° burst
+    </h4>
+
+    <h4>
+        360° 
+    </h4>
+    <h3>
+        Videók 360°-ba
+    </h3>
+    <h4>
+        360° videó
+    </h4>
+        <h4>
+        360° active HDR
+    </h4>
+        <h4>
+        360° timelaps
+    </h4>
+    <h4>
+    360° timeshift
+    </h4>
+    <h4>
+    360° bullet time
+    </h4>
+        <h4>
+    360° loop recording
+    </h4>
+        <h4>
+        360° starlapse
+    </h4>
+<h3 style="color: red;"> Figyelem!</h3>
+<h4>
+    A kamera egy lencsés (360° 2 objektív, normál 1 objektív) használata hiba miatt nem üzemel, kérjük jelezzen előre ha egy objektívet szeretne használni!</h4>
+<a href="https://mail.google.com/mail/?view=cm&fs=1&to=nandor.raffay@budapest.school&su=Egy%20objekt%C3%ADv%20haszn%C3%A1lat!&body=Egy%20objekt%C3%ADvet%20szeretn%C3%A9k%20haszn%C3%A1lni!%0A%0AFotó%20stúdió"
+   target="_blank"
+   class="mail-button">
+    📧 E-mail küldése
+</a>
+<h6 style="color: red;">
+    Figyelem! Ez a mód csak Asztali-nézetben működik!
+</h6>
+
+
+<div id="elérhetőség" class="tab-content">
+    <h2 style="color: #5b5b5b"; >
+    <p>Itt lesznek az elérhetőségek.</p>
+</div>
+    </body>
+    <script>
+    function openTab(tabId, button) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    document.getElementById(tabId).classList.add('active');
+    button.classList.add('active');
+}
+    </script>
