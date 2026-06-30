@@ -3,23 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <title>Szerencsekerék</title>
+
 <style>
 body {
     font-family: Arial;
     margin: 0;
     text-align: center;
-    background: white;
+    transition: 0.3s;
 }
 
-#setup {
-    padding: 20px;
+#setup { padding: 20px; }
+
+.inputRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px;
 }
 
-input {
-    display: block;
-    margin: 8px auto;
+.inputRow input {
     padding: 8px;
-    width: 200px;
+    width: 220px;
+}
+
+.deleteBtn {
+    margin-left: 8px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 4px;
 }
 
 button {
@@ -32,74 +46,81 @@ button {
 
 #addBtn { background: #ddd; }
 #readyBtn { background: #2196f3; color: white; }
+
 #spinBtn { background: orange; color: white; display:none; }
 #resetBtn { background: green; color: white; display:none; }
 
-#game {
-    display: none;
+#game { display:none; }
+
+#wrapper {
     position: relative;
+    display: inline-block;
 }
 
 canvas {
     margin-top: 20px;
-    background: white;
 }
 
 #pointer {
     width: 0;
     height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-bottom: 30px solid white;
-    margin: 0 auto;
-    position: relative;
-    top: 20px;
-    z-index: 2;
-    filter: drop-shadow(0 0 2px black);
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 40px solid white;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    filter: drop-shadow(0 0 3px black);
+    z-index: 10;
 }
 
 #overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right:0;
-    bottom:0;
-    background: rgba(0,0,0,0.5);
+    inset: 0;
+    background: rgba(0,0,0,0.6);
     display: none;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-size: 40px;
     flex-direction: column;
+    color: white;
+}
+
+#resultText {
+    font-weight: bold;
+    text-align: center;
 }
 
 #closeX {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 30px;
+    font-size: 32px;
     cursor: pointer;
-    display: none;
 }
 </style>
 </head>
+
 <body>
 
 <div id="setup">
-    <div id="inputs">
-        <input placeholder="Írj egy szót">
-    </div>
+    <div id="inputs"></div>
+
     <button id="addBtn">+</button>
     <br>
     <button id="readyBtn">Kész</button>
 </div>
 
 <div id="game">
-    <div id="pointer"></div>
-    <canvas id="wheel" width="400" height="400"></canvas>
+
+    <div id="wrapper">
+        <div id="pointer"></div>
+        <canvas id="wheel" width="420" height="420"></canvas>
+    </div>
+
     <br>
     <button id="spinBtn">Pörgetés</button>
-    <button id="resetBtn">Újat akarok kezdeni</button>
+    <button id="resetBtn">Újrakezdés</button>
 </div>
 
 <div id="overlay">
@@ -111,6 +132,7 @@ canvas {
 const inputs = document.getElementById("inputs");
 const addBtn = document.getElementById("addBtn");
 const readyBtn = document.getElementById("readyBtn");
+
 const spinBtn = document.getElementById("spinBtn");
 const resetBtn = document.getElementById("resetBtn");
 
@@ -128,19 +150,37 @@ let words = [];
 let angle = 0;
 let spinning = false;
 
-addBtn.onclick = () => {
+function addInput(value="") {
+    const row = document.createElement("div");
+    row.className = "inputRow";
+
     const input = document.createElement("input");
-    input.placeholder = "Írj egy szót";
-    inputs.appendChild(input);
-};
+    input.value = value;
+
+    const del = document.createElement("button");
+    del.textContent = "X";
+    del.className = "deleteBtn";
+
+    del.onclick = () => {
+        if (inputs.children.length > 1) row.remove();
+    };
+
+    row.appendChild(input);
+    row.appendChild(del);
+    inputs.appendChild(row);
+}
+
+addInput();
+
+addBtn.onclick = () => addInput();
 
 readyBtn.onclick = () => {
-    words = [...document.querySelectorAll("input")]
-        .map(i => i.value)
-        .filter(v => v.trim() !== "");
+    words = [...document.querySelectorAll(".inputRow input")]
+        .map(i => i.value.trim())
+        .filter(v => v !== "");
 
     if (words.length < 2) {
-        alert("Adj meg legalább 2 szót!");
+        alert("Legalább 2 szó kell!");
         return;
     }
 
@@ -152,38 +192,59 @@ readyBtn.onclick = () => {
     drawWheel();
 };
 
-function drawWheel() {
+function drawWheel(highlightIndex = -1) {
     const n = words.length;
     const arc = (2 * Math.PI) / n;
 
-    ctx.clearRect(0, 0, 400, 400);
+    ctx.clearRect(0,0,420,420);
 
-    for (let i = 0; i < n; i++) {
+    for (let i=0;i<n;i++) {
+
         ctx.beginPath();
-        ctx.fillStyle = `hsl(${i * 360 / n}, 70%, 60%)`;
-        ctx.moveTo(200, 200);
-        ctx.arc(200, 200, 200, arc * i + angle, arc * (i + 1) + angle);
-        ctx.fill();
-        ctx.save();
+        ctx.fillStyle = `hsl(${i*360/n},70%,60%)`;
 
-        ctx.translate(200, 200);
-        ctx.rotate(arc * i + arc / 2 + angle);
-        ctx.textAlign = "right";
+        ctx.moveTo(210,210);
+        ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
+        ctx.fill();
+
+        // kiemelés
+        if (i === highlightIndex) {
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.beginPath();
+            ctx.moveTo(210,210);
+            ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
+            ctx.fill();
+        }
+
+        // szöveg
+        ctx.save();
+        ctx.translate(210,210);
+        ctx.rotate(arc*i + arc/2 + angle);
         ctx.fillStyle = "black";
-        ctx.font = "16px Arial";
+        ctx.font = "14px Arial";
+        ctx.textAlign = "right";
         ctx.fillText(words[i], 180, 5);
         ctx.restore();
     }
+}
+
+function getIndexFromAngle() {
+    const n = words.length;
+    const arc = (2*Math.PI)/n;
+
+    let normalized = angle % (2*Math.PI);
+    if (normalized < 0) normalized += 2*Math.PI;
+
+    let index = Math.floor((2*Math.PI - normalized) / arc) % n;
+    return index;
 }
 
 function spin() {
     if (spinning) return;
     spinning = true;
 
-    let speed = Math.random() * 0.3 + 0.3;
-    let decel = 0.995;
-
-    const targetIndex = Math.floor(Math.random() * words.length);
+    let speed = 0.35;
+    const decel = 0.985;
 
     const interval = setInterval(() => {
         angle += speed;
@@ -194,41 +255,47 @@ function spin() {
         if (speed < 0.002) {
             clearInterval(interval);
             spinning = false;
-            showResult(targetIndex);
+
+            const winner = getIndexFromAngle();
+            showResult(winner);
         }
     }, 16);
 }
 
 function showResult(index) {
-    document.body.style.background = "#ccc";
-    resultText.innerText = words[index];
-    overlay.style.display = "flex";
-    closeX.style.display = "block";
 
-    // villogás
-    let count = 0;
-    const blink = setInterval(() => {
-        document.getElementById("pointer").style.opacity =
-            document.getElementById("pointer").style.opacity == "0" ? "1" : "0";
-        count++;
-        if (count > 4) {
-            clearInterval(blink);
-            document.getElementById("pointer").style.opacity = "1";
-        }
-    }, 200);
+    drawWheel(index);
+
+    document.body.style.background = "#ccc";
+
+    const win = words[index];
+
+    resultText.innerHTML = "";
+
+    const big = document.createElement("div");
+    big.textContent = win;
+    big.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.1 + "px";
+    big.style.fontWeight = "bold";
+
+    resultText.appendChild(big);
+
+    overlay.style.display = "flex";
+
+    setTimeout(() => {
+        closeX.style.display = "block";
+    }, 2000);
 }
 
 closeX.onclick = () => {
     overlay.style.display = "none";
+    closeX.style.display = "none";
+    document.body.style.background = "white";
 };
 
-resetBtn.onclick = () => {
-    location.reload();
-};
+resetBtn.onclick = () => location.reload();
 
 spinBtn.onclick = spin;
 </script>
 
 </body>
-  </html>
-  
+</html>
