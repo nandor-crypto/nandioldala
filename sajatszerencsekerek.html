@@ -26,14 +26,20 @@ body {
     width: 220px;
 }
 
+/* 🔴 PIROS X */
 .deleteBtn {
     margin-left: 8px;
-    background: red;
+    background: #ff2d2d;
     color: white;
     border: none;
     padding: 6px 10px;
     cursor: pointer;
     border-radius: 4px;
+    font-weight: bold;
+}
+
+.deleteBtn:hover {
+    background: #cc0000;
 }
 
 button {
@@ -85,21 +91,22 @@ canvas {
     color: white;
 }
 
-#resultText {
+#resultText div {
     font-weight: bold;
-    text-align: center;
 }
 
 #closeX {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 32px;
+    font-size: 34px;
     cursor: pointer;
     display: none;
+    color: red;
+    font-weight: bold;
 }
 
-/* 🔥 MOBIL OPTIMALIZÁLÁS */
+/* 📱 MOBIL */
 @media screen and (max-width: 600px) {
 
     canvas {
@@ -122,12 +129,6 @@ canvas {
     button {
         width: 80%;
         max-width: 250px;
-    }
-
-    #pointer {
-        border-left: 18px solid transparent;
-        border-right: 18px solid transparent;
-        border-bottom: 30px solid white;
     }
 }
 </style>
@@ -181,11 +182,13 @@ let words = [];
 let angle = 0;
 let spinning = false;
 
+/* ➕ INPUT */
 function addInput(value="") {
     const row = document.createElement("div");
     row.className = "inputRow";
 
     const input = document.createElement("input");
+    input.placeholder = "Írd be a szót...";
     input.value = value;
 
     const del = document.createElement("button");
@@ -202,13 +205,13 @@ function addInput(value="") {
 }
 
 addInput();
-
 addBtn.onclick = () => addInput();
 
+/* 🎯 KÉSZ */
 readyBtn.onclick = () => {
     words = [...document.querySelectorAll(".inputRow input")]
         .map(i => i.value.trim())
-        .filter(v => v);
+        .filter(v => v.length > 0);
 
     if (words.length < 2) {
         alert("Legalább 2 szó kell!");
@@ -223,6 +226,7 @@ readyBtn.onclick = () => {
     drawWheel();
 };
 
+/* 🎡 KERÉK */
 function drawWheel(highlightIndex = -1) {
     const n = words.length;
     const arc = (2 * Math.PI) / n;
@@ -239,7 +243,7 @@ function drawWheel(highlightIndex = -1) {
         ctx.fill();
 
         if (i === highlightIndex) {
-            ctx.fillStyle = "rgba(255,255,255,0.35)";
+            ctx.fillStyle = "rgba(255,255,255,0.45)";
             ctx.beginPath();
             ctx.moveTo(210,210);
             ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
@@ -257,6 +261,7 @@ function drawWheel(highlightIndex = -1) {
     }
 }
 
+/* 🔥 JAVÍTOTT INDEX SZÁMÍTÁS */
 function getIndexFromAngle() {
     const n = words.length;
     const arc = (2*Math.PI)/n;
@@ -264,9 +269,10 @@ function getIndexFromAngle() {
     let norm = angle % (2*Math.PI);
     if (norm < 0) norm += 2*Math.PI;
 
-    return Math.floor((2*Math.PI - norm)/arc) % n;
+    return Math.floor(((2*Math.PI - norm) / arc)) % n;
 }
 
+/* 🎰 PÖRGETÉS */
 function spin() {
     if (spinning) return;
     spinning = true;
@@ -290,6 +296,7 @@ function spin() {
     }, 16);
 }
 
+/* 🏆 EREDMÉNY */
 function showResult(index) {
 
     drawWheel(index);
@@ -312,7 +319,7 @@ function showResult(index) {
 
     overlay.style.display = "flex";
 
-    // 🔵 2x villogás
+    /* 🔵 2x villogás */
     let c = 0;
     const blink = setInterval(() => {
         drawWheel(index);
@@ -325,6 +332,7 @@ function showResult(index) {
     }, 2000);
 }
 
+/* ❌ CLOSE */
 closeX.onclick = () => {
     overlay.style.display = "none";
     closeX.style.display = "none";
@@ -332,8 +340,8 @@ closeX.onclick = () => {
 };
 
 resetBtn.onclick = () => location.reload();
-
 spinBtn.onclick = spin;
+
 </script>
 
 </body>
