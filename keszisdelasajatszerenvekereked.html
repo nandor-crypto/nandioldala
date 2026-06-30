@@ -46,7 +46,6 @@ button {
 
 #addBtn { background: #ddd; }
 #readyBtn { background: #2196f3; color: white; }
-
 #spinBtn { background: orange; color: white; display:none; }
 #resetBtn { background: green; color: white; display:none; }
 
@@ -97,6 +96,39 @@ canvas {
     right: 20px;
     font-size: 32px;
     cursor: pointer;
+    display: none;
+}
+
+/* 🔥 MOBIL OPTIMALIZÁLÁS */
+@media screen and (max-width: 600px) {
+
+    canvas {
+        width: 300px !important;
+        height: 300px !important;
+    }
+
+    #wrapper {
+        transform: scale(0.9);
+    }
+
+    #resultText div {
+        font-size: 12vw !important;
+    }
+
+    .inputRow input {
+        width: 160px;
+    }
+
+    button {
+        width: 80%;
+        max-width: 250px;
+    }
+
+    #pointer {
+        border-left: 18px solid transparent;
+        border-right: 18px solid transparent;
+        border-bottom: 30px solid white;
+    }
 }
 </style>
 </head>
@@ -132,7 +164,6 @@ canvas {
 const inputs = document.getElementById("inputs");
 const addBtn = document.getElementById("addBtn");
 const readyBtn = document.getElementById("readyBtn");
-
 const spinBtn = document.getElementById("spinBtn");
 const resetBtn = document.getElementById("resetBtn");
 
@@ -177,7 +208,7 @@ addBtn.onclick = () => addInput();
 readyBtn.onclick = () => {
     words = [...document.querySelectorAll(".inputRow input")]
         .map(i => i.value.trim())
-        .filter(v => v !== "");
+        .filter(v => v);
 
     if (words.length < 2) {
         alert("Legalább 2 szó kell!");
@@ -207,16 +238,14 @@ function drawWheel(highlightIndex = -1) {
         ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
         ctx.fill();
 
-        // kiemelés
         if (i === highlightIndex) {
-            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.fillStyle = "rgba(255,255,255,0.35)";
             ctx.beginPath();
             ctx.moveTo(210,210);
             ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
             ctx.fill();
         }
 
-        // szöveg
         ctx.save();
         ctx.translate(210,210);
         ctx.rotate(arc*i + arc/2 + angle);
@@ -232,11 +261,10 @@ function getIndexFromAngle() {
     const n = words.length;
     const arc = (2*Math.PI)/n;
 
-    let normalized = angle % (2*Math.PI);
-    if (normalized < 0) normalized += 2*Math.PI;
+    let norm = angle % (2*Math.PI);
+    if (norm < 0) norm += 2*Math.PI;
 
-    let index = Math.floor((2*Math.PI - normalized) / arc) % n;
-    return index;
+    return Math.floor((2*Math.PI - norm)/arc) % n;
 }
 
 function spin() {
@@ -246,14 +274,14 @@ function spin() {
     let speed = 0.35;
     const decel = 0.985;
 
-    const interval = setInterval(() => {
+    const anim = setInterval(() => {
         angle += speed;
         speed *= decel;
 
         drawWheel();
 
         if (speed < 0.002) {
-            clearInterval(interval);
+            clearInterval(anim);
             spinning = false;
 
             const winner = getIndexFromAngle();
@@ -274,12 +302,23 @@ function showResult(index) {
 
     const big = document.createElement("div");
     big.textContent = win;
-    big.style.fontSize = Math.min(window.innerWidth, window.innerHeight) * 0.1 + "px";
+
+    big.style.fontSize =
+        Math.min(window.innerWidth, window.innerHeight) * 0.12 + "px";
+
     big.style.fontWeight = "bold";
 
     resultText.appendChild(big);
 
     overlay.style.display = "flex";
+
+    // 🔵 2x villogás
+    let c = 0;
+    const blink = setInterval(() => {
+        drawWheel(index);
+        c++;
+        if (c >= 4) clearInterval(blink);
+    }, 250);
 
     setTimeout(() => {
         closeX.style.display = "block";
@@ -298,4 +337,5 @@ spinBtn.onclick = spin;
 </script>
 
 </body>
-</html>
+    </html>
+    
