@@ -27,7 +27,7 @@ body {
     width: 220px;
 }
 
-/* 🔴 PIROS X GOMB (ÚJ VERZIÓ) */
+/* 🔴 PIROS X */
 .deleteBtn {
     margin-left: 8px;
     background: #ff2d2d;
@@ -108,7 +108,7 @@ canvas {
     font-weight: bold;
 }
 
-/* ❌ CLOSE */
+/* CLOSE */
 #closeX {
     position: absolute;
     top: 20px;
@@ -161,7 +161,6 @@ canvas {
 
 <!-- GAME -->
 <div id="game">
-
     <div id="wrapper">
         <div id="pointer"></div>
         <canvas id="wheel" width="420" height="420"></canvas>
@@ -199,7 +198,7 @@ let words = [];
 let angle = 0;
 let spinning = false;
 
-/* ➕ INPUT HOZZÁADÁS */
+/* INPUT */
 function addInput(value="") {
     const row = document.createElement("div");
     row.className = "inputRow";
@@ -224,11 +223,11 @@ function addInput(value="") {
 addInput();
 addBtn.onclick = () => addInput();
 
-/* 🎯 START */
+/* START */
 readyBtn.onclick = () => {
     words = [...document.querySelectorAll(".inputRow input")]
         .map(i => i.value.trim())
-        .filter(v => v.length > 0);
+        .filter(v => v);
 
     if (words.length < 2) {
         alert("Legalább 2 szó kell!");
@@ -243,7 +242,7 @@ readyBtn.onclick = () => {
     drawWheel();
 };
 
-/* 🎡 KERÉK */
+/* WHEEL */
 function drawWheel(highlightIndex = -1) {
     const n = words.length;
     const arc = (2 * Math.PI) / n;
@@ -260,7 +259,7 @@ function drawWheel(highlightIndex = -1) {
         ctx.fill();
 
         if (i === highlightIndex) {
-            ctx.fillStyle = "rgba(255,255,255,0.45)";
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
             ctx.beginPath();
             ctx.moveTo(210,210);
             ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
@@ -278,7 +277,7 @@ function drawWheel(highlightIndex = -1) {
     }
 }
 
-/* 🧠 INDEX SZÁMÍTÁS */
+/* INDEX FIX */
 function getIndexFromAngle() {
     const n = words.length;
     const arc = (2*Math.PI)/n;
@@ -286,10 +285,10 @@ function getIndexFromAngle() {
     let norm = angle % (2*Math.PI);
     if (norm < 0) norm += 2*Math.PI;
 
-    return Math.floor((2*Math.PI - norm) / arc) % n;
+    return Math.floor((2*Math.PI - norm)/arc) % n;
 }
 
-/* 🎰 PÖRGETÉS */
+/* SPIN */
 function spin() {
     if (spinning) return;
     spinning = true;
@@ -313,10 +312,8 @@ function spin() {
     }, 16);
 }
 
-/* 🏆 EREDMÉNY */
+/* 🏆 RESULT + 2x FLASH */
 function showResult(index) {
-
-    drawWheel(index);
 
     document.body.style.background = "#ccc";
 
@@ -326,30 +323,48 @@ function showResult(index) {
 
     const big = document.createElement("div");
     big.textContent = win;
-
     big.style.fontSize =
         Math.min(window.innerWidth, window.innerHeight) * 0.12 + "px";
-
     big.style.fontWeight = "bold";
 
     resultText.appendChild(big);
 
     overlay.style.display = "flex";
 
-    /* 🔵 2x villogás */
-    let c = 0;
-    const blink = setInterval(() => {
+    // 🎯 alap rajz
+    drawWheel(index);
+
+    // ✨ 2x FEHÉR VILLANÁS A NYERTES SZELETEN
+    let count = 0;
+
+    const flash = setInterval(() => {
         drawWheel(index);
-        c++;
-        if (c >= 4) clearInterval(blink);
-    }, 250);
+
+        const n = words.length;
+        const arc = (2*Math.PI)/n;
+
+        const start = arc*index + angle;
+        const end = arc*(index+1) + angle;
+
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        ctx.beginPath();
+        ctx.moveTo(210,210);
+        ctx.arc(210,210,200,start,end);
+        ctx.fill();
+
+        count++;
+        if (count >= 4) {
+            clearInterval(flash);
+            drawWheel(index);
+        }
+    }, 200);
 
     setTimeout(() => {
         closeX.style.display = "block";
     }, 2000);
 }
 
-/* ❌ CLOSE */
+/* CLOSE */
 closeX.onclick = () => {
     overlay.style.display = "none";
     closeX.style.display = "none";
@@ -358,7 +373,9 @@ closeX.onclick = () => {
 
 resetBtn.onclick = () => location.reload();
 spinBtn.onclick = spin;
+
 </script>
 
 </body>
-</html>
+    </html>
+    
