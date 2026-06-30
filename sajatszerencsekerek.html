@@ -12,6 +12,7 @@ body {
     transition: 0.3s;
 }
 
+/* SETUP */
 #setup { padding: 20px; }
 
 .inputRow {
@@ -26,22 +27,31 @@ body {
     width: 220px;
 }
 
-/* 🔴 PIROS X */
+/* 🔴 PIROS X GOMB (ÚJ VERZIÓ) */
 .deleteBtn {
     margin-left: 8px;
     background: #ff2d2d;
     color: white;
     border: none;
-    padding: 6px 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     cursor: pointer;
-    border-radius: 4px;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    transition: 0.2s;
+    font-size: 16px;
 }
 
 .deleteBtn:hover {
-    background: #cc0000;
+    background: #b80000;
+    transform: scale(1.1);
 }
 
+/* GOMBOK */
 button {
     margin: 10px;
     padding: 10px 20px;
@@ -57,6 +67,7 @@ button {
 
 #game { display:none; }
 
+/* KERÉK */
 #wrapper {
     position: relative;
     display: inline-block;
@@ -66,6 +77,7 @@ canvas {
     margin-top: 20px;
 }
 
+/* POINTER */
 #pointer {
     width: 0;
     height: 0;
@@ -80,6 +92,7 @@ canvas {
     z-index: 10;
 }
 
+/* OVERLAY */
 #overlay {
     position: fixed;
     inset: 0;
@@ -95,6 +108,7 @@ canvas {
     font-weight: bold;
 }
 
+/* ❌ CLOSE */
 #closeX {
     position: absolute;
     top: 20px;
@@ -106,7 +120,7 @@ canvas {
     font-weight: bold;
 }
 
-/* 📱 MOBIL */
+/* 📱 MOBILE */
 @media screen and (max-width: 600px) {
 
     canvas {
@@ -136,6 +150,7 @@ canvas {
 
 <body>
 
+<!-- SETUP -->
 <div id="setup">
     <div id="inputs"></div>
 
@@ -144,6 +159,7 @@ canvas {
     <button id="readyBtn">Kész</button>
 </div>
 
+<!-- GAME -->
 <div id="game">
 
     <div id="wrapper">
@@ -156,6 +172,7 @@ canvas {
     <button id="resetBtn">Újrakezdés</button>
 </div>
 
+<!-- RESULT -->
 <div id="overlay">
     <div id="closeX">X</div>
     <div id="resultText"></div>
@@ -182,7 +199,7 @@ let words = [];
 let angle = 0;
 let spinning = false;
 
-/* ➕ INPUT */
+/* ➕ INPUT HOZZÁADÁS */
 function addInput(value="") {
     const row = document.createElement("div");
     row.className = "inputRow";
@@ -207,7 +224,7 @@ function addInput(value="") {
 addInput();
 addBtn.onclick = () => addInput();
 
-/* 🎯 KÉSZ */
+/* 🎯 START */
 readyBtn.onclick = () => {
     words = [...document.querySelectorAll(".inputRow input")]
         .map(i => i.value.trim())
@@ -261,7 +278,7 @@ function drawWheel(highlightIndex = -1) {
     }
 }
 
-/* 🔥 JAVÍTOTT INDEX SZÁMÍTÁS */
+/* 🧠 INDEX SZÁMÍTÁS */
 function getIndexFromAngle() {
     const n = words.length;
     const arc = (2*Math.PI)/n;
@@ -269,7 +286,7 @@ function getIndexFromAngle() {
     let norm = angle % (2*Math.PI);
     if (norm < 0) norm += 2*Math.PI;
 
-    return Math.floor(((2*Math.PI - norm) / arc)) % n;
+    return Math.floor((2*Math.PI - norm) / arc) % n;
 }
 
 /* 🎰 PÖRGETÉS */
@@ -341,9 +358,7 @@ closeX.onclick = () => {
 
 resetBtn.onclick = () => location.reload();
 spinBtn.onclick = spin;
-
 </script>
 
 </body>
-    </html>
-    
+</html>
