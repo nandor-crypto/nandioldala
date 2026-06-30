@@ -280,14 +280,16 @@ function drawWheel(highlightIndex = -1) {
 /* INDEX FIX */
 function getIndexFromAngle() {
     const n = words.length;
-    const arc = (2*Math.PI)/n;
+    const arc = (2 * Math.PI) / n;
 
-    let norm = angle % (2*Math.PI);
-    if (norm < 0) norm += 2*Math.PI;
+    // A nyíl felfelé mutat
+    let pointer = (-Math.PI / 2 - angle) % (2 * Math.PI);
 
-    return Math.floor((2*Math.PI - norm)/arc) % n;
-}
+    if (pointer < 0)
+        pointer += 2 * Math.PI;
 
+    return Math.floor(pointer / arc);
+    }
 /* SPIN */
 function spin() {
     if (spinning) return;
