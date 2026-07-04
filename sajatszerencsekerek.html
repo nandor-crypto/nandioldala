@@ -365,6 +365,9 @@ function showResult(index) {
         ctx.moveTo(210,210);
         ctx.arc(210,210,200,start,end);
         ctx.fill();
+        const winner = getIndexFromAngle();
+showResult(winner);
+        
 
         count++;
         if (count >= 4) {
