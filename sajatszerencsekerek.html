@@ -312,15 +312,13 @@ function spin() {
 
         drawWheel();
 
-        if (speed < 0.000) {
-            clearInterval(anim);
-            spinning = false;
 
             const winner = getIndexFromAngle();
 
-setTimeout(() => {
-    showResult(winner);
-}, 500); // fél másodperccel a megállás után
+        if (speed < 0.000) {
+            clearInterval(anim);
+            spinning = false;
+    
                 
         }
     }, 16);
