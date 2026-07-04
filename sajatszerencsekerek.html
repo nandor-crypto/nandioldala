@@ -317,7 +317,11 @@ function spin() {
             spinning = false;
 
             const winner = getIndexFromAngle();
-            showResult(winner);
+
+setTimeout(() => {
+    showResult(winner);
+}, 500); // fél másodperccel a megállás után
+                
         }
     }, 16);
 }
