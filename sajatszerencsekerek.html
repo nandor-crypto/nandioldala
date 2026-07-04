@@ -314,13 +314,14 @@ function spin() {
 
 
             const winner = getIndexFromAngle();
+        if (speed < 0.0001) {
+    clearInterval(anim);
+    spinning = false;
 
-        if (speed < 0.000) {
-            clearInterval(anim);
-            spinning = false;
-    
-                
-        }
+    const winner = getIndexFromAngle();
+    showResult(winner);
+    }
+        
     }, 16);
 }
 
