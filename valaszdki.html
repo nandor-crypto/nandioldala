@@ -41,17 +41,20 @@ cursor:pointer;
 
 
 #jatekter{
+
 display:none;
 position:relative;
 justify-content:center;
 gap:80px;
 margin-top:40px;
 min-height:650px;
+
 }
 
 
 
 #vonalak{
+
 position:absolute;
 left:0;
 top:0;
@@ -59,18 +62,23 @@ width:100%;
 height:100%;
 z-index:1;
 pointer-events:none;
+
 }
 
 
 
 .oszlop{
+
 width:350px;
+position:relative;
 z-index:2;
+
 }
 
 
 
 .gomb{
+
 width:300px;
 padding:12px;
 margin:7px;
@@ -81,48 +89,60 @@ border-radius:10px;
 cursor:pointer;
 position:relative;
 z-index:3;
+
 }
 
 
 
 .gomb:hover{
+
 background:#1565c0;
+
 }
 
 
 
 .kivalasztva{
+
 background:#8cff8c!important;
 color:black;
+
 }
 
 
 
 .par{
+
 background:#66ff66!important;
 color:black;
+
 }
 
 
 
 #ellenorzes{
+
 display:none;
 background:#43a047;
 color:white;
 border:0;
 border-radius:8px;
 cursor:pointer;
+
 }
+
 
 </style>
 
 </head>
 
 
+
 <body>
 
 
 <h1>Összekötős tanuló játék</h1>
+
 
 
 <select id="tema">
@@ -152,6 +172,7 @@ Start
 
 
 
+
 <div id="jatekter">
 
 
@@ -169,6 +190,7 @@ Start
 
 
 
+
 <div class="oszlop">
 
 <h2>Meghatározások</h2>
@@ -182,16 +204,16 @@ Start
 
 
 
+
 <button id="ellenorzes" onclick="ellenoriz()">
+
 Ellenőrzés
+
 </button>
 
 
-
 <script>
-
-
-let kapcsolatok=[];
+  let kapcsolatok=[];
 
 let valasztottBal=null;
 
@@ -202,7 +224,6 @@ let jelenlegiTema="";
 
 
 const adatok={
-
 
 
 foci:{
@@ -222,6 +243,7 @@ bal:[
 "Hosszabbítás"
 
 ],
+
 
 
 jobb:[
@@ -271,6 +293,7 @@ bal:[
 ],
 
 
+
 jobb:[
 
 "Fehérjeszintézisben vesz részt.",
@@ -295,9 +318,13 @@ jobb:[
 
 ]
 
+}
+
 };
 
-  <script>
+
+
+
 
 
 function inditas(){
@@ -315,9 +342,11 @@ return;
 }
 
 
+
 document.getElementById("jatekter").style.display="flex";
 
 document.getElementById("ellenorzes").style.display="inline-block";
+
 
 
 kapcsolatok=[];
@@ -328,9 +357,11 @@ let bal=document.getElementById("bal");
 let jobb=document.getElementById("jobb");
 
 
+
 bal.innerHTML="";
 
 jobb.innerHTML="";
+
 
 
 adatok[jelenlegiTema].bal.forEach(szoveg=>{
@@ -398,11 +429,12 @@ rajzol();
 
 
 
+
+
 function kapcsolas(){
 
 
 if(valasztottBal && valasztottJobb){
-
 
 
 let regiBal=kapcsolatok.find(
@@ -451,6 +483,7 @@ jobb:valasztottJobb
 });
 
 
+
 valasztottBal.classList.add("par");
 
 valasztottJobb.classList.add("par");
@@ -465,6 +498,7 @@ valasztottJobb.classList.remove("kivalasztva");
 valasztottBal=null;
 
 valasztottJobb=null;
+
 
 
 rajzol();
@@ -484,7 +518,6 @@ function rajzol(){
 
 let svg=document.getElementById("vonalak");
 
-
 svg.innerHTML="";
 
 
@@ -502,55 +535,30 @@ let jobb=p.jobb.getBoundingClientRect();
 
 
 let vonal=document.createElementNS(
+
 "http://www.w3.org/2000/svg",
+
 "line"
+
 );
 
 
 
-vonal.setAttribute(
-"x1",
-bal.right-terulet.left
-);
+vonal.setAttribute("x1",bal.right-terulet.left);
 
+vonal.setAttribute("y1",bal.top+bal.height/2-terulet.top);
 
-vonal.setAttribute(
-"y1",
-bal.top+bal.height/2-terulet.top
-);
+vonal.setAttribute("x2",jobb.left-terulet.left);
 
-
-vonal.setAttribute(
-"x2",
-jobb.left-terulet.left
-);
-
-
-vonal.setAttribute(
-"y2",
-jobb.top+jobb.height/2-terulet.top
-);
+vonal.setAttribute("y2",jobb.top+jobb.height/2-terulet.top);
 
 
 
-vonal.setAttribute(
-"stroke",
-"#00aa00"
-);
+vonal.setAttribute("stroke","#00aa00");
 
+vonal.setAttribute("stroke-width","5");
 
-
-vonal.setAttribute(
-"stroke-width",
-"5"
-);
-
-
-
-vonal.setAttribute(
-"stroke-linecap",
-"round"
-);
+vonal.setAttribute("stroke-linecap","round");
 
 
 
@@ -558,7 +566,6 @@ svg.appendChild(vonal);
 
 
 });
-
 
 }
 
@@ -574,35 +581,25 @@ const megoldasok={
 foci:{
 
 
-"Les":
-"Csak bizonyos körülmények között ítélhető meg.",
+"Les":"Csak bizonyos körülmények között ítélhető meg.",
 
-"Szöglet":
-"Gól közvetlenül is születhet belőle.",
+"Szöglet":"Gól közvetlenül is születhet belőle.",
 
-"Büntető":
-"Lehet egy szabálytalanság következménye.",
+"Büntető":"Lehet egy szabálytalanság következménye.",
 
-"Szabadrúgás":
-"A játék újraindításának egyik módja.",
+"Szabadrúgás":"A játék újraindításának egyik módja.",
 
-"Bedobás":
-"A játék újraindításának egyik módja.",
+"Bedobás":"A játék újraindításának egyik módja.",
 
-"Sárga lap":
-"A játékvezető figyelmeztetést adhat érte.",
+"Sárga lap":"A játékvezető figyelmeztetést adhat érte.",
 
-"Piros lap":
-"A játékvezető kiállítást ítélhet miatta.",
+"Piros lap":"A játékvezető kiállítást ítélhet miatta.",
 
-"VAR":
-"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+"VAR":"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
 
-"Kapus":
-"Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
+"Kapus":"Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
 
-"Hosszabbítás":
-"Nem minden mérkőzésen fordul elő."
+"Hosszabbítás":"Nem minden mérkőzésen fordul elő."
 
 },
 
@@ -611,39 +608,30 @@ foci:{
 sejt:{
 
 
-"Fotoszintézis":
-"A növények szervesanyag-előállításában játszik szerepet.",
+"Fotoszintézis":"A növények szervesanyag-előállításában játszik szerepet.",
 
-"Mitokondrium":
-"A sejtlégzéshez kapcsolódik.",
+"Mitokondrium":"A sejtlégzéshez kapcsolódik.",
 
-"Riboszóma":
-"Fehérjeszintézisben vesz részt.",
+"Riboszóma":"Fehérjeszintézisben vesz részt.",
 
-"Sejtmag":
-"A sejt működését irányító központi szerkezet.",
+"Sejtmag":"A sejt működését irányító központi szerkezet.",
 
-"Kloroplasztisz":
-"Növényi sejtekben található, de állati sejtekben nem.",
+"Kloroplasztisz":"Növényi sejtekben található, de állati sejtekben nem.",
 
-"Diffúzió":
-"Anyagok részecskék mozgásával történő terjedése.",
+"Diffúzió":"Anyagok részecskék mozgásával történő terjedése.",
 
-"Ozmózis":
-"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
+"Ozmózis":"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
 
-"Enzim":
-"Kémiai reakciókat gyorsít.",
+"Enzim":"Kémiai reakciókat gyorsít.",
 
-"DNS":
-"Örökítőanyaggal kapcsolatos.",
+"DNS":"Örökítőanyaggal kapcsolatos.",
 
-"ATP":
-"Közvetlenül kapcsolódik az energiatermeléshez."
+"ATP":"Közvetlenül kapcsolódik az energiatermeléshez."
 
 }
 
 };
+
 
 
 
@@ -659,9 +647,7 @@ let jo=0;
 kapcsolatok.forEach(p=>{
 
 
-let helyes=
-megoldasok[jelenlegiTema][p.bal.innerHTML];
-
+let helyes=megoldasok[jelenlegiTema][p.bal.innerHTML];
 
 
 if(helyes===p.jobb.innerHTML){
@@ -670,7 +656,6 @@ if(helyes===p.jobb.innerHTML){
 p.bal.style.background="green";
 
 p.jobb.style.background="green";
-
 
 jo++;
 
@@ -683,7 +668,6 @@ p.bal.style.background="red";
 
 p.jobb.style.background="red";
 
-
 }
 
 
@@ -691,9 +675,7 @@ p.jobb.style.background="red";
 
 
 
-alert(
-"Pontszám: "+jo+" / "+kapcsolatok.length
-);
+alert("Pontszám: "+jo+" / "+kapcsolatok.length);
 
 
 }
@@ -701,10 +683,8 @@ alert(
 
 
 
-window.addEventListener(
-"resize",
-rajzol
-);
+
+window.addEventListener("resize",rajzol);
 
 
 </script>
