@@ -2,23 +2,24 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Párosító játék</title>
+<title>Összekötős tanuló játék</title>
 
 <style>
 body{
     font-family: Arial, sans-serif;
-    background:#eef3f8;
+    background:#eef6ff;
     text-align:center;
+    margin:20px;
 }
 
 h1{
-    color:#0d47a1;
+    color:#1565c0;
 }
 
-select, #start{
+select, button{
     font-size:18px;
     padding:10px;
-    margin:10px;
+    margin:8px;
 }
 
 #start{
@@ -29,50 +30,83 @@ select, #start{
     cursor:pointer;
 }
 
+#start:hover{
+    background:#0d47a1;
+}
+
+
 #jatekter{
     display:none;
     justify-content:center;
-    gap:60px;
-    margin-top:30px;
+    gap:80px;
+    margin-top:40px;
+    position:relative;
 }
+
 
 .oszlop{
     width:350px;
 }
 
+
 .gomb{
     width:300px;
-    padding:12px;
-    margin:8px;
+    min-height:45px;
+    margin:7px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
     background:#2196f3;
     color:white;
-    border:none;
-    border-radius:8px;
     cursor:pointer;
     font-size:16px;
 }
 
+
 .gomb:hover{
     background:#1565c0;
 }
+
 
 .kivalasztva{
     background:#8cff8c !important;
     color:black;
 }
 
+
 .par{
     background:#66ff66 !important;
     color:black;
 }
-    
+
+
+#vonalak{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+}
+
+#ellenorzes{
+    display:none;
+    background:#43a047;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
 </style>
 
 </head>
 
+
 <body>
 
-<h1>Tanuló párosító játék</h1>
+<h1>Összekötős tanuló játék</h1>
+
 
 <select id="tema">
 <option value="">-- Válassz témát --</option>
@@ -80,35 +114,55 @@ select, #start{
 <option value="sejt">Sejt alkotók és sejt folyamatok</option>
 </select>
 
+
 <button id="start" onclick="inditas()">Start</button>
 
+
 <div id="jatekter">
+
+<svg id="vonalak"></svg>
+
 
 <div class="oszlop">
 <h2>Fogalmak</h2>
 <div id="bal"></div>
 </div>
 
+
 <div class="oszlop">
 <h2>Meghatározások</h2>
 <div id="jobb"></div>
 </div>
 
+
 </div>
+
+
+<button id="ellenorzes" onclick="ellenoriz()">Ellenőrzés</button>
 
 
 <script>
 
-let balElemek=[];
-let jobbElemek=[];
+
+let balGombok=[];
+let jobbGombok=[];
+
 
 let valasztottBal=null;
 let valasztottJobb=null;
 
 
+let kapcsolatok=[];
+
+
+let jelenlegiTema="";
+
+
 const adatok={
 
+
 foci:{
+
 bal:[
 "Les",
 "Szöglet",
@@ -122,6 +176,7 @@ bal:[
 "Hosszabbítás"
 ],
 
+
 jobb:[
 "Csak bizonyos körülmények között ítélhető meg.",
 "Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
@@ -132,10 +187,12 @@ jobb:[
 "A játék újraindításának egyik módja.",
 "A mérkőzés kimenetelére jelentős hatással lehet."
 ]
+
 },
 
 
 sejt:{
+
 bal:[
 "Fotoszintézis",
 "Mitokondrium",
@@ -148,6 +205,7 @@ bal:[
 "DNS",
 "ATP"
 ],
+
 
 jobb:[
 "Fehérjeszintézisben vesz részt.",
@@ -167,77 +225,17 @@ jobb:[
 
 function inditas(){
 
-let tema=document.getElementById("tema").value;
+jelenlegiTema=document.getElementById("tema").value;
 
-if(!tema){
+
+if(jelenlegiTema==""){
 alert("Válassz témát!");
 return;
 }
+    // ===== 2. RÉSZ =====
 
-document.getElementById("jatekter").style.display="flex";
+// Helyes megoldások
 
-let adat=adatok[tema];
-
-let bal=document.getElementById("bal");
-let jobb=document.getElementById("jobb");
-
-bal.innerHTML="";
-jobb.innerHTML="";
-
-
-adat.bal.forEach(szoveg=>{
-
-let g=document.createElement("button");
-g.className="gomb";
-g.innerHTML=szoveg;
-
-g.onclick=function(){
-valasztottBal=g;
-ellenorzes();
-};
-
-bal.appendChild(g);
-
-});
-
-
-adat.jobb.forEach(szoveg=>{
-
-let g=document.createElement("button");
-g.className="gomb";
-g.innerHTML=szoveg;
-
-g.onclick=function(){
-valasztottJobb=g;
-ellenorzes();
-};
-
-jobb.appendChild(g);
-
-});
-
-}
-
-
-function ellenorzes(){
-
-if(valasztottBal && valasztottJobb){
-
-valasztottBal.classList.add("kivalasztva");
-valasztottJobb.classList.add("kivalasztva");
-
-valasztottBal=null;
-valasztottJobb=null;
-
-}
-
-}
-  // ===== 2. RÉSZ: PÁROSÍTÁS, ELLENŐRZÉS =====
-
-let kapcsolatok = [];
-
-
-// helyes párok
 const megoldasok = {
 
 foci:{
@@ -253,96 +251,88 @@ foci:{
 "Hosszabbítás":"Nem minden mérkőzésen fordul elő."
 },
 
+
 sejt:{
+"Fotoszintézis":"A növények szervesanyag-előállításában játszik szerepet.",
+"Mitokondrium":"A sejtlégzéshez kapcsolódik.",
 "Riboszóma":"Fehérjeszintézisben vesz részt.",
-"ATP":"Közvetlenül kapcsolódik az energiatermeléshez.",
 "Kloroplasztisz":"Növényi sejtekben található, de állati sejtekben nem.",
 "Ozmózis":"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
-"DNS":"Örökítőanyaggal kapcsolatos.",
 "Enzim":"Kémiai reakciókat gyorsít.",
-"Mitokondrium":"A sejtlégzéshez kapcsolódik.",
-"Fotoszintézis":"A növények szervesanyag-előállításában játszik szerepet."
+"DNS":"Örökítőanyaggal kapcsolatos.",
+"ATP":"Közvetlenül kapcsolódik az energiatermeléshez."
 }
 
 };
 
 
-let jelenlegiTema="";
+// gomb kiválasztás javítása
+
+document.addEventListener("click",function(e){
+
+if(e.target.classList.contains("gomb")){
 
 
-// átírjuk az indítást, hogy mentse a témát
-let regiInditas=inditas;
+if(e.target.parentElement.parentElement.id=="bal"){
 
-inditas=function(){
-
-jelenlegiTema=document.getElementById("tema").value;
-
-regiInditas();
-
-kapcsolatok=[];
-
-let ellen=document.getElementById("ellenorzes");
-
-if(!ellen){
-
-ellen=document.createElement("button");
-ellen.id="ellenorzes";
-ellen.innerHTML="Ellenőrzés";
-ellen.style.background="#43a047";
-ellen.style.color="white";
-ellen.style.padding="12px";
-ellen.style.border="none";
-ellen.style.borderRadius="8px";
-ellen.style.cursor="pointer";
-ellen.style.fontSize="18px";
-
-document.body.appendChild(ellen);
-
-ellen.onclick=kiErtekeles;
+valasztottBal=e.target;
 
 }
 
-};
+
+if(e.target.parentElement.parentElement.id=="jobb"){
+
+valasztottJobb=e.target;
+
+}
 
 
-// felülírjuk a kattintást
-function ujPar(bal,jobb){
+// ha mindkettő ki van választva
+
+if(valasztottBal && valasztottJobb){
+
 
 let letezik=kapcsolatok.find(
-p=>p.bal==bal && p.jobb==jobb
+x=>x.bal==valasztottBal &&
+x.jobb==valasztottJobb
 );
+
+
+// törlés
 
 if(letezik){
 
 kapcsolatok=kapcsolatok.filter(
-p=>!(p.bal==bal && p.jobb==jobb)
+x=>x!==letezik
 );
 
-bal.classList.remove("par");
-jobb.classList.remove("par");
+valasztottBal.classList.remove("par");
+valasztottJobb.classList.remove("par");
 
 }
+
+
+// új kapcsolat
+
 else{
 
 kapcsolatok.push({
-bal:bal,
-jobb:jobb
+bal:valasztottBal,
+jobb:valasztottJobb
 });
 
-bal.classList.add("par");
-jobb.classList.add("par");
+valasztottBal.classList.add("par");
+valasztottJobb.classList.add("par");
 
 }
 
-}
+
+valasztottBal.classList.remove("kivalasztva");
+valasztottJobb.classList.remove("kivalasztva");
 
 
-// a régi kiválasztást lecseréljük
-function ellenorzes(){
+rajzolVonalak();
 
-if(valasztottBal && valasztottJobb){
-
-ujPar(valasztottBal,valasztottJobb);
 
 valasztottBal=null;
 valasztottJobb=null;
@@ -351,22 +341,98 @@ valasztottJobb=null;
 
 }
 
+});
 
-// kiértékelés
-function kiErtekeles(){
 
-let jo=0;
-let osszes=kapcsolatok.length;
+
+
+// vonalak rajzolása
+
+function rajzolVonalak(){
+
+let svg=document.getElementById("vonalak");
+
+svg.innerHTML="";
 
 
 kapcsolatok.forEach(p=>{
 
-let helyes=
-megoldasok[jelenlegiTema]
-[p.bal.innerHTML];
+
+let bal=p.bal.getBoundingClientRect();
+let jobb=p.jobb.getBoundingClientRect();
 
 
-if(helyes==p.jobb.innerHTML){
+let svgDoboz=svg.getBoundingClientRect();
+
+
+let vonal=document.createElementNS(
+"http://www.w3.org/2000/svg",
+"line"
+);
+
+
+vonal.setAttribute(
+"x1",
+bal.right-svgDoboz.left
+);
+
+
+vonal.setAttribute(
+"y1",
+bal.top+bal.height/2-svgDoboz.top
+);
+
+
+vonal.setAttribute(
+"x2",
+jobb.left-svgDoboz.left
+);
+
+
+vonal.setAttribute(
+"y2",
+jobb.top+jobb.height/2-svgDoboz.top
+);
+
+
+vonal.setAttribute(
+"stroke",
+"green"
+);
+
+
+vonal.setAttribute(
+"stroke-width",
+"4"
+);
+
+
+svg.appendChild(vonal);
+
+
+});
+
+}
+
+
+
+
+// ellenőrzés
+
+function ellenoriz(){
+
+let jo=0;
+
+
+kapcsolatok.forEach(p=>{
+
+
+let keresett=
+megoldasok[jelenlegiTema][p.bal.innerHTML];
+
+
+if(keresett==p.jobb.innerHTML){
+
 
 p.bal.style.background="green";
 p.jobb.style.background="green";
@@ -374,25 +440,97 @@ p.jobb.style.background="green";
 jo++;
 
 }
+
 else{
+
 
 p.bal.style.background="red";
 p.jobb.style.background="red";
 
 }
 
+
 });
 
 
 alert(
-"Pontszám: "+jo+" / "+osszes
+"Pontszám: "+jo+" / "+kapcsolatok.length
 );
 
-  }
-  
+
+}
+
+
+
+// ha mozgatjuk az ablakot, a vonalak igazodjanak
+
+window.addEventListener(
+"resize",
+rajzolVonalak
+);
+    
+
+
+document.getElementById("jatekter").style.display="flex";
+document.getElementById("ellenorzes").style.display="inline-block";
+
+
+let bal=document.getElementById("bal");
+let jobb=document.getElementById("jobb");
+
+
+bal.innerHTML="";
+jobb.innerHTML="";
+
+
+kapcsolatok=[];
+
+
+adatok[jelenlegiTema].bal.forEach(szoveg=>{
+
+let g=document.createElement("button");
+
+g.className="gomb";
+g.innerHTML=szoveg;
+
+
+g.onclick=function(){
+
+valasztottBal=g;
+g.classList.add("kivalasztva");
+
+}
+
+
+bal.appendChild(g);
+
+});
+
+
+adatok[jelenlegiTema].jobb.forEach(szoveg=>{
+
+let g=document.createElement("button");
+
+g.className="gomb";
+g.innerHTML=szoveg;
+
+
+g.onclick=function(){
+
+valasztottJobb=g;
+g.classList.add("kivalasztva");
+
+}
+
+
+jobb.appendChild(g);
+
+});
+
+
+}
 
 </script>
 
 </body>
-                                                      </html>
-                                                      
+</html>
