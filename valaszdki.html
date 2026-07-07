@@ -140,6 +140,7 @@ Start
 <svg id="vonalak"></svg>
 
 
+
 <div class="oszlop">
 
 <h2>Fogalmak</h2>
@@ -147,6 +148,7 @@ Start
 <div id="bal"></div>
 
 </div>
+
 
 
 
@@ -163,9 +165,12 @@ Start
 
 
 
+
 <button id="ellenorzes" onclick="ellenoriz()">
 Ellenőrzés
 </button>
+
+
 
 
 <script>
@@ -180,10 +185,12 @@ let valasztottJobb=null;
 let jelenlegiTema="";
 
 
+
 const adatok={
 
 
 foci:{
+
 
 bal:[
 
@@ -199,6 +206,8 @@ bal:[
 "Hosszabbítás"
 
 ],
+
+
 
 jobb:[
 
@@ -228,7 +237,9 @@ jobb:[
 
 
 
+
 sejt:{
+
 
 bal:[
 
@@ -244,6 +255,8 @@ bal:[
 "ATP"
 
 ],
+
+
 
 jobb:[
 
@@ -272,10 +285,9 @@ jobb:[
 }
 
 
+
 };
-
-
-  function inditas(){
+function inditas(){
 
 
 jelenlegiTema=document.getElementById("tema").value;
@@ -329,7 +341,6 @@ kapcsolas();
 };
 
 
-
 bal.appendChild(g);
 
 
@@ -359,12 +370,13 @@ kapcsolas();
 };
 
 
-
 jobb.appendChild(g);
 
 
 });
 
+
+rajzol();
 
 }
 
@@ -378,6 +390,7 @@ function kapcsolas(){
 
 
 if(valasztottBal && valasztottJobb){
+
 
 
 let regiBal=kapcsolatok.find(
@@ -398,7 +411,6 @@ p=>p!==regiBal
 );
 
 regiBal.bal.classList.remove("par");
-
 regiBal.jobb.classList.remove("par");
 
 }
@@ -412,11 +424,9 @@ p=>p!==regiJobb
 );
 
 regiJobb.bal.classList.remove("par");
-
 regiJobb.jobb.classList.remove("par");
 
 }
-
 
 
 
@@ -429,6 +439,8 @@ jobb:valasztottJobb
 });
 
 
+
+/* csak párosítás után lesz zöld */
 
 valasztottBal.classList.add("par");
 
@@ -460,7 +472,6 @@ function rajzol(){
 
 let svg=document.getElementById("vonalak");
 
-
 svg.innerHTML="";
 
 
@@ -478,11 +489,8 @@ let jobb=p.jobb.getBoundingClientRect();
 
 
 let vonal=document.createElementNS(
-
 "http://www.w3.org/2000/svg",
-
 "line"
-
 );
 
 
@@ -584,13 +592,17 @@ sejt:{
 function ellenoriz(){
 
 
+let eredmeny="";
+
 let jo=0;
+
 
 
 kapcsolatok.forEach(p=>{
 
 
-let helyes=megoldasok[jelenlegiTema][p.bal.innerHTML];
+let helyes=
+megoldasok[jelenlegiTema][p.bal.innerHTML];
 
 
 
@@ -601,7 +613,16 @@ p.bal.style.background="green";
 
 p.jobb.style.background="green";
 
+
+eredmeny+="✅ Jó: "
++p.bal.innerHTML
++" → "
++p.jobb.innerHTML
++"\n\n";
+
+
 jo++;
+
 
 }
 
@@ -612,6 +633,16 @@ p.bal.style.background="red";
 
 p.jobb.style.background="red";
 
+
+eredmeny+="❌ Rossz: "
++p.bal.innerHTML
++" → "
++p.jobb.innerHTML
++"\nHelyes: "
++helyes
++"\n\n";
+
+
 }
 
 
@@ -620,7 +651,11 @@ p.jobb.style.background="red";
 
 
 alert(
-"Pontszám: "+jo+" / "+kapcsolatok.length
+eredmeny+
+"Pontszám: "
++jo+
+" / "
++kapcsolatok.length
 );
 
 
@@ -642,4 +677,6 @@ rajzol
 </body>
 
 </html>
+  
+
   
