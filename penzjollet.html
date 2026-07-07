@@ -7,13 +7,22 @@ h3 {
   border-radius: 5px;
   border: 2px solid black;
 }
+  @media screen and (max-width: 600px) {
+
+      /* Ide tehetsz még más mobil stílust is, pl: */
+      body {
+        font-size: 18px;
+      }
+  }
+  h1 { 
+    font-size: 19;
 </style>
 </head>
 
 <body>
 
 <select id="menu" onchange="mutatTartalom()">
-  <option value="">Válassz</option>
+  <option value="">Válassz!</option>
   <option value="szoveg1">Fogmosás</option>
   <option value="szoveg2">Semmi édesség</option>
 </select>
