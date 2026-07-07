@@ -7,7 +7,6 @@
 
 <title>Összekötős tanuló játék</title>
 
-
 <style>
 
 body{
@@ -15,7 +14,6 @@ font-family:Arial,sans-serif;
 background:#eef3f8;
 text-align:center;
 }
-
 
 h1{
 color:#0d47a1;
@@ -29,7 +27,6 @@ margin:8px;
 }
 
 
-
 #start{
 background:#1976d2;
 color:white;
@@ -39,22 +36,17 @@ cursor:pointer;
 }
 
 
-
 #jatekter{
-
 display:none;
 position:relative;
 justify-content:center;
 gap:80px;
 margin-top:40px;
 min-height:650px;
-
 }
 
 
-
 #vonalak{
-
 position:absolute;
 left:0;
 top:0;
@@ -62,23 +54,17 @@ width:100%;
 height:100%;
 z-index:1;
 pointer-events:none;
-
 }
-
 
 
 .oszlop{
-
 width:350px;
 position:relative;
 z-index:2;
-
 }
 
 
-
 .gomb{
-
 width:300px;
 padding:12px;
 margin:7px;
@@ -89,53 +75,32 @@ border-radius:10px;
 cursor:pointer;
 position:relative;
 z-index:3;
-
 }
-
 
 
 .gomb:hover{
-
 background:#1565c0;
-
 }
-
-
-
-.kivalasztva{
-
-background:#8cff8c!important;
-color:black;
-
-}
-
 
 
 .par{
-
 background:#66ff66!important;
 color:black;
-
 }
 
 
-
 #ellenorzes{
-
 display:none;
 background:#43a047;
 color:white;
 border:0;
 border-radius:8px;
 cursor:pointer;
-
 }
-
 
 </style>
 
 </head>
-
 
 
 <body>
@@ -144,32 +109,26 @@ cursor:pointer;
 <h1>Összekötős tanuló játék</h1>
 
 
-
 <select id="tema">
 
 <option value="">
 -- Válassz témát --
 </option>
 
-
 <option value="foci">
 Labdarúgás játékszabályok
 </option>
-
 
 <option value="sejt">
 Sejt alkotók és sejt folyamatok
 </option>
 
-
 </select>
-
 
 
 <button id="start" onclick="inditas()">
 Start
 </button>
-
 
 
 
@@ -179,7 +138,6 @@ Start
 <svg id="vonalak"></svg>
 
 
-
 <div class="oszlop">
 
 <h2>Fogalmak</h2>
@@ -187,7 +145,6 @@ Start
 <div id="bal"></div>
 
 </div>
-
 
 
 
@@ -204,16 +161,16 @@ Start
 
 
 
-
 <button id="ellenorzes" onclick="ellenoriz()">
-
 Ellenőrzés
-
 </button>
 
 
+
 <script>
-  let kapcsolatok=[];
+
+
+let kapcsolatok=[];
 
 let valasztottBal=null;
 
@@ -222,12 +179,10 @@ let valasztottJobb=null;
 let jelenlegiTema="";
 
 
-
 const adatok={
 
 
 foci:{
-
 
 bal:[
 
@@ -243,8 +198,6 @@ bal:[
 "Hosszabbítás"
 
 ],
-
-
 
 jobb:[
 
@@ -273,9 +226,7 @@ jobb:[
 },
 
 
-
 sejt:{
-
 
 bal:[
 
@@ -291,8 +242,6 @@ bal:[
 "ATP"
 
 ],
-
-
 
 jobb:[
 
@@ -318,16 +267,9 @@ jobb:[
 
 ]
 
-}
-
 };
 
-
-
-
-
-
-function inditas(){
+  function inditas(){
 
 
 jelenlegiTema=document.getElementById("tema").value;
@@ -342,11 +284,9 @@ return;
 }
 
 
-
 document.getElementById("jatekter").style.display="flex";
 
 document.getElementById("ellenorzes").style.display="inline-block";
-
 
 
 kapcsolatok=[];
@@ -355,7 +295,6 @@ kapcsolatok=[];
 let bal=document.getElementById("bal");
 
 let jobb=document.getElementById("jobb");
-
 
 
 bal.innerHTML="";
@@ -374,15 +313,15 @@ g.className="gomb";
 g.innerHTML=szoveg;
 
 
+
 g.onclick=function(){
 
 valasztottBal=g;
 
-g.classList.add("kivalasztva");
-
 kapcsolas();
 
 };
+
 
 
 bal.appendChild(g);
@@ -404,15 +343,15 @@ g.className="gomb";
 g.innerHTML=szoveg;
 
 
+
 g.onclick=function(){
 
 valasztottJobb=g;
 
-g.classList.add("kivalasztva");
-
 kapcsolas();
 
 };
+
 
 
 jobb.appendChild(g);
@@ -437,6 +376,7 @@ function kapcsolas(){
 if(valasztottBal && valasztottJobb){
 
 
+
 let regiBal=kapcsolatok.find(
 p=>p.bal===valasztottBal
 );
@@ -455,6 +395,7 @@ p=>p!==regiBal
 );
 
 regiBal.bal.classList.remove("par");
+
 regiBal.jobb.classList.remove("par");
 
 }
@@ -468,9 +409,12 @@ p=>p!==regiJobb
 );
 
 regiJobb.bal.classList.remove("par");
+
 regiJobb.jobb.classList.remove("par");
 
 }
+
+
 
 
 
@@ -484,14 +428,11 @@ jobb:valasztottJobb
 
 
 
+/* csak itt lesz zöld */
+
 valasztottBal.classList.add("par");
 
 valasztottJobb.classList.add("par");
-
-
-valasztottBal.classList.remove("kivalasztva");
-
-valasztottJobb.classList.remove("kivalasztva");
 
 
 
@@ -513,10 +454,12 @@ rajzol();
 
 
 
+
 function rajzol(){
 
 
 let svg=document.getElementById("vonalak");
+
 
 svg.innerHTML="";
 
@@ -544,21 +487,71 @@ let vonal=document.createElementNS(
 
 
 
-vonal.setAttribute("x1",bal.right-terulet.left);
+vonal.setAttribute(
 
-vonal.setAttribute("y1",bal.top+bal.height/2-terulet.top);
+"x1",
 
-vonal.setAttribute("x2",jobb.left-terulet.left);
+bal.right-terulet.left
 
-vonal.setAttribute("y2",jobb.top+jobb.height/2-terulet.top);
+);
+
+
+vonal.setAttribute(
+
+"y1",
+
+bal.top+bal.height/2-terulet.top
+
+);
 
 
 
-vonal.setAttribute("stroke","#00aa00");
+vonal.setAttribute(
 
-vonal.setAttribute("stroke-width","5");
+"x2",
 
-vonal.setAttribute("stroke-linecap","round");
+jobb.left-terulet.left
+
+);
+
+
+vonal.setAttribute(
+
+"y2",
+
+jobb.top+jobb.height/2-terulet.top
+
+);
+
+
+
+vonal.setAttribute(
+
+"stroke",
+
+"#00aa00"
+
+);
+
+
+
+vonal.setAttribute(
+
+"stroke-width",
+
+"5"
+
+);
+
+
+
+vonal.setAttribute(
+
+"stroke-linecap",
+
+"round"
+
+);
 
 
 
@@ -568,7 +561,6 @@ svg.appendChild(vonal);
 });
 
 }
-
 
 
 
@@ -650,12 +642,14 @@ kapcsolatok.forEach(p=>{
 let helyes=megoldasok[jelenlegiTema][p.bal.innerHTML];
 
 
+
 if(helyes===p.jobb.innerHTML){
 
 
 p.bal.style.background="green";
 
 p.jobb.style.background="green";
+
 
 jo++;
 
@@ -675,7 +669,9 @@ p.jobb.style.background="red";
 
 
 
-alert("Pontszám: "+jo+" / "+kapcsolatok.length);
+alert(
+"Pontszám: "+jo+" / "+kapcsolatok.length
+);
 
 
 }
@@ -684,7 +680,10 @@ alert("Pontszám: "+jo+" / "+kapcsolatok.length);
 
 
 
-window.addEventListener("resize",rajzol);
+window.addEventListener(
+"resize",
+rajzol
+);
 
 
 </script>
