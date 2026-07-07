@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>Párosító játék</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#eef3f8;
+    text-align:center;
+}
+
+h1{
+    color:#0d47a1;
+}
+
+select, #start{
+    font-size:18px;
+    padding:10px;
+    margin:10px;
+}
+
+#start{
+    background:#1976d2;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#jatekter{
+    display:none;
+    justify-content:center;
+    gap:60px;
+    margin-top:30px;
+}
+
+.oszlop{
+    width:350px;
+}
+
+.gomb{
+    width:300px;
+    padding:12px;
+    margin:8px;
+    background:#2196f3;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.gomb:hover{
+    background:#1565c0;
+}
+
+.kivalasztva{
+    background:#4caf50 !important;
+}
+
+.par{
+    background:#81c784 !important;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Tanuló párosító játék</h1>
+
+<select id="tema">
+<option value="">-- Válassz témát --</option>
+<option value="foci">Labdarúgás játékszabályok</option>
+<option value="sejt">Sejt alkotók és sejt folyamatok</option>
+</select>
+
+<button id="start" onclick="inditas()">Start</button>
+
+<div id="jatekter">
+
+<div class="oszlop">
+<h2>Fogalmak</h2>
+<div id="bal"></div>
+</div>
+
+<div class="oszlop">
+<h2>Meghatározások</h2>
+<div id="jobb"></div>
+</div>
+
+</div>
+
+
+<script>
+
+let balElemek=[];
+let jobbElemek=[];
+
+let valasztottBal=null;
+let valasztottJobb=null;
+
+
+const adatok={
+
+foci:{
+bal:[
+"Les",
+"Szöglet",
+"Büntető",
+"Szabadrúgás",
+"Bedobás",
+"Sárga lap",
+"Piros lap",
+"VAR",
+"Kapus",
+"Hosszabbítás"
+],
+
+jobb:[
+"Csak bizonyos körülmények között ítélhető meg.",
+"Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
+"Lehet egy szabálytalanság következménye.",
+"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+"Nem minden mérkőzésen fordul elő.",
+"Gól közvetlenül is születhet belőle.",
+"A játék újraindításának egyik módja.",
+"A mérkőzés kimenetelére jelentős hatással lehet."
+]
+},
+
+
+sejt:{
+bal:[
+"Fotoszintézis",
+"Mitokondrium",
+"Riboszóma",
+"Sejtmag",
+"Kloroplasztisz",
+"Diffúzió",
+"Ozmózis",
+"Enzim",
+"DNS",
+"ATP"
+],
+
+jobb:[
+"Fehérjeszintézisben vesz részt.",
+"Közvetlenül kapcsolódik az energiatermeléshez.",
+"Növényi sejtekben található, de állati sejtekben nem.",
+"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
+"Örökítőanyaggal kapcsolatos.",
+"Kémiai reakciókat gyorsít.",
+"A sejtlégzéshez kapcsolódik.",
+"A növények szervesanyag-előállításában játszik szerepet."
+]
+
+}
+
+};
+
+
+function inditas(){
+
+let tema=document.getElementById("tema").value;
+
+if(!tema){
+alert("Válassz témát!");
+return;
+}
+
+document.getElementById("jatekter").style.display="flex";
+
+let adat=adatok[tema];
+
+let bal=document.getElementById("bal");
+let jobb=document.getElementById("jobb");
+
+bal.innerHTML="";
+jobb.innerHTML="";
+
+
+adat.bal.forEach(szoveg=>{
+
+let g=document.createElement("button");
+g.className="gomb";
+g.innerHTML=szoveg;
+
+g.onclick=function(){
+valasztottBal=g;
+ellenorzes();
+};
+
+bal.appendChild(g);
+
+});
+
+
+adat.jobb.forEach(szoveg=>{
+
+let g=document.createElement("button");
+g.className="gomb";
+g.innerHTML=szoveg;
+
+g.onclick=function(){
+valasztottJobb=g;
+ellenorzes();
+};
+
+jobb.appendChild(g);
+
+});
+
+}
+
+
+function ellenorzes(){
+
+if(valasztottBal && valasztottJobb){
+
+valasztottBal.classList.add("kivalasztva");
+valasztottJobb.classList.add("kivalasztva");
+
+valasztottBal=null;
+valasztottJobb=null;
+
+}
+
+}
+  // ===== 2. RÉSZ: PÁROSÍTÁS, ELLENŐRZÉS =====
+
+let kapcsolatok = [];
+
+
+// helyes párok
+const megoldasok = {
+
+foci:{
+"Les":"Csak bizonyos körülmények között ítélhető meg.",
+"Szöglet":"Gól közvetlenül is születhet belőle.",
+"Büntető":"Lehet egy szabálytalanság következménye.",
+"Szabadrúgás":"A játék újraindításának egyik módja.",
+"Bedobás":"A játék újraindításának egyik módja.",
+"Sárga lap":"Nem minden mérkőzésen fordul elő.",
+"Piros lap":"A mérkőzés kimenetelére jelentős hatással lehet.",
+"VAR":"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+"Kapus":"Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
+"Hosszabbítás":"Nem minden mérkőzésen fordul elő."
+},
+
+sejt:{
+"Riboszóma":"Fehérjeszintézisben vesz részt.",
+"ATP":"Közvetlenül kapcsolódik az energiatermeléshez.",
+"Kloroplasztisz":"Növényi sejtekben található, de állati sejtekben nem.",
+"Ozmózis":"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
+"DNS":"Örökítőanyaggal kapcsolatos.",
+"Enzim":"Kémiai reakciókat gyorsít.",
+"Mitokondrium":"A sejtlégzéshez kapcsolódik.",
+"Fotoszintézis":"A növények szervesanyag-előállításában játszik szerepet."
+}
+
+};
+
+
+let jelenlegiTema="";
+
+
+// átírjuk az indítást, hogy mentse a témát
+let regiInditas=inditas;
+
+inditas=function(){
+
+jelenlegiTema=document.getElementById("tema").value;
+
+regiInditas();
+
+kapcsolatok=[];
+
+let ellen=document.getElementById("ellenorzes");
+
+if(!ellen){
+
+ellen=document.createElement("button");
+ellen.id="ellenorzes";
+ellen.innerHTML="Ellenőrzés";
+ellen.style.background="#43a047";
+ellen.style.color="white";
+ellen.style.padding="12px";
+ellen.style.border="none";
+ellen.style.borderRadius="8px";
+ellen.style.cursor="pointer";
+ellen.style.fontSize="18px";
+
+document.body.appendChild(ellen);
+
+ellen.onclick=kiErtekeles;
+
+}
+
+};
+
+
+// felülírjuk a kattintást
+function ujPar(bal,jobb){
+
+let letezik=kapcsolatok.find(
+p=>p.bal==bal && p.jobb==jobb
+);
+
+if(letezik){
+
+kapcsolatok=kapcsolatok.filter(
+p=>!(p.bal==bal && p.jobb==jobb)
+);
+
+bal.classList.remove("par");
+jobb.classList.remove("par");
+
+}
+else{
+
+kapcsolatok.push({
+bal:bal,
+jobb:jobb
+});
+
+bal.classList.add("par");
+jobb.classList.add("par");
+
+}
+
+}
+
+
+// a régi kiválasztást lecseréljük
+function ellenorzes(){
+
+if(valasztottBal && valasztottJobb){
+
+ujPar(valasztottBal,valasztottJobb);
+
+valasztottBal=null;
+valasztottJobb=null;
+
+}
+
+}
+
+
+// kiértékelés
+function kiErtekeles(){
+
+let jo=0;
+let osszes=kapcsolatok.length;
+
+
+kapcsolatok.forEach(p=>{
+
+let helyes=
+megoldasok[jelenlegiTema]
+[p.bal.innerHTML];
+
+
+if(helyes==p.jobb.innerHTML){
+
+p.bal.style.background="green";
+p.jobb.style.background="green";
+
+jo++;
+
+}
+else{
+
+p.bal.style.background="red";
+p.jobb.style.background="red";
+
+}
+
+});
+
+
+alert(
+"Pontszám: "+jo+" / "+osszes
+);
+
+  }
+  
+
+</script>
+
+</body>
+                                                      </html>
+                                                      
