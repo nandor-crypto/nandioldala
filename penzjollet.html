@@ -77,7 +77,7 @@ h3 {
     }
 
     h1 {
-        font-size: 36px;
+        font-size: 32px;
     }
 
     h2 {
@@ -99,7 +99,7 @@ h3 {
 <body>
 
 <select id="menu" onchange="mutatTartalom()">
-    <option value="">Válassz!</option>
+    <option value="val">Válassz!</option>
     <option value="szoveg1">Fogmosás</option>
     <option value="szoveg2">Semmi édesség</option>
 </select>
@@ -126,8 +126,10 @@ function mutatTartalom() {
 </div>
           
         `;
-    /*    </h2> 10 pontot! 🎉
-            <p>Szép munka! Csak így tovább!</p> */
+        if (menu.value == "val") {
+        tartalom.innerHTML = `
+    /*    <h1> Válassz egy kategóriát!</h1> */
+            `;
     }
     else {
         tartalom.innerHTML = "";
