@@ -23,6 +23,45 @@ h1 {
 h2 {
     font-size: 32px;
 }
+    .card {
+    position: relative;
+    overflow: hidden;
+    width: 320px;
+    height: 70px;
+    border-radius: 16px;
+    background: #3f4652;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 600 18px sans-serif;
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: shine 3.5s infinite;
+}
+
+@keyframes shine {
+    0%, 70% {
+        left: -60%;
+    }
+    100% {
+        left: 130%;
+    }
+    }
 
 h3 {
     background-color: green;
@@ -82,10 +121,13 @@ function mutatTartalom() {
         tartalom.innerHTML = `
             <h1>Ha egy nap semmilyen édességet nem eszel</h1>
             <h2 style="color: orange;">
-                Ha egy nap semmi édességet nem eszel, kapsz 10 pontot! 🎉
-            </h2>
-            <p>Szép munka! Csak így tovább!</p>
+                Ha egy nap semmi édességet nem eszel, kapsz,</h2> <div class="card">
+  <span>?--?Ft</span>
+</div>
+          
         `;
+    /*    </h2> 10 pontot! 🎉
+            <p>Szép munka! Csak így tovább!</p> */
     }
     else {
         tartalom.innerHTML = "";
