@@ -41,124 +41,78 @@ cursor:pointer;
 
 
 #jatekter{
-
 display:none;
-
 position:relative;
-
 justify-content:center;
-
 gap:80px;
-
 margin-top:40px;
-
-min-height:600px;
-
+min-height:650px;
 }
 
 
 
 #vonalak{
-
 position:absolute;
-
 left:0;
-
 top:0;
-
 width:100%;
-
 height:100%;
-
 z-index:1;
-
 pointer-events:none;
-
 }
 
 
 
 .oszlop{
-
 width:350px;
-
 z-index:2;
-
 }
 
 
 
 .gomb{
-
 width:300px;
-
 padding:12px;
-
 margin:7px;
-
 background:#2196f3;
-
 color:white;
-
 border:0;
-
 border-radius:10px;
-
 cursor:pointer;
-
 position:relative;
-
 z-index:3;
-
 }
 
 
 
 .gomb:hover{
-
 background:#1565c0;
-
 }
 
 
 
 .kivalasztva{
-
 background:#8cff8c!important;
-
 color:black;
-
 }
 
 
 
 .par{
-
 background:#66ff66!important;
-
 color:black;
-
 }
 
 
 
 #ellenorzes{
-
 display:none;
-
 background:#43a047;
-
 color:white;
-
 border:0;
-
 border-radius:8px;
-
 cursor:pointer;
-
 }
-
-
 
 </style>
 
@@ -169,7 +123,6 @@ cursor:pointer;
 
 
 <h1>Összekötős tanuló játék</h1>
-
 
 
 <select id="tema">
@@ -194,9 +147,7 @@ Sejt alkotók és sejt folyamatok
 
 
 <button id="start" onclick="inditas()">
-
 Start
-
 </button>
 
 
@@ -210,30 +161,21 @@ Start
 
 <div class="oszlop">
 
-
 <h2>Fogalmak</h2>
-
 
 <div id="bal"></div>
 
-
 </div>
-
-
 
 
 
 <div class="oszlop">
 
-
 <h2>Meghatározások</h2>
-
 
 <div id="jobb"></div>
 
-
 </div>
-
 
 
 </div>
@@ -241,11 +183,13 @@ Start
 
 
 <button id="ellenorzes" onclick="ellenoriz()">
-
 Ellenőrzés
-
 </button>
+
+
+
 <script>
+
 
 let kapcsolatok=[];
 
@@ -258,6 +202,7 @@ let jelenlegiTema="";
 
 
 const adatok={
+
 
 
 foci:{
@@ -279,7 +224,6 @@ bal:[
 ],
 
 
-
 jobb:[
 
 "Csak bizonyos körülmények között ítélhető meg.",
@@ -296,7 +240,11 @@ jobb:[
 
 "A játék újraindításának egyik módja.",
 
-"A mérkőzés kimenetelére jelentős hatással lehet."
+"A mérkőzés kimenetelére jelentős hatással lehet.",
+
+"A játékvezető figyelmeztetést adhat érte.",
+
+"A játékvezető kiállítást ítélhet miatta."
 
 ]
 
@@ -323,7 +271,6 @@ bal:[
 ],
 
 
-
 jobb:[
 
 "Fehérjeszintézisben vesz részt.",
@@ -340,16 +287,17 @@ jobb:[
 
 "A sejtlégzéshez kapcsolódik.",
 
-"A növények szervesanyag-előállításában játszik szerepet."
+"A növények szervesanyag-előállításában játszik szerepet.",
+
+"A sejt működését irányító központi szerkezet.",
+
+"Anyagok részecskék mozgásával történő terjedése."
 
 ]
 
-}
-
 };
 
-
-
+  <script>
 
 
 function inditas(){
@@ -385,7 +333,6 @@ bal.innerHTML="";
 jobb.innerHTML="";
 
 
-
 adatok[jelenlegiTema].bal.forEach(szoveg=>{
 
 
@@ -411,6 +358,7 @@ bal.appendChild(g);
 
 
 });
+
 
 
 
@@ -450,8 +398,6 @@ rajzol();
 
 
 
-
-
 function kapcsolas(){
 
 
@@ -459,23 +405,38 @@ if(valasztottBal && valasztottJobb){
 
 
 
-let regi=kapcsolatok.find(p=>
+let regiBal=kapcsolatok.find(
+p=>p.bal===valasztottBal
+);
 
-p.bal===valasztottBal ||
 
-p.jobb===valasztottJobb
-
+let regiJobb=kapcsolatok.find(
+p=>p.jobb===valasztottJobb
 );
 
 
 
-if(regi){
+if(regiBal){
 
-kapcsolatok=kapcsolatok.filter(p=>p!==regi);
+kapcsolatok=kapcsolatok.filter(
+p=>p!==regiBal
+);
 
-regi.bal.classList.remove("par");
+regiBal.bal.classList.remove("par");
+regiBal.jobb.classList.remove("par");
 
-regi.jobb.classList.remove("par");
+}
+
+
+
+if(regiJobb){
+
+kapcsolatok=kapcsolatok.filter(
+p=>p!==regiJobb
+);
+
+regiJobb.bal.classList.remove("par");
+regiJobb.jobb.classList.remove("par");
 
 }
 
@@ -490,11 +451,9 @@ jobb:valasztottJobb
 });
 
 
-
 valasztottBal.classList.add("par");
 
 valasztottJobb.classList.add("par");
-
 
 
 valasztottBal.classList.remove("kivalasztva");
@@ -508,14 +467,12 @@ valasztottBal=null;
 valasztottJobb=null;
 
 
-
 rajzol();
 
 
 }
 
 }
-
 
 
 
@@ -545,81 +502,54 @@ let jobb=p.jobb.getBoundingClientRect();
 
 
 let vonal=document.createElementNS(
-
 "http://www.w3.org/2000/svg",
-
 "line"
-
 );
 
 
 
 vonal.setAttribute(
-
 "x1",
-
 bal.right-terulet.left
-
 );
 
 
-
 vonal.setAttribute(
-
 "y1",
-
 bal.top+bal.height/2-terulet.top
-
 );
 
 
-
 vonal.setAttribute(
-
 "x2",
-
 jobb.left-terulet.left
-
 );
 
 
-
 vonal.setAttribute(
-
 "y2",
-
 jobb.top+jobb.height/2-terulet.top
-
 );
 
 
 
 vonal.setAttribute(
-
 "stroke",
-
 "#00aa00"
-
 );
 
 
 
 vonal.setAttribute(
-
 "stroke-width",
-
 "5"
-
 );
 
 
 
 vonal.setAttribute(
-
 "stroke-linecap",
-
 "round"
-
 );
 
 
@@ -637,23 +567,42 @@ svg.appendChild(vonal);
 
 
 
+
 const megoldasok={
 
 
 foci:{
 
 
-"Les":"Csak bizonyos körülmények között ítélhető meg.",
+"Les":
+"Csak bizonyos körülmények között ítélhető meg.",
 
-"Szöglet":"Gól közvetlenül is születhet belőle.",
+"Szöglet":
+"Gól közvetlenül is születhet belőle.",
 
-"Büntető":"Lehet egy szabálytalanság következménye.",
+"Büntető":
+"Lehet egy szabálytalanság következménye.",
 
-"Szabadrúgás":"A játék újraindításának egyik módja.",
+"Szabadrúgás":
+"A játék újraindításának egyik módja.",
 
-"VAR":"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+"Bedobás":
+"A játék újraindításának egyik módja.",
 
-"Kapus":"Egy játékos közvetlenül is meghatározó szerepet játszhat benne."
+"Sárga lap":
+"A játékvezető figyelmeztetést adhat érte.",
+
+"Piros lap":
+"A játékvezető kiállítást ítélhet miatta.",
+
+"VAR":
+"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+
+"Kapus":
+"Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
+
+"Hosszabbítás":
+"Nem minden mérkőzésen fordul elő."
 
 },
 
@@ -662,21 +611,35 @@ foci:{
 sejt:{
 
 
-"Riboszóma":"Fehérjeszintézisben vesz részt.",
+"Fotoszintézis":
+"A növények szervesanyag-előállításában játszik szerepet.",
 
-"ATP":"Közvetlenül kapcsolódik az energiatermeléshez.",
+"Mitokondrium":
+"A sejtlégzéshez kapcsolódik.",
 
-"Kloroplasztisz":"Növényi sejtekben található, de állati sejtekben nem.",
+"Riboszóma":
+"Fehérjeszintézisben vesz részt.",
 
-"Ozmózis":"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
+"Sejtmag":
+"A sejt működését irányító központi szerkezet.",
 
-"DNS":"Örökítőanyaggal kapcsolatos.",
+"Kloroplasztisz":
+"Növényi sejtekben található, de állati sejtekben nem.",
 
-"Enzim":"Kémiai reakciókat gyorsít.",
+"Diffúzió":
+"Anyagok részecskék mozgásával történő terjedése.",
 
-"Mitokondrium":"A sejtlégzéshez kapcsolódik.",
+"Ozmózis":
+"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
 
-"Fotoszintézis":"A növények szervesanyag-előállításában játszik szerepet."
+"Enzim":
+"Kémiai reakciókat gyorsít.",
+
+"DNS":
+"Örökítőanyaggal kapcsolatos.",
+
+"ATP":
+"Közvetlenül kapcsolódik az energiatermeléshez."
 
 }
 
@@ -693,12 +656,10 @@ function ellenoriz(){
 let jo=0;
 
 
-
 kapcsolatok.forEach(p=>{
 
 
 let helyes=
-
 megoldasok[jelenlegiTema][p.bal.innerHTML];
 
 
@@ -731,9 +692,7 @@ p.jobb.style.background="red";
 
 
 alert(
-
 "Pontszám: "+jo+" / "+kapcsolatok.length
-
 );
 
 
@@ -743,11 +702,8 @@ alert(
 
 
 window.addEventListener(
-
 "resize",
-
 rajzol
-
 );
 
 
@@ -757,3 +713,4 @@ rajzol
 </body>
 
 </html>
+  
