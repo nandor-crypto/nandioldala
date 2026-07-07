@@ -5,157 +5,172 @@
 <title>Összekötős tanuló játék</title>
 
 <style>
+
 body{
-    font-family: Arial, sans-serif;
-    background:#eef6ff;
-    text-align:center;
-    margin:20px;
+font-family:Arial,sans-serif;
+background:#eef3f8;
+text-align:center;
 }
 
 h1{
-    color:#1565c0;
+color:#0d47a1;
 }
 
-select, button{
-    font-size:18px;
-    padding:10px;
-    margin:8px;
+select,button{
+font-size:18px;
+padding:10px;
+margin:8px;
 }
+
 
 #start{
-    background:#1976d2;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-#start:hover{
-    background:#0d47a1;
+background:#1976d2;
+color:white;
+border:0;
+border-radius:8px;
+cursor:pointer;
 }
 
 
 #jatekter{
-    display:none;
-    justify-content:center;
-    gap:80px;
-    margin-top:40px;
-    position:relative;
-}
-
-
-.oszlop{
-    width:350px;
-}
-
-
-.gomb{
-    width:300px;
-    min-height:45px;
-    margin:7px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    background:#2196f3;
-    color:white;
-    cursor:pointer;
-    font-size:16px;
-}
-
-
-.gomb:hover{
-    background:#1565c0;
-}
-
-
-.kivalasztva{
-    background:#8cff8c !important;
-    color:black;
-}
-
-
-.par{
-    background:#66ff66 !important;
-    color:black;
+display:none;
+position:relative;
+justify-content:center;
+gap:80px;
+margin-top:40px;
 }
 
 
 #vonalak{
-    position:absolute;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+pointer-events:none;
 }
 
-#ellenorzes{
-    display:none;
-    background:#43a047;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+
+.oszlop{
+width:350px;
 }
+
+
+.gomb{
+width:300px;
+padding:12px;
+margin:7px;
+background:#2196f3;
+color:white;
+border:0;
+border-radius:10px;
+cursor:pointer;
+}
+
+
+.gomb:hover{
+background:#1565c0;
+}
+
+
+.kivalasztva{
+background:#8cff8c!important;
+color:black;
+}
+
+
+.par{
+background:#66ff66!important;
+color:black;
+}
+
+
+#ellenorzes{
+display:none;
+background:#43a047;
+color:white;
+border:0;
+border-radius:8px;
+cursor:pointer;
+}
+
 
 </style>
 
 </head>
 
-
 <body>
+
 
 <h1>Összekötős tanuló játék</h1>
 
 
 <select id="tema">
+
 <option value="">-- Válassz témát --</option>
-<option value="foci">Labdarúgás játékszabályok</option>
-<option value="sejt">Sejt alkotók és sejt folyamatok</option>
+
+<option value="foci">
+Labdarúgás játékszabályok
+</option>
+
+<option value="sejt">
+Sejt alkotók és sejt folyamatok
+</option>
+
 </select>
 
 
-<button id="start" onclick="inditas()">Start</button>
+<button id="start" onclick="inditas()">
+Start
+</button>
+
 
 
 <div id="jatekter">
+
 
 <svg id="vonalak"></svg>
 
 
 <div class="oszlop">
+
 <h2>Fogalmak</h2>
+
 <div id="bal"></div>
+
 </div>
+
 
 
 <div class="oszlop">
+
 <h2>Meghatározások</h2>
+
 <div id="jobb"></div>
-</div>
-
 
 </div>
 
 
-<button id="ellenorzes" onclick="ellenoriz()">Ellenőrzés</button>
+</div>
+
+
+
+<button id="ellenorzes" onclick="ellenoriz()">
+Ellenőrzés
+</button>
+
 
 
 <script>
 
 
-let balGombok=[];
-let jobbGombok=[];
-
+let kapcsolatok=[];
 
 let valasztottBal=null;
 let valasztottJobb=null;
 
-
-let kapcsolatok=[];
-
-
 let jelenlegiTema="";
+
 
 
 const adatok={
@@ -178,22 +193,34 @@ bal:[
 
 
 jobb:[
+
 "Csak bizonyos körülmények között ítélhető meg.",
+
 "Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
+
 "Lehet egy szabálytalanság következménye.",
+
 "Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+
 "Nem minden mérkőzésen fordul elő.",
+
 "Gól közvetlenül is születhet belőle.",
+
 "A játék újraindításának egyik módja.",
+
 "A mérkőzés kimenetelére jelentős hatással lehet."
+
 ]
 
 },
 
 
+
 sejt:{
 
+
 bal:[
+
 "Fotoszintézis",
 "Mitokondrium",
 "Riboszóma",
@@ -204,18 +231,28 @@ bal:[
 "Enzim",
 "DNS",
 "ATP"
+
 ],
 
 
 jobb:[
+
 "Fehérjeszintézisben vesz részt.",
+
 "Közvetlenül kapcsolódik az energiatermeléshez.",
+
 "Növényi sejtekben található, de állati sejtekben nem.",
+
 "Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
+
 "Örökítőanyaggal kapcsolatos.",
+
 "Kémiai reakciókat gyorsít.",
+
 "A sejtlégzéshez kapcsolódik.",
+
 "A növények szervesanyag-előállításában játszik szerepet."
+
 ]
 
 }
@@ -223,88 +260,118 @@ jobb:[
 };
 
 
+
+
+
 function inditas(){
+
 
 jelenlegiTema=document.getElementById("tema").value;
 
 
 if(jelenlegiTema==""){
+
 alert("Válassz témát!");
+
 return;
+
 }
-    // ===== 2. RÉSZ =====
-
-// Helyes megoldások
-
-const megoldasok = {
-
-foci:{
-"Les":"Csak bizonyos körülmények között ítélhető meg.",
-"Szöglet":"Gól közvetlenül is születhet belőle.",
-"Büntető":"Lehet egy szabálytalanság következménye.",
-"Szabadrúgás":"A játék újraindításának egyik módja.",
-"Bedobás":"A játék újraindításának egyik módja.",
-"Sárga lap":"Nem minden mérkőzésen fordul elő.",
-"Piros lap":"A mérkőzés kimenetelére jelentős hatással lehet.",
-"VAR":"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
-"Kapus":"Egy játékos közvetlenül is meghatározó szerepet játszhat benne.",
-"Hosszabbítás":"Nem minden mérkőzésen fordul elő."
-},
 
 
-sejt:{
-"Fotoszintézis":"A növények szervesanyag-előállításában játszik szerepet.",
-"Mitokondrium":"A sejtlégzéshez kapcsolódik.",
-"Riboszóma":"Fehérjeszintézisben vesz részt.",
-"Kloroplasztisz":"Növényi sejtekben található, de állati sejtekben nem.",
-"Ozmózis":"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
-"Enzim":"Kémiai reakciókat gyorsít.",
-"DNS":"Örökítőanyaggal kapcsolatos.",
-"ATP":"Közvetlenül kapcsolódik az energiatermeléshez."
-}
+document.getElementById("jatekter").style.display="flex";
+
+document.getElementById("ellenorzes").style.display="inline-block";
+
+
+kapcsolatok=[];
+
+
+let bal=document.getElementById("bal");
+let jobb=document.getElementById("jobb");
+
+
+bal.innerHTML="";
+jobb.innerHTML="";
+
+
+adatok[jelenlegiTema].bal.forEach(szoveg=>{
+
+
+let g=document.createElement("button");
+
+g.className="gomb";
+
+g.innerHTML=szoveg;
+
+
+g.onclick=function(){
+
+valasztottBal=g;
+
+g.classList.add("kivalasztva");
+
+kapcsolas();
 
 };
 
 
-// gomb kiválasztás javítása
-
-document.addEventListener("click",function(e){
-
-if(e.target.classList.contains("gomb")){
+bal.appendChild(g);
 
 
-if(e.target.parentElement.parentElement.id=="bal"){
+});
 
-valasztottBal=e.target;
+
+
+adatok[jelenlegiTema].jobb.forEach(szoveg=>{
+
+
+let g=document.createElement("button");
+
+g.className="gomb";
+
+g.innerHTML=szoveg;
+
+
+g.onclick=function(){
+
+valasztottJobb=g;
+
+g.classList.add("kivalasztva");
+
+kapcsolas();
+
+};
+
+
+jobb.appendChild(g);
+
+
+});
+
 
 }
+// ===== 2. RÉSZ =====
 
+// Kapcsolatok kezelése
 
-if(e.target.parentElement.parentElement.id=="jobb"){
-
-valasztottJobb=e.target;
-
-}
-
-
-// ha mindkettő ki van választva
+function kapcsolas(){
 
 if(valasztottBal && valasztottJobb){
 
 
 let letezik=kapcsolatok.find(
-x=>x.bal==valasztottBal &&
-x.jobb==valasztottJobb
+p=>p.bal===valasztottBal && p.jobb===valasztottJobb
 );
 
 
-// törlés
+// ha már létezik, töröljük
 
 if(letezik){
 
 kapcsolatok=kapcsolatok.filter(
-x=>x!==letezik
+p=>p!==letezik
 );
+
 
 valasztottBal.classList.remove("par");
 valasztottJobb.classList.remove("par");
@@ -312,17 +379,23 @@ valasztottJobb.classList.remove("par");
 }
 
 
-// új kapcsolat
+// ha nincs, létrehozzuk
 
 else{
 
+
 kapcsolatok.push({
+
 bal:valasztottBal,
+
 jobb:valasztottJobb
+
 });
+
 
 valasztottBal.classList.add("par");
 valasztottJobb.classList.add("par");
+
 
 }
 
@@ -331,38 +404,41 @@ valasztottBal.classList.remove("kivalasztva");
 valasztottJobb.classList.remove("kivalasztva");
 
 
-rajzolVonalak();
+rajzol();
 
 
 valasztottBal=null;
 valasztottJobb=null;
 
-}
 
 }
 
-});
-
+}
 
 
 
 // vonalak rajzolása
 
-function rajzolVonalak(){
+function rajzol(){
+
 
 let svg=document.getElementById("vonalak");
 
+
 svg.innerHTML="";
+
+
+let terulet=svg.getBoundingClientRect();
+
 
 
 kapcsolatok.forEach(p=>{
 
 
 let bal=p.bal.getBoundingClientRect();
+
 let jobb=p.jobb.getBoundingClientRect();
 
-
-let svgDoboz=svg.getBoundingClientRect();
 
 
 let vonal=document.createElementNS(
@@ -371,40 +447,45 @@ let vonal=document.createElementNS(
 );
 
 
+
 vonal.setAttribute(
 "x1",
-bal.right-svgDoboz.left
+bal.right-terulet.left
 );
 
 
 vonal.setAttribute(
 "y1",
-bal.top+bal.height/2-svgDoboz.top
+bal.top+bal.height/2-terulet.top
 );
+
 
 
 vonal.setAttribute(
 "x2",
-jobb.left-svgDoboz.left
+jobb.left-terulet.left
 );
 
 
 vonal.setAttribute(
 "y2",
-jobb.top+jobb.height/2-svgDoboz.top
+jobb.top+jobb.height/2-terulet.top
 );
+
 
 
 vonal.setAttribute(
 "stroke",
-"green"
+"#00aa00"
 );
+
 
 
 vonal.setAttribute(
 "stroke-width",
-"4"
+"5"
 );
+
 
 
 svg.appendChild(vonal);
@@ -412,7 +493,84 @@ svg.appendChild(vonal);
 
 });
 
+
 }
+
+
+
+
+// helyes válaszok
+
+const megoldasok={
+
+
+foci:{
+
+
+"Les":
+"Csak bizonyos körülmények között ítélhető meg.",
+
+
+"Szöglet":
+"Gól közvetlenül is születhet belőle.",
+
+
+"Büntető":
+"Lehet egy szabálytalanság következménye.",
+
+
+"Szabadrúgás":
+"A játék újraindításának egyik módja.",
+
+
+"VAR":
+"Előfordulhat, hogy technológia segítségével vizsgálják felül.",
+
+
+"Kapus":
+"Egy játékos közvetlenül is meghatározó szerepet játszhat benne."
+
+},
+
+
+
+sejt:{
+
+
+"Riboszóma":
+"Fehérjeszintézisben vesz részt.",
+
+
+"ATP":
+"Közvetlenül kapcsolódik az energiatermeléshez.",
+
+
+"Kloroplasztisz":
+"Növényi sejtekben található, de állati sejtekben nem.",
+
+
+"Ozmózis":
+"Áteresztő hártyával összefüggő folyamat vagy szerkezet.",
+
+
+"DNS":
+"Örökítőanyaggal kapcsolatos.",
+
+
+"Enzim":
+"Kémiai reakciókat gyorsít.",
+
+
+"Mitokondrium":
+"A sejtlégzéshez kapcsolódik.",
+
+
+"Fotoszintézis":
+"A növények szervesanyag-előállításában játszik szerepet."
+
+}
+
+};
 
 
 
@@ -421,23 +579,28 @@ svg.appendChild(vonal);
 
 function ellenoriz(){
 
+
 let jo=0;
 
 
 kapcsolatok.forEach(p=>{
 
 
-let keresett=
+let helyes=
 megoldasok[jelenlegiTema][p.bal.innerHTML];
 
 
-if(keresett==p.jobb.innerHTML){
+
+if(helyes===p.jobb.innerHTML){
 
 
 p.bal.style.background="green";
+
 p.jobb.style.background="green";
 
+
 jo++;
+
 
 }
 
@@ -445,12 +608,15 @@ else{
 
 
 p.bal.style.background="red";
+
 p.jobb.style.background="red";
+
 
 }
 
 
 });
+
 
 
 alert(
@@ -462,75 +628,12 @@ alert(
 
 
 
-// ha mozgatjuk az ablakot, a vonalak igazodjanak
+// ablakméretezésnél újrarajzol
 
 window.addEventListener(
 "resize",
-rajzolVonalak
+rajzol
 );
+
     
-
-
-document.getElementById("jatekter").style.display="flex";
-document.getElementById("ellenorzes").style.display="inline-block";
-
-
-let bal=document.getElementById("bal");
-let jobb=document.getElementById("jobb");
-
-
-bal.innerHTML="";
-jobb.innerHTML="";
-
-
-kapcsolatok=[];
-
-
-adatok[jelenlegiTema].bal.forEach(szoveg=>{
-
-let g=document.createElement("button");
-
-g.className="gomb";
-g.innerHTML=szoveg;
-
-
-g.onclick=function(){
-
-valasztottBal=g;
-g.classList.add("kivalasztva");
-
-}
-
-
-bal.appendChild(g);
-
-});
-
-
-adatok[jelenlegiTema].jobb.forEach(szoveg=>{
-
-let g=document.createElement("button");
-
-g.className="gomb";
-g.innerHTML=szoveg;
-
-
-g.onclick=function(){
-
-valasztottJobb=g;
-g.classList.add("kivalasztva");
-
-}
-
-
-jobb.appendChild(g);
-
-});
-
-
-}
-
-</script>
-
-</body>
-</html>
+    
