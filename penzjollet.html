@@ -1,54 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
-<style>
-h3 {
-  background-color: green;
-  border-radius: 5px;
-  border: 2px solid black;
-}
-  @media screen and (max-width: 600px) {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      /* Ide tehetsz még más mobil stílust is, pl: */
-      body {
-        font-size: 28px;
-      }
-  }
-  h1 { 
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+select {
+    font-size: 22px;
+    padding: 8px;
+    margin-bottom: 20px;
+}
+
+h1 {
     font-size: 50px;
-  }
+}
+
+h2 {
+    font-size: 32px;
+}
+
+h3 {
+    background-color: green;
+    color: white;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        font-size: 28px;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 28px;
+    }
+
+    select {
+        width: 100%;
+        font-size: 28px;
+    }
+}
 </style>
 </head>
 
 <body>
 
 <select id="menu" onchange="mutatTartalom()">
-  <option value="">Válassz!</option>
-  <option value="szoveg1">Fogmosás</option>
-  <option value="szoveg2">Semmi édesség</option>
+    <option value="">Válassz!</option>
+    <option value="szoveg1">Fogmosás</option>
+    <option value="szoveg2">Semmi édesség</option>
 </select>
 
 <div id="tartalom"></div>
 
 <script>
 function mutatTartalom() {
-  let menu = document.getElementById("menu");
-  let tartalom = document.getElementById("tartalom");
+    let menu = document.getElementById("menu");
+    let tartalom = document.getElementById("tartalom");
 
-  if (menu.value == "szoveg1") {
-    tartalom.innerHTML = "<h3>Ne felejts el fogat mosni!</h3>";
-  } 
-  else if (menu.value == "szoveg2") {
-    tartalom.innerHTML = `
-      <h1>Ha egy nap semmilyen édességet nem eszel</h1>
-      <h2 style="color: orange;">
-        Ha egy nap semmi édességet nem eszel,kapsz
-      </h2>
-    `;
-  } 
-  else {
-    tartalom.innerHTML = "";
-  }
+    if (menu.value == "szoveg1") {
+        tartalom.innerHTML = `
+            <h3>Ne felejts el fogat mosni!</h3>
+            <p>A rendszeres fogmosás segít megőrizni a fogaid egészségét.</p>
+        `;
+    }
+    else if (menu.value == "szoveg2") {
+        tartalom.innerHTML = `
+            <h1>Ha egy nap semmilyen édességet nem eszel</h1>
+            <h2 style="color: orange;">
+                Ha egy nap semmi édességet nem eszel, kapsz 10 pontot! 🎉
+            </h2>
+            <p>Szép munka! Csak így tovább!</p>
+        `;
+    }
+    else {
+        tartalom.innerHTML = "";
+    }
 }
 </script>
 
