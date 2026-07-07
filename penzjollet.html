@@ -15,6 +15,9 @@ select {
     padding: 8px;
     margin-bottom: 20px;
 }
+span{
+    font-size:50px;
+}
 
 h1 {
     font-size: 50px;
@@ -23,20 +26,133 @@ h1 {
 h2 {
     font-size: 32px;
 }
-    .card {
+
+.card {
     position: relative;
+    border: blue;
     overflow: hidden;
     width: 320px;
     height: 70px;
     border-radius: 16px;
-    background: #3f4652;
-    color: white;
+    background: #22b943;
+    color: rgb(16, 80, 21);
     display: flex;
     align-items: center;
     justify-content: center;
     font: 600 18px sans-serif;
+    border-width: 3px;
+border-style: solid;
+border-color: blue;
+
+}
+.card {
+    position: relative;
+    width: 320px;
+    height: 70px;
+    border-radius: 16px;
+    padding: 6px;
+
+    background: linear-gradient(
+        90deg,
+        #22b943,
+        #32c95d,
+        #49d39a,
+        #50cfe0,
+        #1e90ff
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font: 600 18px sans-serif;
+    color: rgb(16, 80, 21);
 }
 
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 11px;
+    background: #22b943;
+}
+
+.card span {
+    position: relative;
+    z-index: 2;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 13px;
+    background: #22b943;
+    z-index: 0;
+}
+
+.card span {
+    position: relative;
+    z-index: 2;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 13px;
+    background: #22b943;
+    z-index: 0;
+}
+
+/* fehér csík */
+.card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+    animation: shine 2.5s linear infinite;
+    z-index: 1;
+}
+
+.card span {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes shine {
+    from {
+        left: -60%;
+    }
+    to {
+        left: 130%;
+    }
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 13px;
+    background: #22b943;
+    z-index: 0;
+}
+
+.card span {
+    position: relative;
+    z-index: 1;
+}
 .card::after {
     content: "";
     position: absolute;
@@ -51,17 +167,26 @@ h2 {
         transparent
     );
     transform: skewX(-20deg);
-    animation: shine 2.0s infinite;
+    animation: shine 10s infinite;
 }
 
 @keyframes shine {
-    0%, 70% {
+    0% {
         left: -60%;
     }
+
+    60% {
+        left: 130%;
+    }
+
     100% {
         left: 130%;
     }
-    }
+}
+
+.card::after {
+    animation: shine 5s linear infinite;
+}
 
 h3 {
     background-color: green;
@@ -93,6 +218,10 @@ h3 {
         font-size: 28px;
     }
 }
+h3.normalis {
+    all: unset;
+      font-size: 30px;
+}
 </style>
 </head>
 
@@ -120,22 +249,17 @@ function mutatTartalom() {
     else if (menu.value == "szoveg2") {
         tartalom.innerHTML = `
             <h1>Ha egy nap semmilyen édességet nem eszel</h1>
-            <h2 style="color: orange;">
-                Ha egy nap semmi édességet nem eszel, kapsz,</h2> <div class="card">
-  <span>?--?Ft</span>
-</div>
-          
+            <h2 style="color: orange;">Ha egy nap semmi édességet nem eszel, kapsz:</h2>
+            <div class="card"><span>500 Ft</span></div><h3 class="normalis" >-ot
         `;
-/*        if (menu.value == "val") {
-        tartalom.innerHTML = `
-    /*    <h1> Válassz egy kategóriát!</h1> */
-            `;
     }
     else {
         tartalom.innerHTML = "";
     }
 }
-</script>
 
+// Betöltéskor is fusson le
+mutatTartalom();
+</script>
 </body>
 </html>
