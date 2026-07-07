@@ -1,18 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+h3 {
+  background-color: green;
+  border-radius: 5px;
+  border: 2px solid black;
+}
+</style>
+</head>
+
+<body>
+
 <select id="menu" onchange="mutatTartalom()">
   <option value="">Válassz</option>
   <option value="szoveg1">Fogmosás</option>
-  <option value="szoveg2">Semmi ésesség</option>
+  <option value="szoveg2">Semmi édesség</option>
 </select>
-<style> 
-  h3 {
-    background-color: green;
-    border-radius: 5px;
-    border:
-</style>
-<body>
 
 <div id="tartalom"></div>
-</body>
 
 <script>
 function mutatTartalom() {
@@ -20,13 +26,21 @@ function mutatTartalom() {
   let tartalom = document.getElementById("tartalom");
 
   if (menu.value == "szoveg1") {
-    tartalom.innerHTML = "Ez az első tartalom.";
+    tartalom.innerHTML = "<h3>Ne felejts el fogat mosni!</h3>";
   } 
   else if (menu.value == "szoveg2") {
-    tartalom.innerHTML = "<h1>Ha egy nap semmijen édesség</h1> <h2 style="color: orange">Ha egy nap semmi édességet nem eszel, kapsz</h2>";
+    tartalom.innerHTML = `
+      <h1>Ha egy nap semmilyen édességet nem eszel</h1>
+      <h2 style="color: orange;">
+        Ha egy nap semmi édességet nem eszel, kapsz egy jutalmat.
+      </h2>
+    `;
   } 
   else {
     tartalom.innerHTML = "";
   }
 }
 </script>
+
+</body>
+</html>
