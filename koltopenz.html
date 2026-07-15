@@ -3,298 +3,438 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profilkezelő</title>
+
+<title>Gyerek pénztárca</title>
 
 <style>
+
 body{
-    margin:0;
     font-family:Arial,sans-serif;
-    background:#f2f2f2;
-}
-
-.page{
-    display:none;
-}
-
-.active{
-    display:block;
-}
-
-.center{
+    background:#f4f8ff;
     text-align:center;
-    margin-top:120px;
+    margin:20px;
+}
+    .money-card{
+
+    animation:
+    appear 0.8s ease,
+    float 4s ease-in-out infinite,
+    glow 3s infinite;
+
 }
 
-button{
-    cursor:pointer;
-    border:none;
-    border-radius:8px;
-    padding:10px 20px;
-    font-size:16px;
+
+.money-card::after{
+
+    content:"🪙  ✨  🪙  ✨";
+
+    position:absolute;
+
+    bottom:-20px;
+
+    left:0;
+
+    width:100%;
+
+    font-size:25px;
+
+    opacity:.7;
+
+    animation:
+    coins 5s linear infinite;
+
 }
 
-.blue{
-    background:#1e88e5;
-    color:white;
+
+@keyframes coins{
+
+0%{
+
+transform:translateY(40px);
+
+opacity:0;
+
 }
 
-.lightBlue{
-    background:#90caf9;
+
+30%{
+
+opacity:1;
+
 }
 
-.lightGreen{
-    background:#a5d6a7;
+
+100%{
+
+transform:translateY(-130px);
+
+opacity:0;
+
 }
 
-.gray{
-    background:#bdbdbd;
 }
 
-.save{
-    background:#1e88e5;
-    color:white;
+
+
+@keyframes glow{
+
+
+0%,100%{
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.25);
+
 }
 
-input,select{
-    padding:8px;
-    font-size:16px;
-    border-radius:6px;
-    border:1px solid gray;
+
+50%{
+
+box-shadow:
+0 10px 35px rgba(33,150,243,.7);
+
 }
 
-#loginBox{
-    margin-top:20px;
+
 }
 
-.eye{
-    width:42px;
+
+
+.money-card:hover{
+
+transform:scale(1.05);
+
 }
 
-.topBar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+
+.info{
+
+background:white;
+
+display:inline-block;
+
+padding:12px 25px;
+
+border-radius:20px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.15);
+
+animation:
+appear 1s;
+
+    }
+    
+
+
+select{
+
+    font-size:22px;
     padding:10px;
+    border-radius:10px;
+
 }
 
-.edit{
-    font-size:28px;
-    cursor:pointer;
+
+h1{
+
+    font-size:45px;
+    color:#1976d2;
+
 }
+
+
+.money-card{
+
+    margin:40px auto;
+
+    width:330px;
+
+    height:110px;
+
+    border-radius:25px;
+
+    background:
+    linear-gradient(
+    135deg,
+    #66bb6a,
+    #29b6f6
+    );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+
+    overflow:hidden;
+
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.25);
+
+
+    animation:
+    appear 1s ease,
+    float 4s ease-in-out infinite;
+
+}
+
+
+
+.money-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:60px;
+
+    height:200%;
+
+    background:
+    rgba(255,255,255,.5);
+
+
+    transform:rotate(25deg);
+
+    left:-100px;
+
+
+    animation:
+    light 5s infinite;
+
+}
+
+
+
+.money{
+
+    color:white;
+
+    font-size:45px;
+
+    font-weight:bold;
+
+    z-index:2;
+
+    text-shadow:
+    0 3px 5px black;
+
+
+    animation:
+    moneyShow 1.5s;
+
+}
+
+
+
+@keyframes appear{
+
+from{
+
+transform:scale(.3);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+
+@keyframes float{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+}
+
+
+
+@keyframes light{
+
+0%{
+
+left:-100px;
+
+}
+
+60%{
+
+left:400px;
+
+}
+
+100%{
+
+left:400px;
+
+}
+
+}
+
+
+
+@keyframes moneyShow{
+
+0%{
+
+transform:scale(0);
+
+}
+
+70%{
+
+transform:scale(1.3);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+
+
+.info{
+
+font-size:25px;
+
+color:#555;
+
+}
+
+
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- ================= BELÉPÉS ================= -->
 
-<div id="loginPage" class="page active">
+<h1>💰 Saját pénzem</h1>
 
-<div class="center">
 
-<button class="blue" onclick="showLogin()">
-Bejelentkezés
-</button>
+<select id="child" onchange="showMoney()">
 
-<div id="loginBox" style="display:none;">
+<option value="">Válassz!</option>
 
-<br>
+<option value="Vili">Vili</option>
 
-<select id="userSelect" onchange="userChanged()">
-<option value="">Válassz...</option>
-<option>Vili</option>
-<option>Nándi</option>
-<option>Gyuri</option>
+<option value="Nándi">Nándi</option>
+
 </select>
 
-<div id="passwordArea" style="display:none;margin-top:15px;">
 
-<input
-type="password"
-id="password"
-placeholder="Jelszó">
 
-<button
-class="eye"
-onclick="showPassword()">
-👁️
-</button>
+<div id="content">
 
-<br><br>
-
-<button
-class="blue"
-onclick="loginGyuri()">
-Belépés
-</button>
 
 </div>
 
-</div>
 
-</div>
-
-</div>
-
-<!-- ================= GYURI FŐOLDAL ================= -->
-
-<div id="mainPage" class="page">
-
-<div class="topBar">
-
-<div class="edit"
-onclick="openPasswordChange()">
-✏️
-</div>
-
-<h2>Gyuri</h2>
-
-<div></div>
-
-</div>
-
-<div style="text-align:center;margin-top:40px;">
-
-<button
-class="lightGreen"
-onclick="openProfile('vili')">
-Vili
-</button>
-
-<button
-class="lightBlue"
-onclick="openProfile('nandi')">
-Nándi
-</button>
-
-</div>
-
-<div
-id="passwordChange"
-style="display:none;
-margin-top:40px;
-text-align:center;">
-
-<h3>Jelszó módosítása</h3>
-
-<input
-type="password"
-id="newPassword"
-placeholder="Új jelszó">
-
-<br><br>
-
-<button
-class="save"
-onclick="savePassword()">
-Mentés
-</button>
-
-<button
-class="gray"
-onclick="cancelPassword()">
-Mégse
-</button>
-
-</div>
-
-</div>
-
-<!-- ================= NÁNDI ================= -->
-
-<div id="nandiPage" class="page">
-
-<h1 style="text-align:center;">
-Nándi
-</h1>
-
-<div style="text-align:center;">
-
-<h2 id="nandiInfo"></h2>
-
-</div>
-
-</div>
-
-<!-- ================= VILI ================= -->
-
-<div id="viliPage" class="page">
-
-<h1 style="text-align:center;">
-Vili
-</h1>
-
-<div style="text-align:center;">
-
-<h2 id="viliInfo"></h2>
-
-</div>
-
-</div>
 
 <script>
 
-let password =
-localStorage.getItem("password")
-|| "Répapa";
 
-function showLogin(){
+let moneyData={
 
-document.getElementById("loginBox").style.display="block";
+Vili:{
+money:200,
+currency:"Ft"
+},
+
+Nándi:{
+money:500,
+currency:"Ft"
+}
+
+};
+
+
+
+function showMoney(){
+
+
+let name=document.getElementById("child").value;
+
+let content=document.getElementById("content");
+
+
+
+if(name===""){
+
+content.innerHTML="";
+
+return;
 
 }
 
-function userChanged(){
 
-let user=
-document.getElementById("userSelect").value;
 
-if(user==="Gyuri"){
+let amount=moneyData[name].money;
 
-document.getElementById("passwordArea").style.display="block";
 
-}else{
 
-document.getElementById("passwordArea").style.display="none";
+content.innerHTML=`
 
-if(user==="Vili"){
+<h1>${name}</h1>
 
-openProfile("vili");
 
-}
+<div class="money-card">
 
-if(user==="Nándi"){
+<div class="money">
 
-openProfile("nandi");
+${amount} ${moneyData[name].currency}
 
-}
+</div>
 
-}
+</div>
 
-}
 
-function showPassword(){
+<div class="info">
 
-let box=document.getElementById("password");
+Ez a saját pénzed 💚
 
-box.type="text";
+</div>
 
-setTimeout(function(){
-
-box.type="password";
-
-},4000);
+`;
 
 }
+let gyuriPassword = 
+localStorage.getItem("gyuriPassword") || "Répapa";
 
-function loginGyuri(){
 
-let p=
-document.getElementById("password").value;
+function openGyuri(){
 
-if(p===password){
+let password = prompt("Gyuri jelszó:");
 
-showPage("mainPage");
+if(password===gyuriPassword){
+
+showAdmin();
 
 }else{
 
@@ -304,301 +444,293 @@ alert("Hibás jelszó!");
 
 }
 
-function showPage(id){
 
-document.querySelectorAll(".page").forEach(function(x){
 
-x.classList.remove("active");
+function showAdmin(){
+
+document.getElementById("content").innerHTML=`
+
+<h1>👨‍👧 Gyuri kezelő</h1>
+
+
+<select id="editChild">
+
+<option value="Vili">Vili</option>
+
+<option value="Nándi">Nándi</option>
+
+</select>
+
+
+<br><br>
+
+
+<input 
+id="newMoney"
+type="number"
+placeholder="Új összeg">
+
+
+<select id="newCurrency">
+
+<option>Ft</option>
+
+<option>€</option>
+
+<option>$</option>
+
+</select>
+
+
+<br><br>
+
+
+<button onclick="saveMoney()">
+
+Mentés
+
+</button>
+
+
+<br><br>
+
+
+<button onclick="changePassword()">
+
+🔑 Jelszó módosítás
+
+</button>
+
+`;
+
+}
+
+
+
+
+function saveMoney(){
+
+
+let child=
+document.getElementById("editChild").value;
+
+
+let money=
+document.getElementById("newMoney").value;
+
+
+let currency=
+document.getElementById("newCurrency").value;
+
+
+
+moneyData[child].money=
+Number(money);
+
+
+moneyData[child].currency=
+currency;
+
+
+
+localStorage.setItem(
+child+"Money",
+money
+);
+
+
+localStorage.setItem(
+child+"Currency",
+currency
+);
+
+
+
+alert("Elmentve!");
+
+}
+
+
+
+
+function changePassword(){
+
+
+let newPass=
+prompt("Új Gyuri jelszó:");
+
+
+
+if(newPass){
+
+gyuriPassword=newPass;
+
+
+localStorage.setItem(
+"gyuriPassword",
+newPass
+);
+
+
+alert("Jelszó megváltoztatva!");
+
+}
+
+
+}
+
+
+
+// adatok visszatöltése
+
+function loadData(){
+
+
+["Vili","Nándi"].forEach(function(child){
+
+
+let m=
+localStorage.getItem(child+"Money");
+
+
+let c=
+localStorage.getItem(child+"Currency");
+
+
+
+if(m){
+
+moneyData[child].money=
+Number(m);
+
+}
+
+
+if(c){
+
+moneyData[child].currency=c;
+
+}
+
 
 });
 
-document.getElementById(id).classList.add("active");
 
 }
 
-function openPasswordChange(){
 
-document.getElementById("passwordChange").style.display="block";
+loadData();
 
-}
+    function animateMoney(element, start, end, currency){
 
-function savePassword(){
+let current=start;
 
-password=
-document.getElementById("newPassword").value;
+let speed=20;
 
-localStorage.setItem("password",password);
+let difference=end-start;
 
-alert("Elmentve!");
 
-document.getElementById("passwordChange").style.display="none";
+let step=difference/50;
 
-}
 
-function cancelPassword(){
+let timer=setInterval(function(){
 
-document.getElementById("passwordChange").style.display="none";
 
-}
+current+=step;
 
-function openProfile(profile){
 
-if(profile==="vili"){
+if(
+(step>0 && current>=end) ||
+(step<0 && current<=end)
+){
 
-showPage("viliPage");
+current=end;
 
-}
-
-if(profile==="nandi"){
-
-showPage("nandiPage");
+clearInterval(timer);
 
 }
 
-}
 
-  
-//============================
-// ADATOK BETÖLTÉSE
-//============================
+element.innerHTML=
+Math.floor(current)+" "+currency;
 
-let nandiNumber =
-localStorage.getItem("nandiNumber") || "30";
 
-let nandiMoney =
-localStorage.getItem("nandiMoney") || "Euró €";
+},speed);
 
-let viliNumber =
-localStorage.getItem("viliNumber") || "30";
-
-let viliMoney =
-localStorage.getItem("viliMoney") || "Euró €";
-
-function refreshTexts(){
-
-document.getElementById("nandiInfo").innerHTML =
-nandiNumber + " " + nandiMoney;
-
-document.getElementById("viliInfo").innerHTML =
-viliNumber + " " + viliMoney;
 
 }
 
-refreshTexts();
 
 
-//============================
-// NÁNDI OLDAL
-//============================
+function showMoney(){
 
-document.getElementById("nandiPage").innerHTML += `
 
-<div style="text-align:center;margin-top:30px;">
+let name=document.getElementById("child").value;
 
-<input
-id="nandiNumberBox"
-type="number"
-value="${nandiNumber}">
+let content=document.getElementById("content");
 
-<select id="nandiMoneyBox">
 
-<option>Euró €</option>
 
-<option>Forint Ft</option>
+if(name===""){
 
-<option>Dollár $</option>
+content.innerHTML="";
 
-</select>
+return;
 
-<br><br>
+}
 
-<button
-class="save"
-onclick="saveNandi()">
-Mentés
-</button>
 
-<button
-class="gray"
-onclick="cancelNandi()">
-Mégse
-</button>
 
-<br><br>
+let amount=moneyData[name].money;
 
-<button
-class="blue"
-onclick="showPage('mainPage')">
-Vissza
-</button>
+let currency=moneyData[name].currency;
+
+
+
+content.innerHTML=`
+
+<h1>${name}</h1>
+
+
+<div class="money-card">
+
+<div class="money" id="animatedMoney">
+
+0 ${currency}
+
+</div>
+
+</div>
+
+
+<div class="info">
+
+💚 Ez a saját pénzed
 
 </div>
 
 `;
 
 
-//============================
-// VILI OLDAL
-//============================
 
-document.getElementById("viliPage").innerHTML += `
-
-<div style="text-align:center;margin-top:30px;">
-
-<input
-id="viliNumberBox"
-type="number"
-value="${viliNumber}">
-
-<select id="viliMoneyBox">
-
-<option>Euró €</option>
-
-<option>Forint Ft</option>
-
-<option>Dollár $</option>
-
-</select>
-
-<br><br>
-
-<button
-class="save"
-onclick="saveVili()">
-Mentés
-</button>
-
-<button
-class="gray"
-onclick="cancelVili()">
-Mégse
-</button>
-
-<br><br>
-
-<button
-class="blue"
-onclick="showPage('mainPage')">
-Vissza
-</button>
-
-</div>
-
-`;
+let moneyBox=
+document.getElementById("animatedMoney");
 
 
-//============================
-// LENYÍLÓK BEÁLLÍTÁSA
-//============================
 
-document.getElementById("nandiMoneyBox").value =
-nandiMoney;
-
-document.getElementById("viliMoneyBox").value =
-viliMoney;
+animateMoney(
+moneyBox,
+0,
+amount,
+currency
+);
 
 
-//============================
-// MENTÉS NÁNDI
-//============================
+    }
+    
 
-function saveNandi(){
-
-nandiNumber =
-document.getElementById("nandiNumberBox").value;
-
-nandiMoney =
-document.getElementById("nandiMoneyBox").value;
-
-localStorage.setItem(
-"nandiNumber",
-nandiNumber);
-
-localStorage.setItem(
-"nandiMoney",
-nandiMoney);
-
-refreshTexts();
-
-alert("Elmentve!");
-
-}
-
-
-//============================
-// MÉGSE NÁNDI
-//============================
-
-function cancelNandi(){
-
-document.getElementById("nandiNumberBox").value =
-nandiNumber;
-
-document.getElementById("nandiMoneyBox").value =
-nandiMoney;
-
-}
-//============================
-// MENTÉS VILI
-//============================
-
-function saveVili(){
-
-viliNumber =
-document.getElementById("viliNumberBox").value;
-
-viliMoney =
-document.getElementById("viliMoneyBox").value;
-
-localStorage.setItem(
-"viliNumber",
-viliNumber);
-
-localStorage.setItem(
-"viliMoney",
-viliMoney);
-
-refreshTexts();
-
-alert("Elmentve!");
-
-}
-
-
-//============================
-// MÉGSE VILI
-//============================
-
-function cancelVili(){
-
-document.getElementById("viliNumberBox").value =
-viliNumber;
-
-document.getElementById("viliMoneyBox").value =
-viliMoney;
-
-}
-
-
-//============================
-// BETÖLTÉSKOR FRISSÍTÉS
-//============================
-
-window.onload=function(){
-
-refreshTexts();
-
-document.getElementById("nandiMoneyBox").value =
-nandiMoney;
-
-document.getElementById("viliMoneyBox").value =
-viliMoney;
-
-};
 </script>
+
 
 </body>
 </html>
-
-  
-  
