@@ -7,134 +7,20 @@
 <title>Gyerek pénztárca</title>
 
 <style>
-
-body{
-    font-family:Arial,sans-serif;
-    background:#eef6ff;
-    text-align:center;
-    margin:20px;
-}
-
-
-h1{
-    color:#1976d2;
-    font-size:42px;
-}
-
-
-select,input{
-    font-size:20px;
-    padding:10px;
-    border-radius:12px;
-}
-
-
-button{
-    font-size:20px;
-    padding:12px 25px;
-    border:none;
-    border-radius:15px;
-    cursor:pointer;
-}
-
-
-.blue{
-    background:#2196f3;
-    color:white;
-}
-
-
-.gray{
-    background:#555;
-    color:white;
-}
-
-
-.card{
-
-    background:white;
-
-    width:330px;
-
-    margin:30px auto;
-
-    padding:25px;
-
-    border-radius:25px;
-
-    box-shadow:
-    0 8px 25px rgba(0,0,0,.2);
-
-}
-
-
-.money-card{
-
-    width:330px;
-
-    height:120px;
-
-    margin:30px auto;
-
-    border-radius:25px;
-
-    background:
-    linear-gradient(
-    135deg,
-    #66bb6a,
-    #2196f3
-    );
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    animation:float 4s infinite;
-
-}
-
-
-.money{
-
-    color:white;
-
-    font-size:45px;
-
-    font-weight:bold;
-
-    text-shadow:
-    0 3px 5px black;
-
-}
-
-
-@keyframes float{
-
-0%,100%{
-transform:translateY(0);
-}
-
-50%{
-transform:translateY(-10px);
-}
-
-}
-
-
+/* ide jön a kinézet */
 </style>
 
 </head>
 
-
 <body>
+    <body>
+
+<h1>💰 Saját pénztárca</h1>
 
 
-<h1>💰 Saját pénzem</h1>
+<!-- Gyerek választó -->
 
-
-<select id="child" onchange="showMoney()">
+<select id="childSelect" onchange="showChildMoney()">
 
 <option value="">
 Válassz!
@@ -154,16 +40,24 @@ Nándi
 <br><br>
 
 
-<button class="gray" onclick="openGyuri()">
+<!-- Gyuri belépés gomb -->
+
+<button class="gray" onclick="openGyuriLogin()">
 
 👨‍👧 Gyuri
 
 </button>
 
 
-<div id="content"></div>
+
+<!-- Gyerek pénz megjelenítés -->
+
+<div id="childContent"></div>
 
 
+
+
+<!-- Gyuri belépő -->
 
 <div id="gyuriLogin" class="card" style="display:none;">
 
@@ -172,13 +66,15 @@ Nándi
 
 
 <input
-id="password"
+id="gyuriPassword"
 type="password"
 placeholder="Jelszó">
 
 
-<button onclick="eyePassword()">
+<button onclick="showPassword()">
+
 👁️
+
 </button>
 
 
@@ -196,144 +92,39 @@ Belépés
 
 
 
-<script>
 
 
-let gyuriPassword =
-localStorage.getItem("gyuriPassword")
-|| "Répapa";
+<!-- Gyuri kezelőfelület -->
 
-
-
-let moneyData={
-
-Vili:{
-money:200,
-currency:"Ft"
-},
-
-Nándi:{
-money:500,
-currency:"Ft"
-}
-
-};
-
-
-
-function showMoney(){
-
-let name=
-document.getElementById("child").value;
-
-
-let content=
-document.getElementById("content");
-
-
-if(name===""){
-
-content.innerHTML="";
-
-return;
-
-}
-
-
-content.innerHTML=`
-
-<h1>${name}</h1>
-
-
-<div class="money-card">
-
-<div class="money">
-
-${moneyData[name].money}
-${moneyData[name].currency}
-
-</div>
-
-</div>
-
-
-<p>
-Csak megtekintés 👀
-</p>
-
-`;
-
-}
-
-
-
-function openGyuri(){
-
-document.getElementById("gyuriLogin")
-.style.display="block";
-
-}
-
-
-
-function eyePassword(){
-
-let p=
-document.getElementById("password");
-
-
-p.type="text";
-
-
-setTimeout(()=>{
-
-p.type="password";
-
-},4000);
-
-}
-
-
-
-function loginGyuri(){
-
-let p=
-document.getElementById("password").value;
-
-
-if(p===gyuriPassword){
-
-alert("Gyuri belépve");
-
-
-}else{
-
-alert("Hibás jelszó");
-
-}
-
-}
 <div id="gyuriPanel" class="card" style="display:none;">
 
-<h1>👨‍👧 Gyuri</h1>
+
+<h1>👨 Gyuri</h1>
+
 
 <h2>Pénz beállítása</h2>
 
 
+
 <select id="editChild">
+
 
 <option value="Vili">
 Vili
 </option>
 
+
 <option value="Nándi">
 Nándi
 </option>
 
+
 </select>
 
 
+
 <br><br>
+
 
 
 <input
@@ -342,27 +133,35 @@ type="number"
 placeholder="Összeg">
 
 
+
 <br><br>
 
 
+
 <select id="currencyInput">
+
 
 <option>
 Euró €
 </option>
 
+
 <option>
 Forint Ft
 </option>
+
 
 <option>
 Dollár $
 </option>
 
+
 </select>
 
 
+
 <br><br>
+
 
 
 <button class="blue" onclick="saveMoney()">
@@ -372,14 +171,17 @@ Dollár $
 </button>
 
 
-<button class="gray" onclick="closePanel()">
+
+<button class="gray" onclick="closeGyuri()">
 
 Mégse
 
 </button>
 
 
+
 <br><br>
+
 
 
 <button class="gray" onclick="changePassword()">
@@ -389,20 +191,226 @@ Mégse
 </button>
 
 
+
+    </div>
+        
+
+<!-- ide jönnek a gombok, menük, kártyák -->
+
+<script>
+    <script>
+
+let gyuriPassword =
+localStorage.getItem("gyuriPassword") || "Répapa";
+
+
+let moneyData = {
+
+Vili:{
+    money:200,
+    currency:"Forint Ft"
+},
+
+Nándi:{
+    money:500,
+    currency:"Euró €"
+}
+
+};
+
+
+
+// mentett adatok betöltése
+
+function loadData(){
+
+["Vili","Nándi"].forEach(function(name){
+
+let money =
+localStorage.getItem(name+"Money");
+
+let currency =
+localStorage.getItem(name+"Currency");
+
+
+if(money){
+
+moneyData[name].money =
+Number(money);
+
+}
+
+
+if(currency){
+
+moneyData[name].currency =
+currency;
+
+}
+
+});
+
+}
+
+
+loadData();
+
+
+
+
+// gyerek pénz megmutatása
+
+function showChildMoney(){
+
+let name =
+document.getElementById("childSelect").value;
+
+
+let box =
+document.getElementById("childContent");
+
+
+
+if(name===""){
+
+box.innerHTML="";
+
+return;
+
+}
+
+
+
+box.innerHTML=`
+
+<h1>${name}</h1>
+
+
+<div class="money-card">
+
+<div class="money" id="moneyNumber">
+
+0 ${moneyData[name].currency}
+
+</div>
+
 </div>
 
 
+<p>
 
-<script>
+👀 Csak megtekintés
+
+</p>
+
+`;
+
+
+
+animateMoney(
+
+document.getElementById("moneyNumber"),
+
+0,
+
+moneyData[name].money,
+
+moneyData[name].currency
+
+);
+
+
+}
+
+
+
+
+
+// lassú pénzszámolás
+
+function animateMoney(element,start,end,currency){
+
+
+let current=start;
+
+
+let step=end/50;
+
+
+let timer=setInterval(function(){
+
+
+current+=step;
+
+
+
+if(current>=end){
+
+current=end;
+
+clearInterval(timer);
+
+}
+
+
+
+element.innerHTML =
+Math.floor(current)+" "+currency;
+
+
+
+},30);
+
+
+}
+
+
+
+
+
+// Gyuri belépés
+
+function openGyuriLogin(){
+
+document.getElementById("gyuriLogin")
+.style.display="block";
+
+}
+
+
+
+
+
+function showPassword(){
+
+let input =
+document.getElementById("gyuriPassword");
+
+
+input.type="text";
+
+
+setTimeout(function(){
+
+input.type="password";
+
+},4000);
+
+}
+
+
+
 
 
 function loginGyuri(){
 
-let p =
-document.getElementById("password").value;
+
+let pass =
+document.getElementById("gyuriPassword").value;
 
 
-if(p===gyuriPassword){
+
+if(pass===gyuriPassword){
 
 
 document.getElementById("gyuriLogin")
@@ -420,13 +428,10 @@ alert("Hibás jelszó!");
 
 }
 
+
 }
 
-
-
-
-function saveMoney(){
-
+  function saveMoney(){
 
 let child =
 document.getElementById("editChild").value;
@@ -463,390 +468,74 @@ currency
 
 
 
-alert("Elmentve!");
+alert("Elmentve! 💾");
 
 
+
+if(document.getElementById("childSelect").value===child){
+
+showChildMoney();
+
+}
 
 }
 
 
 
-function closePanel(){
+
+
+function closeGyuri(){
 
 document.getElementById("gyuriPanel")
 .style.display="none";
 
 }
+
+
 
 
 
 function changePassword(){
 
 
-let newPass =
-prompt("Új jelszó:");
+let newPassword =
+prompt("Új Gyuri jelszó:");
 
 
 
-if(newPass){
+if(newPassword){
 
-gyuriPassword=newPass;
+
+gyuriPassword=newPassword;
 
 
 localStorage.setItem(
 "gyuriPassword",
-newPass
+newPassword
 );
 
 
-alert("Új jelszó mentve!");
+alert("Jelszó megváltoztatva! 🔑");
 
-}
-
-}
-
-
-
-function loadSavedMoney(){
-
-
-["Vili","Nándi"].forEach(function(child){
-
-
-let money =
-localStorage.getItem(child+"Money");
-
-
-let currency =
-localStorage.getItem(child+"Currency");
-
-
-
-if(money){
-
-moneyData[child].money =
-Number(money);
-
-}
-
-
-if(currency){
-
-moneyData[child].currency =
-currency;
-
-}
-
-
-});
-
-
-}
-
-<style>
-
-.money-card{
-
-    position:relative;
-
-    overflow:hidden;
-
-    animation:
-    appear .8s ease,
-    float 4s infinite;
-
-}
-
-
-.money-card::after{
-
-    content:"🪙 ✨ 🪙 ✨";
-
-    position:absolute;
-
-    bottom:-10px;
-
-    font-size:28px;
-
-    animation:
-    coins 4s infinite;
-
-}
-
-
-
-@keyframes coins{
-
-0%{
-
-transform:translateY(30px);
-
-opacity:0;
-
-}
-
-
-50%{
-
-opacity:1;
-
-}
-
-
-100%{
-
-transform:translateY(-100px);
-
-opacity:0;
-
-}
-
-}
-
-
-
-@keyframes appear{
-
-from{
-
-transform:scale(.4);
-
-opacity:0;
-
-}
-
-to{
-
-transform:scale(1);
-
-opacity:1;
-
-}
-
-}
-
-
-
-</style>
-
-
-<script>
-
-
-function countMoney(element,start,end,currency){
-
-
-let value=start;
-
-
-let step=(end-start)/50;
-
-
-
-let timer=setInterval(function(){
-
-
-value+=step;
-
-
-
-if(
-(step>0 && value>=end) ||
-(step<0 && value<=end)
-){
-
-value=end;
-
-clearInterval(timer);
-
-}
-
-
-
-element.innerHTML=
-Math.floor(value)+" "+currency;
-
-
-
-},25);
-
-
-}
-
-
-
-
-function showMoney(){
-
-
-let name=
-document.getElementById("child").value;
-
-
-let content=
-document.getElementById("content");
-
-
-
-if(name===""){
-
-content.innerHTML="";
-
-return;
-
-}
-
-
-
-let amount=
-moneyData[name].money;
-
-
-let currency=
-moneyData[name].currency;
-
-
-
-content.innerHTML=`
-
-<h1>${name}</h1>
-
-
-<div class="money-card">
-
-<div class="money" id="moneyNumber">
-
-0 ${currency}
-
-</div>
-
-</div>
-
-
-<p>
-
-💚 Ez a saját pénzed
-
-</p>
-
-`;
-
-
-
-countMoney(
-
-document.getElementById("moneyNumber"),
-
-0,
-
-amount,
-
-currency
-
-);
-
-
-}
-
-
-
-
-function saveMoney(){
-
-
-let child =
-document.getElementById("editChild").value;
-
-
-let money =
-Number(document.getElementById("moneyInput").value);
-
-
-let currency =
-document.getElementById("currencyInput").value;
-
-
-
-moneyData[child].money=money;
-
-moneyData[child].currency=currency;
-
-
-
-localStorage.setItem(
-child+"Money",
-money
-);
-
-
-localStorage.setItem(
-child+"Currency",
-currency
-);
-
-
-
-alert("Elmentve!");
-
-
-// ha éppen azt nézi a gyerek
-
-if(document.getElementById("child").value===child){
-
-showMoney();
 
 }
 
 
 }
 
-<script>
-
-
-function logoutGyuri(){
-
-document.getElementById("gyuriPanel")
-.style.display="none";
-
-
-document.getElementById("gyuriLogin")
-.style.display="block";
-
-
-document.getElementById("password").value="";
-
-
-alert("Kijelentkeztél.");
-
-}
 
 
 </script>
-
-
-<br>
-
-
-<button 
-class="gray"
-onclick="logoutGyuri()">
-
-🚪 Kijelentkezés
-
-</button>
 
 
 </body>
 
 </html>
 
-    
 
-loadSavedMoney();
-
+/* ide jön a működés */
 
 </script>
-    
 
-    </script>
-    
+</body>
+</html>
