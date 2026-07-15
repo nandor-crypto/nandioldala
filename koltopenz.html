@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profilkezelő</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f2f2f2;
+}
+
+.page{
+    display:none;
+}
+
+.active{
+    display:block;
+}
+
+.center{
+    text-align:center;
+    margin-top:120px;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+    border-radius:8px;
+    padding:10px 20px;
+    font-size:16px;
+}
+
+.blue{
+    background:#1e88e5;
+    color:white;
+}
+
+.lightBlue{
+    background:#90caf9;
+}
+
+.lightGreen{
+    background:#a5d6a7;
+}
+
+.gray{
+    background:#bdbdbd;
+}
+
+.save{
+    background:#1e88e5;
+    color:white;
+}
+
+input,select{
+    padding:8px;
+    font-size:16px;
+    border-radius:6px;
+    border:1px solid gray;
+}
+
+#loginBox{
+    margin-top:20px;
+}
+
+.eye{
+    width:42px;
+}
+
+.topBar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+}
+
+.edit{
+    font-size:28px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= BELÉPÉS ================= -->
+
+<div id="loginPage" class="page active">
+
+<div class="center">
+
+<button class="blue" onclick="showLogin()">
+Bejelentkezés
+</button>
+
+<div id="loginBox" style="display:none;">
+
+<br>
+
+<select id="userSelect" onchange="userChanged()">
+<option value="">Válassz...</option>
+<option>Vili</option>
+<option>Nándi</option>
+<option>Gyuri</option>
+</select>
+
+<div id="passwordArea" style="display:none;margin-top:15px;">
+
+<input
+type="password"
+id="password"
+placeholder="Jelszó">
+
+<button
+class="eye"
+onclick="showPassword()">
+👁️
+</button>
+
+<br><br>
+
+<button
+class="blue"
+onclick="loginGyuri()">
+Belépés
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= GYURI FŐOLDAL ================= -->
+
+<div id="mainPage" class="page">
+
+<div class="topBar">
+
+<div class="edit"
+onclick="openPasswordChange()">
+✏️
+</div>
+
+<h2>Gyuri</h2>
+
+<div></div>
+
+</div>
+
+<div style="text-align:center;margin-top:40px;">
+
+<button
+class="lightGreen"
+onclick="openProfile('vili')">
+Vili
+</button>
+
+<button
+class="lightBlue"
+onclick="openProfile('nandi')">
+Nándi
+</button>
+
+</div>
+
+<div
+id="passwordChange"
+style="display:none;
+margin-top:40px;
+text-align:center;">
+
+<h3>Jelszó módosítása</h3>
+
+<input
+type="password"
+id="newPassword"
+placeholder="Új jelszó">
+
+<br><br>
+
+<button
+class="save"
+onclick="savePassword()">
+Mentés
+</button>
+
+<button
+class="gray"
+onclick="cancelPassword()">
+Mégse
+</button>
+
+</div>
+
+</div>
+
+<!-- ================= NÁNDI ================= -->
+
+<div id="nandiPage" class="page">
+
+<h1 style="text-align:center;">
+Nándi
+</h1>
+
+<div style="text-align:center;">
+
+<h2 id="nandiInfo"></h2>
+
+</div>
+
+</div>
+
+<!-- ================= VILI ================= -->
+
+<div id="viliPage" class="page">
+
+<h1 style="text-align:center;">
+Vili
+</h1>
+
+<div style="text-align:center;">
+
+<h2 id="viliInfo"></h2>
+
+</div>
+
+</div>
+
+<script>
+
+let password =
+localStorage.getItem("password")
+|| "Répapa";
+
+function showLogin(){
+
+document.getElementById("loginBox").style.display="block";
+
+}
+
+function userChanged(){
+
+let user=
+document.getElementById("userSelect").value;
+
+if(user==="Gyuri"){
+
+document.getElementById("passwordArea").style.display="block";
+
+}else{
+
+document.getElementById("passwordArea").style.display="none";
+
+if(user==="Vili"){
+
+openProfile("vili");
+
+}
+
+if(user==="Nándi"){
+
+openProfile("nandi");
+
+}
+
+}
+
+}
+
+function showPassword(){
+
+let box=document.getElementById("password");
+
+box.type="text";
+
+setTimeout(function(){
+
+box.type="password";
+
+},4000);
+
+}
+
+function loginGyuri(){
+
+let p=
+document.getElementById("password").value;
+
+if(p===password){
+
+showPage("mainPage");
+
+}else{
+
+alert("Hibás jelszó!");
+
+}
+
+}
+
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(function(x){
+
+x.classList.remove("active");
+
+});
+
+document.getElementById(id).classList.add("active");
+
+}
+
+function openPasswordChange(){
+
+document.getElementById("passwordChange").style.display="block";
+
+}
+
+function savePassword(){
+
+password=
+document.getElementById("newPassword").value;
+
+localStorage.setItem("password",password);
+
+alert("Elmentve!");
+
+document.getElementById("passwordChange").style.display="none";
+
+}
+
+function cancelPassword(){
+
+document.getElementById("passwordChange").style.display="none";
+
+}
+
+function openProfile(profile){
+
+if(profile==="vili"){
+
+showPage("viliPage");
+
+}
+
+if(profile==="nandi"){
+
+showPage("nandiPage");
+
+}
+
+}
+
+  
+//============================
+// ADATOK BETÖLTÉSE
+//============================
+
+let nandiNumber =
+localStorage.getItem("nandiNumber") || "30";
+
+let nandiMoney =
+localStorage.getItem("nandiMoney") || "Euró €";
+
+let viliNumber =
+localStorage.getItem("viliNumber") || "30";
+
+let viliMoney =
+localStorage.getItem("viliMoney") || "Euró €";
+
+function refreshTexts(){
+
+document.getElementById("nandiInfo").innerHTML =
+nandiNumber + " " + nandiMoney;
+
+document.getElementById("viliInfo").innerHTML =
+viliNumber + " " + viliMoney;
+
+}
+
+refreshTexts();
+
+
+//============================
+// NÁNDI OLDAL
+//============================
+
+document.getElementById("nandiPage").innerHTML += `
+
+<div style="text-align:center;margin-top:30px;">
+
+<input
+id="nandiNumberBox"
+type="number"
+value="${nandiNumber}">
+
+<select id="nandiMoneyBox">
+
+<option>Euró €</option>
+
+<option>Forint Ft</option>
+
+<option>Dollár $</option>
+
+</select>
+
+<br><br>
+
+<button
+class="save"
+onclick="saveNandi()">
+Mentés
+</button>
+
+<button
+class="gray"
+onclick="cancelNandi()">
+Mégse
+</button>
+
+<br><br>
+
+<button
+class="blue"
+onclick="showPage('mainPage')">
+Vissza
+</button>
+
+</div>
+
+`;
+
+
+//============================
+// VILI OLDAL
+//============================
+
+document.getElementById("viliPage").innerHTML += `
+
+<div style="text-align:center;margin-top:30px;">
+
+<input
+id="viliNumberBox"
+type="number"
+value="${viliNumber}">
+
+<select id="viliMoneyBox">
+
+<option>Euró €</option>
+
+<option>Forint Ft</option>
+
+<option>Dollár $</option>
+
+</select>
+
+<br><br>
+
+<button
+class="save"
+onclick="saveVili()">
+Mentés
+</button>
+
+<button
+class="gray"
+onclick="cancelVili()">
+Mégse
+</button>
+
+<br><br>
+
+<button
+class="blue"
+onclick="showPage('mainPage')">
+Vissza
+</button>
+
+</div>
+
+`;
+
+
+//============================
+// LENYÍLÓK BEÁLLÍTÁSA
+//============================
+
+document.getElementById("nandiMoneyBox").value =
+nandiMoney;
+
+document.getElementById("viliMoneyBox").value =
+viliMoney;
+
+
+//============================
+// MENTÉS NÁNDI
+//============================
+
+function saveNandi(){
+
+nandiNumber =
+document.getElementById("nandiNumberBox").value;
+
+nandiMoney =
+document.getElementById("nandiMoneyBox").value;
+
+localStorage.setItem(
+"nandiNumber",
+nandiNumber);
+
+localStorage.setItem(
+"nandiMoney",
+nandiMoney);
+
+refreshTexts();
+
+alert("Elmentve!");
+
+}
+
+
+//============================
+// MÉGSE NÁNDI
+//============================
+
+function cancelNandi(){
+
+document.getElementById("nandiNumberBox").value =
+nandiNumber;
+
+document.getElementById("nandiMoneyBox").value =
+nandiMoney;
+
+}
+//============================
+// MENTÉS VILI
+//============================
+
+function saveVili(){
+
+viliNumber =
+document.getElementById("viliNumberBox").value;
+
+viliMoney =
+document.getElementById("viliMoneyBox").value;
+
+localStorage.setItem(
+"viliNumber",
+viliNumber);
+
+localStorage.setItem(
+"viliMoney",
+viliMoney);
+
+refreshTexts();
+
+alert("Elmentve!");
+
+}
+
+
+//============================
+// MÉGSE VILI
+//============================
+
+function cancelVili(){
+
+document.getElementById("viliNumberBox").value =
+viliNumber;
+
+document.getElementById("viliMoneyBox").value =
+viliMoney;
+
+}
+
+
+//============================
+// BETÖLTÉSKOR FRISSÍTÉS
+//============================
+
+window.onload=function(){
+
+refreshTexts();
+
+document.getElementById("nandiMoneyBox").value =
+nandiMoney;
+
+document.getElementById("viliMoneyBox").value =
+viliMoney;
+
+};
+</script>
+
+</body>
+</html>
+
+  
+  
