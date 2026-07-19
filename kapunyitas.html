@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,138 +9,149 @@
 <style>
 
 *{
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-    margin:0;
-    height:100vh;
-    background:#f1f1f1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+margin:0;
+height:100vh;
+background:#eeeeee;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 
-/* Profil */
+/* jobb felső sarok */
 
-#profilBox{
-    position:fixed;
-    top:15px;
-    right:15px;
+#profilTerulet{
+position:fixed;
+top:0;
+right:0;
+width:80px;
+height:80px;
 }
 
 
 #profil{
-    font-size:40px;
-    cursor:pointer;
+position:absolute;
+top:15px;
+right:15px;
+font-size:40px;
+cursor:pointer;
 }
 
 
-/* Menü */
+/* menü */
 
 #menu{
-    display:none;
-    background:white;
-    border-radius:10px;
-    overflow:hidden;
-    box-shadow:0 0 10px #777;
+display:none;
+position:absolute;
+top:65px;
+right:10px;
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 0 10px #777;
 }
 
 
 #menu div{
-    padding:15px 35px;
-    cursor:pointer;
+padding:15px 30px;
+cursor:pointer;
 }
 
 
 #menu div:hover{
-    background:#ddd;
+background:#ddd;
 }
 
 
-/* Oldalak */
+
+/* oldalak */
 
 .oldal{
-    text-align:center;
+text-align:center;
 }
+
 
 
 button{
 
-    width:230px;
-    height:70px;
-    margin:10px;
+width:230px;
+height:70px;
+margin:10px;
 
-    border:0;
-    border-radius:12px;
+border:none;
+border-radius:12px;
 
-    color:white;
-    font-size:22px;
+font-size:22px;
+color:white;
 
-    cursor:pointer;
+cursor:pointer;
+
 }
 
 
 #teljes{
-    background:#006cff;
+background:#006cff;
 }
 
 
 #kis{
-    background:#19a83a;
+background:#16a33a;
 }
 
 
 #koszonet{
 
-    display:none;
+display:none;
 
-    color:green;
-    font-size:30px;
+font-size:30px;
+color:green;
 
-    margin-top:20px;
+margin-top:20px;
+
 }
 
 
 #uzenet{
 
-    display:none;
+display:none;
 
-    color:red;
-    font-size:28px;
+font-size:28px;
+color:red;
 
 }
-
 
 </style>
 
 </head>
 
-
 <body>
 
 
-<div id="profilBox">
+<div id="profilTerulet">
 
-    <div id="profil">
-        👤
-    </div>
-
-
-    <div id="menu">
-
-        <div onclick="vevo()">
-            Vevő
-        </div>
+<div id="profil">
+👤
+</div>
 
 
-        <div onclick="iranyito()">
-            Irányító
-        </div>
+<div id="menu">
 
-    </div>
+<div onclick="vevo()">
+Vevő
+</div>
+
+
+<div onclick="iranyito()">
+Irányító
+</div>
+
+
+</div>
 
 </div>
 
@@ -174,38 +184,27 @@ Köszönjük!
 
 
 
-
 <div id="iranyitoOldal" class="oldal" style="display:none">
-
 
 <h1>Irányító</h1>
 
-
-<div id="uzenet">
-
-</div>
-
+<div id="uzenet"></div>
 
 </div>
 <script>
 
-// elemek
-
 const profil = document.getElementById("profil");
 const menu = document.getElementById("menu");
+const profilTerulet = document.getElementById("profilTerulet");
+
+let elrejto;
 
 
-// csengő hang
+// profil megnyitja a menüt
 
-const csengo = new Audio(
-"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-);
+profil.onclick = function(e){
 
-
-
-// profil menü megnyitása
-
-profil.onclick = function(){
+    e.stopPropagation();
 
     if(menu.style.display === "block"){
         menu.style.display="none";
@@ -218,36 +217,50 @@ profil.onclick = function(){
 
 
 
-// profil ikon 3 másodperc után eltűnik
+// 3 másodperc után eltűnik
 
-setTimeout(function(){
+function profilElrejt(){
 
-    profil.style.display="none";
+    clearTimeout(elrejto);
 
-},3000);
-
-
-
-// jobb felső sarok érintésére visszajön
-
-document.getElementById("profilBox").onclick=function(){
-
-    profil.style.display="block";
-
-    clearTimeout(window.elrejtes);
-
-    window.elrejtes=setTimeout(function(){
+    elrejto=setTimeout(function(){
 
         profil.style.display="none";
 
     },3000);
+
+}
+
+
+profilElrejt();
+
+
+
+// a jobb felső területre kattintva visszajön
+
+profilTerulet.onclick=function(){
+
+    profil.style.display="block";
+
+    profilElrejt();
 
 };
 
 
 
 
-// Vevő oldal
+// ha máshova kattintunk, a menü bezár
+
+document.body.onclick=function(){
+
+    menu.style.display="none";
+
+};
+
+
+
+
+// Vevő mód
 
 function vevo(){
 
@@ -261,7 +274,7 @@ function vevo(){
 
 
 
-// Irányító oldal
+// Irányító mód
 
 function iranyito(){
 
@@ -271,11 +284,14 @@ function iranyito(){
 
     document.getElementById("iranyitoOldal").style.display="block";
 
+    ellenorzes();
+
 }
 
 
 
-// gombok
+
+// teljes nyitás
 
 document.getElementById("teljes").onclick=function(){
 
@@ -284,6 +300,8 @@ document.getElementById("teljes").onclick=function(){
 };
 
 
+
+// kis nyitás
 
 document.getElementById("kis").onclick=function(){
 
@@ -294,14 +312,13 @@ document.getElementById("kis").onclick=function(){
 
 
 
-// kérés elküldése
+// kérés mentése
 
-function kuldes(tipus){
-
+function kuldes(szoveg){
 
     localStorage.setItem(
-        "kapuUzenet",
-        tipus
+        "kapuKeres",
+        szoveg
     );
 
 
@@ -318,57 +335,38 @@ function kuldes(tipus){
 
     },3000);
 
-
 }
 
 
 
-// irányító üzenet megjelenítése
+
+// irányító üzenet
 
 function ellenorzes(){
 
+    let keres =
+    localStorage.getItem("kapuKeres");
 
-    let adat =
-    localStorage.getItem("kapuUzenet");
 
-
-    if(adat){
-
+    if(keres){
 
         let uzenet =
         document.getElementById("uzenet");
 
 
         uzenet.innerHTML =
-        "🔔 " + adat + " kérve";
+        "🔔 " + keres + " kérve";
 
 
         uzenet.style.display="block";
-
-
-        csengo.play();
-
 
     }
 
 }
 
 
-// amikor irányító módba lép,
-// rögtön ellenőriz
-
-const regiIranyito = iranyito;
-
-iranyito = function(){
-
-    regiIranyito();
-
-    ellenorzes();
-
-};
-
-
 </script>
 
 </body>
-</html>
+    </html>
+    
