@@ -3,217 +3,312 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Kapunyitó</title>
 
 <style>
+
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
 
 body{
-background:#f2f2f2;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
+    margin:0;
+    height:100vh;
+    background:#eeeeee;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-#topArea{
-position:fixed;
-top:0;
-right:0;
-width:150px;
-height:80px;
+
+#profilBox{
+    position:fixed;
+    top:15px;
+    right:15px;
 }
 
-#profile{
-position:absolute;
-top:15px;
-right:15px;
-font-size:38px;
-cursor:pointer;
-user-select:none;
-transition:.3s;
+
+#profil{
+    font-size:40px;
+    cursor:pointer;
+    user-select:none;
 }
+
 
 #menu{
-display:none;
-position:absolute;
-top:65px;
-right:10px;
-background:white;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,.3);
-overflow:hidden;
-width:160px;
+    display:none;
+    background:white;
+    margin-top:10px;
+    border-radius:10px;
+    box-shadow:0 0 10px #777;
+    overflow:hidden;
 }
+
 
 #menu div{
-padding:12px;
-cursor:pointer;
-text-align:center;
+    padding:15px 35px;
+    cursor:pointer;
 }
+
 
 #menu div:hover{
-background:#eee;
+    background:#ddd;
 }
 
-#customer{
-display:none;
-text-align:center;
+
+.oldal{
+    text-align:center;
 }
 
-#controller{
-display:none;
-text-align:center;
-}
 
 button{
-width:220px;
-padding:18px;
-margin:12px;
-border:none;
-border-radius:10px;
-font-size:22px;
-cursor:pointer;
-color:white;
+    width:230px;
+    height:70px;
+    border:0;
+    border-radius:12px;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    margin:10px;
 }
 
-#full{
-background:#007bff;
+
+#teljes{
+    background:#006cff;
 }
 
-#small{
-background:#1fae3d;
+
+#kis{
+    background:#18a83a;
 }
 
-#thanks{
-display:none;
-font-size:28px;
-color:green;
-margin-top:20px;
+
+#koszonet{
+    display:none;
+    font-size:30px;
+    color:green;
+    margin-top:20px;
 }
 
-#notify{
-display:none;
-font-size:30px;
-color:red;
-margin-top:20px;
-font-weight:bold;
+
+#ertesites{
+    display:none;
+    font-size:28px;
+    color:red;
 }
 
-h1{
-margin-bottom:30px;
-}
 </style>
 
 </head>
+
 <body>
 
-<div id="topArea">
-<div id="profile">👤</div>
 
-<div id="menu">
-<div onclick="customerMode()">Vevő</div>
-<div onclick="controllerMode()">Irányító</div>
-</div>
-</div>
+<div id="profilBox">
 
-<div id="customer">
+    <div id="profil">
+        👤
+    </div>
 
-<h1>Vevő</h1>
 
-<button id="full" onclick="sendOpen('Teljes nyitás')">
-Teljes nyitás
-</button>
+    <div id="menu">
 
-<br>
+        <div onclick="vevo()">
+            Vevő
+        </div>
 
-<button id="small" onclick="sendOpen('Kis nyitás')">
-Kis nyitás
-</button>
+        <div onclick="iranyito()">
+            Irányító
+        </div>
 
-<div id="thanks">
-Köszönjük!
-</div>
+    </div>
 
 </div>
 
-<div id="controller">
 
-<h1>Irányító</h1>
+<div id="vevoOldal" class="oldal">
 
-<div id="notify">
+    <h1>Vevő</h1>
 
-Várakozás...
+    <button id="teljes">
+        Teljes nyitás
+    </button>
+
+    <br>
+
+    <button id="kis">
+        Kis nyitás
+    </button>
+
+    <div id="koszonet">
+        Köszönjük!
+    </div>
 
 </div>
 
-</div>
 
-<audio id="bell">
-<source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">
-</audio>
+<div id="iranyitoOldal" class="oldal" style="display:none">
 
-<script>
+    <h1>Irányító</h1>
 
-// Profil ikon
-const profile=document.getElementById("profile");
-const menu=document.getElementById("menu");
+    <div id="ertesites"></div>
 
-profile.onclick=()=>{
-menu.style.display=
-menu.style.display=="block"?
-"none":"block";
+          </div>
+          <script>
+
+// Profil ikon és menü
+
+const profil = document.getElementById("profil");
+const menu = document.getElementById("menu");
+
+
+// profil kattintás
+
+profil.onclick = function(){
+
+    if(menu.style.display === "block"){
+        menu.style.display="none";
+    }else{
+        menu.style.display="block";
+    }
+
 };
 
-setTimeout(()=>{
-profile.style.display="none";
+
+
+// 3 másodperc után eltűnik
+
+setTimeout(function(){
+
+    profil.style.display="none";
+
 },3000);
 
-document.getElementById("topArea").onclick=()=>{
-profile.style.display="block";
 
-clearTimeout(window.hideIcon);
 
-window.hideIcon=setTimeout(()=>{
-profile.style.display="none";
-},3000);
+// jobb felső sarokra kattintva visszajön
+
+document.getElementById("profilBox").onclick=function(){
+
+    profil.style.display="block";
+
+
+    clearTimeout(window.profilTimer);
+
+
+    window.profilTimer=setTimeout(function(){
+
+        profil.style.display="none";
+
+    },3000);
 
 };
 
-function customerMode(){
 
-menu.style.display="none";
 
-document.getElementById("customer").style.display="block";
 
-document.getElementById("controller").style.display="none";
+// Vevő mód
+
+function vevo(){
+
+    menu.style.display="none";
+
+    document.getElementById("vevoOldal").style.display="block";
+
+    document.getElementById("iranyitoOldal").style.display="none";
 
 }
 
-function controllerMode(){
 
-menu.style.display="none";
 
-document.getElementById("controller").style.display="block";
 
-document.getElementById("customer").style.display="none";
+// Irányító mód
+
+function iranyito(){
+
+    menu.style.display="none";
+
+    document.getElementById("vevoOldal").style.display="none";
+
+    document.getElementById("iranyitoOldal").style.display="block";
 
 }
-const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  databaseURL: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
+
+
+
+// Vevő gombok
+
+document.getElementById("teljes").onclick=function(){
+
+    kuldes("Teljes nyitás");
+
 };
-</script>
-</body>
-</html>
+
+
+
+document.getElementById("kis").onclick=function(){
+
+    kuldes("Kis nyitás");
+
+};
+
+
+
+// kérés mentése
+
+function kuldes(szoveg){
+
+
+    localStorage.setItem(
+        "kapuKeres",
+        szoveg
+    );
+
+
+    let koszonet =
+    document.getElementById("koszonet");
+
+
+    koszonet.style.display="block";
+
+
+    setTimeout(function(){
+
+        koszonet.style.display="none";
+
+    },3000);
+
+}
+
+
+
+// irányító ellenőrzés
+
+function ellenorzes(){
+
+
+    let keres =
+    localStorage.getItem("kapuKeres");
+
+
+    if(keres){
+
+
+        let uzenet =
+        document.getElementById("ertesites");
+
+
+        uzenet.innerHTML =
+        keres + " kérve";
+
+
+        uzenet.style.display="block";
+
+    }
+
+}
+
+  </script>
+  
