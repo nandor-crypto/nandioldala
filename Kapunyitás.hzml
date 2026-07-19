@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapunyitó</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f2f2f2;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
+
+#topArea{
+position:fixed;
+top:0;
+right:0;
+width:150px;
+height:80px;
+}
+
+#profile{
+position:absolute;
+top:15px;
+right:15px;
+font-size:38px;
+cursor:pointer;
+user-select:none;
+transition:.3s;
+}
+
+#menu{
+display:none;
+position:absolute;
+top:65px;
+right:10px;
+background:white;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.3);
+overflow:hidden;
+width:160px;
+}
+
+#menu div{
+padding:12px;
+cursor:pointer;
+text-align:center;
+}
+
+#menu div:hover{
+background:#eee;
+}
+
+#customer{
+display:none;
+text-align:center;
+}
+
+#controller{
+display:none;
+text-align:center;
+}
+
+button{
+width:220px;
+padding:18px;
+margin:12px;
+border:none;
+border-radius:10px;
+font-size:22px;
+cursor:pointer;
+color:white;
+}
+
+#full{
+background:#007bff;
+}
+
+#small{
+background:#1fae3d;
+}
+
+#thanks{
+display:none;
+font-size:28px;
+color:green;
+margin-top:20px;
+}
+
+#notify{
+display:none;
+font-size:30px;
+color:red;
+margin-top:20px;
+font-weight:bold;
+}
+
+h1{
+margin-bottom:30px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="topArea">
+<div id="profile">👤</div>
+
+<div id="menu">
+<div onclick="customerMode()">Vevő</div>
+<div onclick="controllerMode()">Irányító</div>
+</div>
+</div>
+
+<div id="customer">
+
+<h1>Vevő</h1>
+
+<button id="full" onclick="sendOpen('Teljes nyitás')">
+Teljes nyitás
+</button>
+
+<br>
+
+<button id="small" onclick="sendOpen('Kis nyitás')">
+Kis nyitás
+</button>
+
+<div id="thanks">
+Köszönjük!
+</div>
+
+</div>
+
+<div id="controller">
+
+<h1>Irányító</h1>
+
+<div id="notify">
+
+Várakozás...
+
+</div>
+
+</div>
+
+<audio id="bell">
+<source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">
+</audio>
+
+<script>
+
+// Profil ikon
+const profile=document.getElementById("profile");
+const menu=document.getElementById("menu");
+
+profile.onclick=()=>{
+menu.style.display=
+menu.style.display=="block"?
+"none":"block";
+};
+
+setTimeout(()=>{
+profile.style.display="none";
+},3000);
+
+document.getElementById("topArea").onclick=()=>{
+profile.style.display="block";
+
+clearTimeout(window.hideIcon);
+
+window.hideIcon=setTimeout(()=>{
+profile.style.display="none";
+},3000);
+
+};
+
+function customerMode(){
+
+menu.style.display="none";
+
+document.getElementById("customer").style.display="block";
+
+document.getElementById("controller").style.display="none";
+
+}
+
+function controllerMode(){
+
+menu.style.display="none";
+
+document.getElementById("controller").style.display="block";
+
+document.getElementById("customer").style.display="none";
+
+}
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  databaseURL: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};
