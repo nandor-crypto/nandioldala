@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -16,12 +17,14 @@
 body{
     margin:0;
     height:100vh;
-    background:#eeeeee;
+    background:#f1f1f1;
     display:flex;
     justify-content:center;
     align-items:center;
 }
 
+
+/* Profil */
 
 #profilBox{
     position:fixed;
@@ -33,17 +36,17 @@ body{
 #profil{
     font-size:40px;
     cursor:pointer;
-    user-select:none;
 }
 
+
+/* Menü */
 
 #menu{
     display:none;
     background:white;
-    margin-top:10px;
     border-radius:10px;
-    box-shadow:0 0 10px #777;
     overflow:hidden;
+    box-shadow:0 0 10px #777;
 }
 
 
@@ -58,20 +61,26 @@ body{
 }
 
 
+/* Oldalak */
+
 .oldal{
     text-align:center;
 }
 
 
 button{
+
     width:230px;
     height:70px;
+    margin:10px;
+
     border:0;
     border-radius:12px;
+
     color:white;
     font-size:22px;
+
     cursor:pointer;
-    margin:10px;
 }
 
 
@@ -81,27 +90,35 @@ button{
 
 
 #kis{
-    background:#18a83a;
+    background:#19a83a;
 }
 
 
 #koszonet{
+
     display:none;
-    font-size:30px;
+
     color:green;
+    font-size:30px;
+
     margin-top:20px;
 }
 
 
-#ertesites{
+#uzenet{
+
     display:none;
-    font-size:28px;
+
     color:red;
+    font-size:28px;
+
 }
+
 
 </style>
 
 </head>
+
 
 <body>
 
@@ -119,6 +136,7 @@ button{
             Vevő
         </div>
 
+
         <div onclick="iranyito()">
             Irányító
         </div>
@@ -128,49 +146,71 @@ button{
 </div>
 
 
+
 <div id="vevoOldal" class="oldal">
 
-    <h1>Vevő</h1>
+<h1>Vevő</h1>
 
-    <button id="teljes">
-        Teljes nyitás
-    </button>
 
-    <br>
+<button id="teljes">
+Teljes nyitás
+</button>
 
-    <button id="kis">
-        Kis nyitás
-    </button>
 
-    <div id="koszonet">
-        Köszönjük!
-    </div>
+<br>
+
+
+<button id="kis">
+Kis nyitás
+</button>
+
+
+<div id="koszonet">
+Köszönjük!
+</div>
+
 
 </div>
 
 
+
+
 <div id="iranyitoOldal" class="oldal" style="display:none">
 
-    <h1>Irányító</h1>
 
-    <div id="ertesites"></div>
+<h1>Irányító</h1>
 
-          </div>
-          <script>
 
-// Profil ikon és menü
+<div id="uzenet">
+
+</div>
+
+
+</div>
+<script>
+
+// elemek
 
 const profil = document.getElementById("profil");
 const menu = document.getElementById("menu");
 
 
-// profil kattintás
+// csengő hang
+
+const csengo = new Audio(
+"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+);
+
+
+
+// profil menü megnyitása
 
 profil.onclick = function(){
 
     if(menu.style.display === "block"){
         menu.style.display="none";
-    }else{
+    }
+    else{
         menu.style.display="block";
     }
 
@@ -178,7 +218,7 @@ profil.onclick = function(){
 
 
 
-// 3 másodperc után eltűnik
+// profil ikon 3 másodperc után eltűnik
 
 setTimeout(function(){
 
@@ -188,17 +228,15 @@ setTimeout(function(){
 
 
 
-// jobb felső sarokra kattintva visszajön
+// jobb felső sarok érintésére visszajön
 
 document.getElementById("profilBox").onclick=function(){
 
     profil.style.display="block";
 
+    clearTimeout(window.elrejtes);
 
-    clearTimeout(window.profilTimer);
-
-
-    window.profilTimer=setTimeout(function(){
+    window.elrejtes=setTimeout(function(){
 
         profil.style.display="none";
 
@@ -209,7 +247,7 @@ document.getElementById("profilBox").onclick=function(){
 
 
 
-// Vevő mód
+// Vevő oldal
 
 function vevo(){
 
@@ -223,8 +261,7 @@ function vevo(){
 
 
 
-
-// Irányító mód
+// Irányító oldal
 
 function iranyito(){
 
@@ -238,7 +275,7 @@ function iranyito(){
 
 
 
-// Vevő gombok
+// gombok
 
 document.getElementById("teljes").onclick=function(){
 
@@ -256,14 +293,15 @@ document.getElementById("kis").onclick=function(){
 
 
 
-// kérés mentése
 
-function kuldes(szoveg){
+// kérés elküldése
+
+function kuldes(tipus){
 
 
     localStorage.setItem(
-        "kapuKeres",
-        szoveg
+        "kapuUzenet",
+        tipus
     );
 
 
@@ -280,35 +318,57 @@ function kuldes(szoveg){
 
     },3000);
 
+
 }
 
 
 
-// irányító ellenőrzés
+// irányító üzenet megjelenítése
 
 function ellenorzes(){
 
 
-    let keres =
-    localStorage.getItem("kapuKeres");
+    let adat =
+    localStorage.getItem("kapuUzenet");
 
 
-    if(keres){
+    if(adat){
 
 
         let uzenet =
-        document.getElementById("ertesites");
+        document.getElementById("uzenet");
 
 
         uzenet.innerHTML =
-        keres + " kérve";
+        "🔔 " + adat + " kérve";
 
 
         uzenet.style.display="block";
+
+
+        csengo.play();
+
 
     }
 
 }
 
-  </script>
-  
+
+// amikor irányító módba lép,
+// rögtön ellenőriz
+
+const regiIranyito = iranyito;
+
+iranyito = function(){
+
+    regiIranyito();
+
+    ellenorzes();
+
+};
+
+
+</script>
+
+</body>
+</html>
