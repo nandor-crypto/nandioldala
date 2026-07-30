@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamera HUD</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: black;
+    font-family: Arial, sans-serif;
+}
+
+/* Kamera háttér */
+#camera {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* HUD réteg */
+#hud {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+
+/* Középső célkereszt */
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #888;
+    font-size: 45px;
+    font-weight: bold;
+}
+
+
+/* Fogaskerék gomb */
+#settingsButton {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    background: rgba(80,80,80,0.8);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+
+    opacity: 0;
+    transition: 0.3s;
+
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+
+/* Ha a jobb felső sarok fölé megy az egér */
+body:hover #settingsButton {
+    opacity: 1;
+}
+
+
+/* Menü */
+#menu {
+
+    position: absolute;
+
+    right: 20px;
+    top: 90px;
+
+    width: 280px;
+
+    background: rgba(40,40,40,0.85);
+
+    border-radius: 20px;
+
+    padding: 15px;
+
+    display: none;
+
+    pointer-events: auto;
+
+    color:white;
+}
+
+
+/* Menü címe */
+#menu h2 {
+
+    text-align:center;
+    margin-bottom:15px;
+    font-size:20px;
+
+}
+
+
+/* Gombok tartója */
+.options {
+
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:15px;
+
+}
+
+
+/* Kör alakú kapcsolók */
+.option {
+
+    width:90px;
+    height:90px;
+
+    border-radius:50%;
+
+    background:#777;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+    text-align:center;
+
+}
+
+
+.option .icon {
+
+    font-size:30px;
+
+}
+
+
+.option span {
+
+    font-size:12px;
+    margin-top:5px;
+
+}
+
+
+/* Bekapcsolt állapot */
+.option.active {
+
+    background:orange;
+
+}
+
+
+/* Halvány külső keret */
+#screenFrame {
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    border:3px solid rgba(220,220,220,0.35);
+
+    display:none;
+
+}
+
+
+/* Infra piros fókuszkeret */
+#infraFrame {
+
+    position:absolute;
+
+    width:70%;
+    height:50%;
+
+    left:15%;
+    top:25%;
+
+    border:5px solid red;
+
+    display:none;
+
+}
+
+
+/* Függőleges detektor alap */
+#detector {
+
+    position:absolute;
+
+    right:60px;
+
+    top:25%;
+
+    height:50%;
+
+    width:8px;
+
+    background:rgba(255,255,255,0.5);
+
+    display:none;
+
+}
+
+
+/* Háromszögek */
+.triangle {
+
+    position:absolute;
+
+    left:-12px;
+
+    width:0;
+    height:0;
+
+    border-left:12px solid transparent;
+    border-right:12px solid transparent;
+
+}
+
+
+#triangleTop {
+
+    top:-15px;
+
+    border-bottom:20px solid red;
+
+}
+
+
+#triangleBottom {
+
+    bottom:-15px;
+
+    border-top:20px solid red;
+
+}
+
+
