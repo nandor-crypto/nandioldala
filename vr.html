@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamera HUD</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: black;
+    font-family: Arial, sans-serif;
+}
+
+/* Kamera háttér */
+#camera {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* HUD réteg */
+#hud {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+
+/* Középső célkereszt */
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #888;
+    font-size: 45px;
+    font-weight: bold;
+}
+
+
+/* Fogaskerék gomb */
+#settingsButton {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    background: rgba(80,80,80,0.8);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+
+    opacity: 0;
+    transition: 0.3s;
+
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 10;
+}
+
+
+/* Ha a jobb felső sarok fölé megy az egér */
+body:hover #settingsButton {
+    opacity: 1;
+}
+
+
+/* Menü */
+#menu {
+
+    position: absolute;
+
+    right: 20px;
+    top: 90px;
+
+    width: 280px;
+
+    background: rgba(40,40,40,0.85);
+
+    border-radius: 20px;
+
+    padding: 15px;
+
+    display: none;
+
+    pointer-events: auto;
+
+    color:white;
+}
+
+
+/* Menü címe */
+#menu h2 {
+
+    text-align:center;
+    margin-bottom:15px;
+    font-size:20px;
+
+}
+
+
+/* Gombok tartója */
+.options {
+
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:15px;
+
+}
+
+
+/* Kör alakú kapcsolók */
+.option {
+
+    width:90px;
+    height:90px;
+
+    border-radius:50%;
+
+    background:#777;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+    text-align:center;
+
+}
+
+
+.option .icon {
+
+    font-size:30px;
+
+}
+
+
+.option span {
+
+    font-size:12px;
+    margin-top:5px;
+
+}
+
+
+/* Bekapcsolt állapot */
+.option.active {
+
+    background:orange;
+
+}
+
+
+/* Halvány külső keret */
+#screenFrame {
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    display:none;
+    pointer-events: none;
+
+}
+
+
+/* Infra piros fókuszkeret */
+#infraFrame {
+
+    position:absolute;
+
+    width:70%;
+    height:50%;
+
+    left:15%;
+    top:25%;
+
+    border:5px solid red;
+
+    display:none;
+
+}
+
+
+/* Függőleges detektor alap */
+#detector {
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform: translateY(-50%);
+    height:220px;
+    width:40px;
+    display:none;
+    pointer-events: none;
+}
+
+#detectorLine {
+    position:absolute;
+    left:50%;
+    top:0;
+    transform: translateX(-50%);
+    width:8px;
+    height:100%;
+    background:red;
+}
+
+/* Fullscreen invisible touch layer for shooting (enabled when shooting is active) */
+#touchLayer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Canvas used to draw motion/focus boxes */
+#motionCanvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: none;
+    pointer-events: none;
+}
+
+/* Háromszögek */
+.triangle {
+    position:absolute;
+    width:0;
+    height:0;
+}
+
+#triangleLeft {
+    top:50%;
+    left:-16px;
+    transform: translateY(-50%);
+    border-top:14px solid transparent;
+    border-bottom:14px solid transparent;
+    border-right:14px solid red;
+}
+
+#triangleRight {
+    top:50%;
+    right:-16px;
+    transform: translateY(-50%);
+    border-top:14px solid transparent;
+    border-bottom:14px solid transparent;
+    border-left:14px solid red;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Kamera kép -->
+<video id="camera" autoplay playsinline></video>
+
+
+<!-- HUD elemek -->
+<div id="hud">
+
+
+    <!-- Középső plusz -->
+    <div id="crosshair">+</div>
+
+
+    <!-- Beállítás gomb -->
+    <div id="settingsButton">
+        ⚙️
+    </div>
+
+
+
+    <!-- Menü -->
+    <div id="menu">
+
+        <h2>Beállítások</h2>
+
+
+        <div class="options">
+
+
+            <!-- Infra keret -->
+            <div class="option" id="infraButton">
+
+                <div class="icon">
+                    ‼️
+                </div>
+
+                <span>
+                    Infra keret
+                </span>
+
+            </div>
+
+
+
+            <!-- Függőleges detektor -->
+            <div class="option" id="detectorButton">
+
+                <div class="icon">
+                    🔺🔻
+                </div>
+
+                <span>
+                    Függőleges detektor
+                </span>
+
+            </div>
+
+
+
+
+            <!-- Veszély mód -->
+            <div class="option" id="dangerButton">
+
+                <div class="icon">
+                    ☣️⚠️
+                </div>
+
+                <span>
+                    Veszély
+                </span>
+
+            </div>
+
+
+
+
+            <!-- Halvány keret -->
+            <div class="option" id="frameButton">
+
+                <div class="icon">
+                    ⏹️
+                </div>
+
+                <span>
+                    Keret
+                </span>
+
+            </div>
+
+
+
+
+            <!-- Lövés -->
+            <div class="option" id="shootButton">
+
+                <div class="icon">
+                    🔫
+                </div>
+
+                <span>
+                    Lövés
+                </span>
+
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Effektek -->
+
+
+    <!-- Infra fókuszkeret -->
+    <div id="infraFrame"></div>
+
+
+
+    <!-- Külső halvány keret -->
+    <div id="screenFrame"></div>
+
+    <!-- Motion/focus canvas (drawn when Infra is active) -->
+    <canvas id="motionCanvas"></canvas>
+
+    <!-- Touch layer for shooting (enabled when shooting mode is active) -->
+    <div id="touchLayer"></div>
+
+
+
+
+    <!-- Függőleges detektor -->
+    <div id="detector">
+        <div id="detectorLine"></div>
+        <div id="triangleLeft" class="triangle"></div>
+        <div id="triangleRight" class="triangle"></div>
+    </div>
+
+
+
+</div>
+
+
+
+<!-- Hangok helye -->
+<audio id="shotSound" src="shot.mp3"></audio>
+
+<audio id="reloadSound" src="reload.mp3"></audio>
+
+<audio id="sirenSound" src="siren.mp3"></audio>
+
+
+
+    
+<script>
+
+
+// Kamera indítása
+
+const camera = document.getElementById("camera");
+
+
+navigator.mediaDevices.getUserMedia({
+
+    video: {
+        facingMode: "environment"
+    },
+
+    audio:false
+
+})
+
+.then(stream => {
+
+    camera.srcObject = stream;
+
+})
+
+.catch(error => {
+
+    alert("A kamera nem érhető el: " + error);
+
+});
+
+
+
+
+
+// Menü elemek
+
+const settingsButton = document.getElementById("settingsButton");
+
+const menu = document.getElementById("menu");
+
+
+
+// Menü nyitás
+
+settingsButton.addEventListener("click",()=>{
+
+
+    if(menu.style.display === "block"){
+
+        menu.style.display="none";
+
+    }
+
+    else{
+
+        menu.style.display="block";
+
+    }
+
+
+});
+
+
+
+
+
+
+
+// Gombok
+
+const infraButton =
+document.getElementById("infraButton");
+
+
+const detectorButton =
+document.getElementById("detectorButton");
+
+
+const dangerButton =
+document.getElementById("dangerButton");
+
+
+const frameButton =
+document.getElementById("frameButton");
+
+
+const shootButton =
+document.getElementById("shootButton");
+
+
+
+
+
+
+// Effektek
+
+const infraFrame =
+document.getElementById("infraFrame");
+
+
+const screenFrame =
+document.getElementById("screenFrame");
+
+
+const detector =
+document.getElementById("detector");
+
+
+
+
+
+// Kapcsoló segédfüggvény
+
+function toggleButton(button){
+
+    button.classList.toggle("active");
+
+}
+
+
+
+
+
+
+// INFRA KERET
+
+infraButton.addEventListener("click",()=>{
+    toggleButton(infraButton);
+    if(infraButton.classList.contains("active")){
+        startInfra();
+    } else {
+        stopInfra();
+    }
+});
+
+
+
+
+
+
+
+
+
+// HALVÁNY KERET
+
+frameButton.addEventListener("click",()=>{
+
+
+    toggleButton(frameButton);
+
+
+    if(frameButton.classList.contains("active")){
+
+        // create a full-screen 3x3 overlay grid of contiguous squares
+        screenFrame.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.style.position = 'absolute';
+        grid.style.left = '0';
+        grid.style.top = '0';
+        grid.style.width = '100%';
+        grid.style.height = '100%';
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(3,1fr)';
+        grid.style.gridTemplateRows = 'repeat(3,1fr)';
+        grid.style.gap = '0';
+        grid.style.pointerEvents = 'none';
+        for(let i=0;i<9;i++){
+            const cell = document.createElement('div');
+            cell.style.boxSizing = 'border-box';
+            cell.style.border = '2px solid rgba(220,220,220,0.35)';
+            cell.style.background = 'transparent';
+            grid.appendChild(cell);
+        }
+        screenFrame.appendChild(grid);
+        screenFrame.style.display = 'block';
+
+
+    }
+
+    else{
+
+
+        screenFrame.style.display='none';
+        screenFrame.innerHTML = '';
+
+
+    }
+
+
+});
+
+
+
+
+
+
+
+
+
+// FÜGGŐLEGES DETEKTOR
+
+detectorButton.addEventListener("click",()=>{
+
+
+    toggleButton(detectorButton);
+
+
+
+    if(detectorButton.classList.contains("active")){
+
+
+        detector.style.display="block";
+
+
+        startDetector();
+
+
+    }
+
+    else{
+
+
+        detector.style.display="none";
+
+
+        stopDetector();
+
+
+    }
+
+
+
+});
+
+
+
+
+
+
+// Detektor megjelenítés
+
+const motionCanvas = document.getElementById('motionCanvas');
+const touchLayer = document.getElementById('touchLayer');
+const mCtx = motionCanvas.getContext && motionCanvas.getContext('2d');
+const processCanvas = document.createElement('canvas');
+const pCtx = processCanvas.getContext && processCanvas.getContext('2d');
+let motionInterval = null;
+let detectorMoveInterval = null;
+const triangleLeft = document.getElementById('triangleLeft');
+const triangleRight = document.getElementById('triangleRight');
+
+function startDetector(){
+    detector.style.display = 'block';
+    if(detectorMoveInterval) return;
+    detectorMoveInterval = setInterval(()=>{
+        const offset = (Math.random() - 0.5) * 30;
+        triangleLeft.style.transform = `translateY(calc(-50% + ${offset}px))`;
+        triangleRight.style.transform = `translateY(calc(-50% + ${offset}px))`;
+    }, 900);
+}
+
+function startInfra(){
+    if(!mCtx || !pCtx) return;
+    motionCanvas.style.display = 'block';
+    motionCanvas.width = window.innerWidth;
+    motionCanvas.height = window.innerHeight;
+    processCanvas.width = 240;
+    processCanvas.height = 180;
+    motionInterval = setInterval(()=>{
+        try{
+            pCtx.drawImage(camera,0,0,processCanvas.width,processCanvas.height);
+            const img = pCtx.getImageData(0,0,processCanvas.width,processCanvas.height);
+            detectShapes(img);
+        }catch(e){ /* camera not ready yet */ }
+    },200);
+}
+
+function stopInfra(){
+    motionCanvas.style.display = 'none';
+    clearInterval(motionInterval);
+    motionInterval = null;
+    if(mCtx) mCtx.clearRect(0,0,motionCanvas.width,motionCanvas.height);
+}
+
+function detectShapes(img){
+    const w = processCanvas.width;
+    const h = processCanvas.height;
+    const gray = new Uint8ClampedArray(w * h);
+    for(let i=0, j=0; i<img.data.length; i+=4, j++){
+        const r = img.data[i];
+        const g = img.data[i+1];
+        const b = img.data[i+2];
+        gray[j] = (0.299*r + 0.587*g + 0.114*b)|0;
+    }
+    const blurred = gaussianBlur(gray, w, h, 5);
+    const edges = canny(blurred, w, h, 80, 160);
+    const contours = findContours(edges, w, h);
+    if(!mCtx) return;
+    mCtx.clearRect(0,0,motionCanvas.width,motionCanvas.height);
+    mCtx.strokeStyle = 'red';
+    mCtx.lineWidth = 4;
+    const scaleX = motionCanvas.width / w;
+    const scaleY = motionCanvas.height / h;
+    contours.forEach(contour=>{
+        if(contour.length < 20) return;
+        const bbox = boundingBox(contour);
+        const area = contour.length;
+        if(area < 800 || bbox.w < 20 || bbox.h < 20) return;
+        const peri = perimeter(contour);
+        const approx = approxPolyDP(contour, 0.02 * peri);
+        if(approx.length === 4){
+            const rectBox = boundingBox(approx);
+            const ratio = rectBox.w / rectBox.h;
+            if(ratio > 0.90 && ratio < 1.10){
+                // near square
+                mCtx.strokeRect(rectBox.x * scaleX, rectBox.y * scaleY, rectBox.w * scaleX, rectBox.h * scaleY);
+            } else {
+                // rectangle
+                mCtx.strokeRect(rectBox.x * scaleX, rectBox.y * scaleY, rectBox.w * scaleX, rectBox.h * scaleY);
+            }
+        }
+    });
+}
+
+function gaussianBlur(src, w, h, k){
+    const dst = new Uint8ClampedArray(w*h);
+    const kernel = [1, 4, 6, 4, 1];
+    const sum = 16;
+    const temp = new Uint8ClampedArray(w*h);
+    const half = Math.floor(k/2);
+    for(let y=0; y<h; y++){
+        for(let x=0; x<w; x++){
+            let acc = 0;
+            for(let j=-half; j<=half; j++){
+                const sx = Math.min(w-1, Math.max(0, x+j));
+                acc += src[y*w + sx] * kernel[j+half];
+            }
+            temp[y*w + x] = acc / sum | 0;
+        }
+    }
+    for(let x=0; x<w; x++){
+        for(let y=0; y<h; y++){
+            let acc = 0;
+            for(let j=-half; j<=half; j++){
+                const sy = Math.min(h-1, Math.max(0, y+j));
+                acc += temp[sy*w + x] * kernel[j+half];
+            }
+            dst[y*w + x] = acc / sum | 0;
+        }
+    }
+    return dst;
+}
+
+function canny(gray, w, h, low, high){
+    const mag = new Float32Array(w*h);
+    const edge = new Uint8ClampedArray(w*h);
+    const strong = 255, weak = 128;
+    for(let y=1; y<h-1; y++){
+        for(let x=1; x<w-1; x++){
+            const idx = y*w + x;
+            const gx = -gray[idx-w-1] - 2*gray[idx-1] - gray[idx+w-1] + gray[idx-w+1] + 2*gray[idx+1] + gray[idx+w+1];
+            const gy = -gray[idx-w-1] - 2*gray[idx-w] - gray[idx-w+1] + gray[idx+w-1] + 2*gray[idx+w] + gray[idx+w+1];
+            mag[idx] = Math.hypot(gx, gy);
+            edge[idx] = mag[idx] >= high ? strong : mag[idx] >= low ? weak : 0;
+        }
+    }
+    for(let y=1; y<h-1; y++){
+        for(let x=1; x<w-1; x++){
+            const idx = y*w + x;
+            if(edge[idx] !== weak) continue;
+            let keep = false;
+            for(let dy=-1; dy<=1 && !keep; dy++){
+                for(let dx=-1; dx<=1; dx++){
+                    if(dx===0 && dy===0) continue;
+                    if(edge[(y+dy)*w + x+dx] === strong){
+                        keep = true;
+                        break;
+                    }
+                }
+            }
+            edge[idx] = keep ? strong : 0;
+        }
+    }
+    return edge;
+}
+
+function findContours(edge, w, h){
+    const visited = new Uint8Array(w*h);
+    const contours = [];
+    for(let y=0; y<h; y++){
+        for(let x=0; x<w; x++){
+            const idx = y*w + x;
+            if(edge[idx] !== 255 || visited[idx]) continue;
+            const stack = [idx];
+            const points = [];
+            visited[idx] = 1;
+            while(stack.length){
+                const cur = stack.pop();
+                const cy = (cur / w)|0;
+                const cx = cur % w;
+                points.push({x:cx, y:cy});
+                for(let dy=-1; dy<=1; dy++){
+                    for(let dx=-1; dx<=1; dx++){
+                        const nx = cx + dx;
+                        const ny = cy + dy;
+                        if(nx<0||nx>=w||ny<0||ny>=h) continue;
+                        const nidx = ny*w + nx;
+                        if(edge[nidx] === 255 && !visited[nidx]){
+                            visited[nidx] = 1;
+                            stack.push(nidx);
+                        }
+                    }
+                }
+            }
+            contours.push(points);
+        }
+    }
+    return contours;
+}
+
+function boundingBox(points){
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    points.forEach(p=>{
+        minX = Math.min(minX, p.x);
+        minY = Math.min(minY, p.y);
+        maxX = Math.max(maxX, p.x);
+        maxY = Math.max(maxY, p.y);
+    });
+    return {x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1};
+}
+
+function perimeter(points){
+    let p = 0;
+    for(let i=1; i<points.length; i++){
+        const dx = points[i].x - points[i-1].x;
+        const dy = points[i].y - points[i-1].y;
+        p += Math.hypot(dx, dy);
+    }
+    return p;
+}
+
+function approxPolyDP(points, epsilon){
+    if(points.length < 3) return points.slice();
+    const dmax = {val:0, idx:0};
+    const [start, end] = [points[0], points[points.length-1]];
+    for(let i=1; i<points.length-1; i++){
+        const d = pointLineDistance(points[i], start, end);
+        if(d > dmax.val){dmax.val = d; dmax.idx = i;}
+    }
+    if(dmax.val > epsilon){
+        const rec1 = approxPolyDP(points.slice(0, dmax.idx+1), epsilon);
+        const rec2 = approxPolyDP(points.slice(dmax.idx), epsilon);
+        return rec1.slice(0, -1).concat(rec2);
+    }
+    return [start, end];
+}
+
+function pointLineDistance(pt, a, b){
+    const A = pt.x - a.x;
+    const B = pt.y - a.y;
+    const C = b.x - a.x;
+    const D = b.y - a.y;
+    const dot = A*C + B*D;
+    const lenSq = C*C + D*D;
+    const param = lenSq !== 0 ? dot / lenSq : -1;
+    let xx, yy;
+    if(param < 0){xx = a.x; yy = a.y;}
+    else if(param > 1){xx = b.x; yy = b.y;}
+    else {xx = a.x + param * C; yy = a.y + param * D;}
+    const dx = pt.x - xx;
+    const dy = pt.y - yy;
+    return Math.hypot(dx, dy);
+}
+
+function isCircleContour(points, bbox){
+    const aspect = bbox.w / bbox.h;
+    if(aspect < 0.7 || aspect > 1.3) return false;
+    const radius = (bbox.w + bbox.h) / 4;
+    const cx = bbox.x + bbox.w/2;
+    const cy = bbox.y + bbox.h/2;
+    let distSum = 0;
+    let count = 0;
+    points.forEach(p=>{
+        const d = Math.hypot(p.x - cx, p.y - cy);
+        distSum += Math.abs(d - radius);
+        count++;
+    });
+    const avgError = distSum / Math.max(count,1);
+    return avgError < radius * 0.35;
+}
+
+window.addEventListener('resize', ()=>{
+    if(motionCanvas.style.display !== 'none'){
+        motionCanvas.width = window.innerWidth;
+        motionCanvas.height = window.innerHeight;
+    }
+});
+
+function stopDetector(){
+    detector.style.display = 'none';
+    if(detectorMoveInterval){
+        clearInterval(detectorMoveInterval);
+        detectorMoveInterval = null;
+        triangleLeft.style.transform = 'translateY(-50%)';
+        triangleRight.style.transform = 'translateY(-50%)';
+    }
+}
+
+
+// ===============================
+// VESZÉLY MÓD
+// ===============================
+
+
+const hud = document.getElementById("hud");
+
+
+// Figyelmeztető felirat létrehozása
+
+const warningText = document.createElement("div");
+
+warningText.innerHTML = "⚠️ VESZÉLY ⚠️";
+
+
+warningText.style.position="absolute";
+warningText.style.top="40px";
+warningText.style.left="50%";
+warningText.style.transform="translateX(-50%)";
+
+warningText.style.color="red";
+warningText.style.fontSize="35px";
+warningText.style.fontWeight="bold";
+
+warningText.style.display="none";
+
+
+hud.appendChild(warningText);
+
+
+
+
+
+// Piros villódzó réteg
+
+const dangerFlash = document.createElement("div");
+
+
+dangerFlash.style.position="absolute";
+dangerFlash.style.left="0";
+dangerFlash.style.top="0";
+
+dangerFlash.style.width="100%";
+dangerFlash.style.height="100%";
+
+dangerFlash.style.border="25px solid red";
+
+dangerFlash.style.display="none";
+
+dangerFlash.style.pointerEvents="none";
+
+
+hud.appendChild(dangerFlash);
+
+
+
+
+
+
+
+let dangerActive=false;
+
+let dangerInterval;
+
+
+
+
+
+
+dangerButton.addEventListener("click",()=>{
+
+
+    toggleButton(dangerButton);
+
+
+
+    if(dangerButton.classList.contains("active")){
+
+
+        dangerActive=true;
+
+
+        startDanger();
+
+
+    }
+
+    else{
+
+
+        dangerActive=false;
+
+
+        stopDanger();
+
+
+    }
+
+
+});
+
+
+
+
+
+
+
+
+function startDanger(){
+
+
+    dangerInterval=setInterval(()=>{
+
+
+        if(!dangerActive) return;
+
+
+
+        warningText.style.display="block";
+
+
+        dangerFlash.style.display="block";
+
+
+
+        dangerFlash.animate(
+
+            [
+                {
+                    opacity:0.2
+                },
+
+                {
+                    opacity:1
+                },
+
+                {
+                    opacity:0.2
+                }
+
+            ],
+
+            {
+
+                duration:800,
+                iterations:3
+
+            }
+
+
+        );
+
+
+
+        let siren =
+        document.getElementById("sirenSound");
+
+
+        siren.currentTime=0;
+
+        siren.play().catch(()=>{});
+
+        setTimeout(()=>{
+
+            warningText.style.display="none";
+
+            dangerFlash.style.display="none";
+
+
+        },4000);
+
+    },120000); // 2 perc
+
+
+}
+
+function stopDanger(){
+ clearInterval(dangerInterval);
+ warningText.style.display="none";
+ dangerFlash.style.display="none";
+
+
+}
+
+// ===============================
+// LÖVÉS FUNKCIÓ
+// ===============================
+
+
+const shotSound =
+document.getElementById("shotSound");
+
+
+const reloadSound =
+document.getElementById("reloadSound");
+
+let shotCount = 0;
+let reloadActive = false;
+
+shootButton.addEventListener("click",()=>{
+    toggleButton(shootButton);
+    if(shootButton.classList.contains('active')){
+        touchLayer.style.pointerEvents = 'auto';
+    } else {
+        touchLayer.style.pointerEvents = 'none';
+    }
+});
+
+// shoot by tapping/clicking the screen (works on mobile via pointer events)
+touchLayer.addEventListener('pointerdown',(e)=>{
+    e.preventDefault();
+    touchLayer.style.pointerEvents = 'none';
+    const underlying = document.elementFromPoint(e.clientX, e.clientY);
+    touchLayer.style.pointerEvents = 'auto';
+
+    if(underlying){
+        const menuElem = underlying.closest && underlying.closest('#menu');
+        const settingsElem = underlying.closest && underlying.closest('#settingsButton');
+        if(menuElem || settingsElem){
+            underlying.click();
+            return;
+        }
+    }
+
+    if(!shootButton.classList.contains('active') || reloadActive) return;
+    shotCount++;
+    shotSound.currentTime = 0;
+    shotSound.play().catch(()=>{});
+
+    if(shotCount % 5 === 0){
+        reloadActive = true;
+        setTimeout(()=>{
+            reloadSound.currentTime = 0;
+            reloadSound.play().catch(()=>{});
+            reloadSound.onended = () => {
+                reloadActive = false;
+            };
+            const unlockDelay = Math.max((reloadSound.duration || 0) - 2, 0) * 1000;
+            if(unlockDelay > 0){
+                setTimeout(() => { reloadActive = false; }, unlockDelay);
+            }
+        }, 200);
+    }
+});
+
+</script>
+
+
+</body>
+
+</html>
