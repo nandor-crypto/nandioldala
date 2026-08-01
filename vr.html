@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamera HUD</title>
+<title>Vr Extra játék</title>
 
 <style>
 
@@ -31,6 +31,99 @@ html, body {
     top: 0;
     left: 0;
     z-index: 1;
+    transition: all 0.35s ease;
+}
+
+/* body.vr-mode #camera {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: none;
+    filter:
+        contrast(1.05)
+        saturate(1.1);
+    transform: scale(1.12);
+} */
+
+/* body.vr-mode #hud {
+    background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.98) 100%);
+    overflow: hidden;
+} */
+
+body.vr-mode #hud::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+    radial-gradient(circle at 25% 50%,transparent 0%,transparent 34%,rgba(0,0,0,.25) 52%,rgba(0,0,0,.85) 100%),
+    radial-gradient(circle at 75% 50%,transparent 0%,transparent 34%,rgba(0,0,0,.25) 52%,rgba(0,0,0,.85) 100%);
+
+    pointer-events: none;
+}
+
+#vrShell {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+}
+
+body.vr-mode #vrShell {
+    display: block;
+}
+
+.vrLens {
+    position: absolute;
+    top: 50%;
+    width: 44%;
+    height: 72%;
+    transform: translateY(-50%);
+    border: 3px solid rgba(255,255,255,0.22);
+    border-radius: 20px;
+    box-shadow: inset 0 0 0 8px rgba(0,0,0,0.75), 0 0 18px rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.14);
+}
+
+.vrLens::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    border-radius: 50%;
+    background:
+    radial-gradient(circle,
+    transparent 52%,
+    rgba(0,0,0,.18) 72%,
+    rgba(0,0,0,.55) 100%);
+
+    pointer-events: none;
+}
+
+.vrLensLeft {
+    left: 3%;
+}
+
+.vrLensRight {
+    right: 3%;
+}
+
+#vrBridge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 5%;
+    height: 18%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.55);
+    border-radius: 999px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.35);
 }
 
 /* HUD réteg */
@@ -42,9 +135,8 @@ html, body {
     pointer-events: none;
 }
 
-
-/* Középső célkereszt */
 #crosshair {
+    z-index: 6;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -54,169 +146,453 @@ html, body {
     font-weight: bold;
 }
 
+body.vr-mode #crosshair {
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-/* Fogaskerék gomb */
+body.vr-mode #crosshair::before {
+    content: "+";
+    position: absolute;
+    right: 3.5vw;
+    top: 0;
+}
+
+body.vr-mode #crosshair::after {
+    content: "+";
+    position: absolute;
+    left: 3.5vw;
+    top: 0;
+}
+body.vr-mode #settingsButton {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+body.vr-mode #hud::before {
+    content: "";
+    position: absolute;
+    inset: 5vh 8vw 5vh 8vw;
+    border: 3px solid rgba(255, 255, 255, 0.16);
+    border-radius: 28px;
+    box-shadow:
+        inset 0 0 0 12px rgba(0, 0, 0, 0.85),
+        0 0 45px rgba(0, 0, 0, 0.65);
+    clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+    pointer-events: none;
+}
+
 #settingsButton {
     position: absolute;
     right: 20px;
     top: 20px;
-
     width: 60px;
     height: 60px;
-
     border-radius: 50%;
     background: rgba(80,80,80,0.8);
     color: white;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 30px;
-
     opacity: 0;
     transition: 0.3s;
-
     pointer-events: auto;
     cursor: pointer;
     z-index: 10;
 }
 
-
-/* Ha a jobb felső sarok fölé megy az egér */
 body:hover #settingsButton {
     opacity: 1;
 }
 
-
-/* Menü */
 #menu {
-
     position: absolute;
-
     right: 20px;
     top: 90px;
-
     width: 280px;
-
     background: rgba(40,40,40,0.85);
-
     border-radius: 20px;
-
     padding: 15px;
-
     display: none;
-
     pointer-events: auto;
-
     color:white;
 }
 
-
-/* Menü címe */
 #menu h2 {
-
     text-align:center;
     margin-bottom:15px;
     font-size:20px;
-
 }
 
-
-/* Gombok tartója */
 .options {
-
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
     gap:15px;
-
 }
 
-
-/* Kör alakú kapcsolók */
 .option {
-
     width:90px;
     height:90px;
-
     border-radius:50%;
-
     background:#777;
-
     display:flex;
     flex-direction:column;
-
     justify-content:center;
     align-items:center;
-
     color:white;
-
     cursor:pointer;
-
     transition:0.2s;
-
     text-align:center;
-
 }
-
 
 .option .icon {
-
     font-size:30px;
-
 }
-
 
 .option span {
-
     font-size:12px;
     margin-top:5px;
-
 }
 
-
-/* Bekapcsolt állapot */
 .option.active {
-
     background:orange;
-
 }
 
-
-/* Halvány külső keret */
 #screenFrame {
-
     position:absolute;
-
     width:100%;
     height:100%;
-
     display:none;
     pointer-events: none;
-
 }
 
+#shotEffect {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 7;
+    overflow: hidden;
+}
 
-/* Infra piros fókuszkeret */
+.shotOrb {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,235,165,1) 0%, rgba(255,180,70,0.9) 45%, rgba(255,120,30,0.5) 70%, rgba(255,120,30,0.1) 90%);
+    box-shadow: 0 0 20px rgba(255,170,50,0.95), inset 0 0 16px rgba(255,230,190,0.8);
+    opacity: 1;
+}
+
+.shotOrb.active {
+    animation: shotOrbAnim 700ms ease-in forwards;
+}
+
+@keyframes shotOrbAnim {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 0;
+    }
+}
+
+.shotOrb::before {
+    content: "";
+    position: absolute;
+    left: 55%;
+    top: 50%;
+    width: 48px;
+    height: 20px;
+    transform: translate(-50%, -50%) rotate(10deg);
+    background: radial-gradient(circle at 20% 50%, rgba(255,255,200,0.95) 0%, rgba(255,190,80,0.9) 24%, rgba(255,120,20,0.6) 55%, rgba(255,80,0,0) 100%);
+    filter: blur(3px);
+    opacity: 0.95;
+    border-radius: 50% 50% 20% 50%;
+}
+
+.shotOrb::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 120px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255,220,140,0.45) 0%, rgba(255,170,70,0.05) 55%, transparent 70%);
+    filter: blur(10px);
+    opacity: 0.8;
+}
+
+.shotOrb .spark {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,200,80,0.9) 35%, rgba(255,130,10,0.2) 70%, transparent 100%);
+    filter: blur(1px);
+    opacity: 0.9;
+    animation: sparkBurst 700ms ease-out forwards;
+}
+
+@keyframes sparkBurst {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--dx), var(--dy)) scale(0.2);
+        opacity: 0;
+    }
+}
+
+.shotFlash {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translate(-50%, -50%) scale(0.3);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,240,190,0.7) 40%, rgba(255,180,70,0) 70%);
+    filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 8;
+    animation: shotFlashAnim 180ms ease-out forwards;
+}
+
+@keyframes shotFlashAnim {
+    0% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(0.4);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.6);
+    }
+}
+
+.grenadeEgg {
+    position: absolute;
+    left: 50%;
+    top: 18%;
+    width: 110px;
+    height: 150px;
+    border-radius: 50% / 62%;
+    box-sizing: border-box;
+
+background:
+    linear-gradient(to right, #000 6px, transparent 6px),
+    linear-gradient(to bottom, #000 6px, transparent 6px),
+    radial-gradient(circle at 40% 35%, #b8ff8a 0%, #78d84b 45%, #264e14 100%);
+
+background-size:
+    calc(100% / 3) calc(100% / 3),
+    calc(100% / 3) calc(100% / 3),
+    100% 100%;
+
+background-position:
+    center,
+    center,
+    center;
+    box-shadow:
+        inset 0 0 16px rgba(255,255,255,0.18),
+        0 0 24px rgba(120,255,110,0.35),
+        0 0 0 3px rgba(0,0,0,0.85);
+
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 8;
+}
+
+.grenadeEgg::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -26px;
+    width: 10px;
+    height: 36px;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,220,100,0.8) 40%, rgba(255,180,20,0.4) 100%);
+    box-shadow: 0 0 24px rgba(255,200,80,0.85);
+}
+
+.grenadeEgg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 8px solid #000000;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.grenadeEgg.spark::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -42px;
+    width: 24px;
+    height: 24px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,235,140,0.9) 35%, rgba(255,170,40,0.3) 65%, transparent 100%);
+    filter: blur(1px);
+    box-shadow: 0 0 18px rgba(255,225,120,0.95), 0 0 42px rgba(255,170,40,0.45);
+    animation: sparkPulse 240ms ease-in-out infinite alternate;
+}
+
+@keyframes sparkPulse {
+    0% {
+        transform: translateX(-50%) scale(0.9);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(-50%) scale(1.15);
+        opacity: 1;
+    }
+}
+
+.grenadeEgg.drop {
+    animation: grenadeDrop 1.4s ease-out forwards;
+}
+
+.grenadeEgg.reverse {
+    animation: grenadeDropReverse 1.2s ease-in forwards;
+}
+
+@keyframes grenadeDrop {
+    0% {
+        top: 18%;
+        opacity: 1;
+        transform: translateX(-50%) scale(0.7);
+    }
+    50% {
+        top: 60%;
+        transform: translateX(-50%) scale(1.1);
+    }
+    100% {
+        top: calc(100% + 140px);
+        transform: translateX(-50%) scale(0.45);
+        opacity: 0;
+    }
+}
+
+@keyframes grenadeDropReverse {
+    0% {
+        top: calc(100% + 140px);
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5);
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        top: 18%;
+        transform: translateX(-50%) scale(1.0);
+    }
+    100% {
+        top: 18%;
+        transform: translateX(-50%) scale(0.6);
+        opacity: 0;
+    }
+}
+
+.vrShotBall {
+    position: absolute;
+    top: 50%;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    left: 15%;
+    transform: translate(-50%, -50%) scale(0.35);
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,200,110,0.96) 28%, rgba(255,120,40,0.8) 55%, rgba(255,90,20,0.15) 90%);
+    box-shadow: 0 0 28px rgba(255,190,90,0.75), inset 0 0 18px rgba(255,240,180,0.45);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 8;
+}
+
+.vrShotBall::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+    border: 2px solid rgba(255,255,255,0.65);
+    background: rgba(255,255,255,0.08);
+}
+
+.vrShotBall.vrRight {
+    left: 85%;
+}
+
+.vrShotBall.active.vrLeft {
+    animation: vrShotMoveLeft 520ms ease-out forwards;
+    opacity: 1;
+}
+
+.vrShotBall.active.vrRight {
+    animation: vrShotMoveRight 520ms ease-out forwards;
+    opacity: 1;
+}
+
+@keyframes vrShotMoveLeft {
+    0% {
+        left: 15%;
+        transform: translate(-50%, -50%) scale(0.4);
+        opacity: 1;
+    }
+    70% {
+        left: 48%;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    100% {
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.25);
+        opacity: 0;
+    }
+}
+
+@keyframes vrShotMoveRight {
+    0% {
+        left: 85%;
+        transform: translate(-50%, -50%) scale(0.4);
+        opacity: 1;
+    }
+    70% {
+        left: 52%;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    100% {
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.25);
+        opacity: 0;
+    }
+}
+
 #infraFrame {
-
     position:absolute;
-
     width:70%;
     height:50%;
-
     left:15%;
     top:25%;
-
     border:5px solid red;
-
     display:none;
-
 }
 
-
-/* Függőleges detektor alap */
 #detector {
     position:absolute;
     right:20px;
@@ -238,18 +614,51 @@ body:hover #settingsButton {
     background:red;
 }
 
-/* Fullscreen invisible touch layer for shooting (enabled when shooting is active) */
+body.vr-mode #detector,
+body.vr-mode #detectorLine,
+body.vr-mode #triangleLeft,
+body.vr-mode #triangleRight {
+    display: none !important;
+}
+
+body.vr-mode #hud::before,
+body.vr-mode #motionCanvas {
+    display: none !important;
+}
+
+#screenFrame {
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:none;
+    pointer-events: none;
+    z-index: 8;
+}
+
+body.screen-shake #camera,
+body.screen-shake #hud {
+    animation: screenShake 320ms ease-out;
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-6px, -4px); }
+    40% { transform: translate(7px, 4px); }
+    60% { transform: translate(-5px, 2px); }
+    80% { transform: translate(4px, -3px); }
+}
+
 #touchLayer {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 20;
     pointer-events: none;
+    touch-action: none;
 }
 
-/* Canvas used to draw motion/focus boxes */
 #motionCanvas {
     position: absolute;
     left: 0;
@@ -261,31 +670,14 @@ body:hover #settingsButton {
     pointer-events: none;
 }
 
-/* Háromszögek */
 .triangle {
-    position:absolute;
-    width:0;
-    height:0;
+    display: none;
 }
 
-#triangleLeft {
-    top:50%;
-    left:-16px;
-    transform: translateY(-50%);
-    border-top:14px solid transparent;
-    border-bottom:14px solid transparent;
-    border-right:14px solid red;
-}
-
+#triangleLeft,
 #triangleRight {
-    top:50%;
-    right:-16px;
-    transform: translateY(-50%);
-    border-top:14px solid transparent;
-    border-bottom:14px solid transparent;
-    border-left:14px solid red;
+    display: none;
 }
-
 
 </style>
 
@@ -293,919 +685,240 @@ body:hover #settingsButton {
 
 <body>
 
-<!-- Kamera kép -->
 <video id="camera" autoplay playsinline></video>
 
-
-<!-- HUD elemek -->
 <div id="hud">
-
-
-    <!-- Középső plusz -->
     <div id="crosshair">+</div>
-
-
-    <!-- Beállítás gomb -->
-    <div id="settingsButton">
-        ⚙️
-    </div>
-
-
-
-    <!-- Menü -->
+    <div id="settingsButton">⚙️</div>
     <div id="menu">
-
         <h2>Beállítások</h2>
-
-
         <div class="options">
-
-
-            <!-- Infra keret -->
-            <div class="option" id="infraButton">
-
-                <div class="icon">
-                    ‼️
-                </div>
-
-                <span>
-                    Infra keret
-                </span>
-
-            </div>
-
-
-
-            <!-- Függőleges detektor -->
-            <div class="option" id="detectorButton">
-
-                <div class="icon">
-                    🔺🔻
-                </div>
-
-                <span>
-                    Függőleges detektor
-                </span>
-
-            </div>
-
-
-
-
-            <!-- Veszély mód -->
-            <div class="option" id="dangerButton">
-
-                <div class="icon">
-                    ☣️⚠️
-                </div>
-
-                <span>
-                    Veszély
-                </span>
-
-            </div>
-
-
-
-
-            <!-- Halvány keret -->
-            <div class="option" id="frameButton">
-
-                <div class="icon">
-                    ⏹️
-                </div>
-
-                <span>
-                    Keret
-                </span>
-
-            </div>
-
-
-
-
-            <!-- Lövés -->
-            <div class="option" id="shootButton">
-
-                <div class="icon">
-                    🔫
-                </div>
-
-                <span>
-                    Lövés
-                </span>
-
-            </div>
-
-
-
+            <div class="option" id="infraButton"><div class="icon">‼️</div><span>Infra keret</span></div>
+            <div class="option" id="detectorButton"><div class="icon">🔺🔻</div><span>Függőleges detektor</span></div>
+            <div class="option" id="dangerButton"><div class="icon">☣️⚠️</div><span>Veszély</span></div>
+            <div class="option" id="vrButton"><div class="icon">🧿</div><span>Vr</span></div>
+            <div class="option" id="frameButton"><div class="icon">⏹️</div><span>Keret</span></div>
+            <div class="option" id="grenadeButton"><div class="icon">💣</div><span>Gránát</span></div>
+            <div class="option" id="shootButton"><div class="icon">🔫</div><span>Lövés</span></div>
         </div>
-
-
     </div>
-
-
-
-    <!-- Effektek -->
-
-
-    <!-- Infra fókuszkeret -->
+    <div id="vrShell">
+        <div class="vrLens vrLensLeft"></div>
+        <div id="vrBridge"></div>
+        <div class="vrLens vrLensRight"></div>
+    </div>
     <div id="infraFrame"></div>
-
-
-
-    <!-- Külső halvány keret -->
     <div id="screenFrame"></div>
-
-    <!-- Motion/focus canvas (drawn when Infra is active) -->
+    <div id="shotEffect"></div>
     <canvas id="motionCanvas"></canvas>
-
-    <!-- Touch layer for shooting (enabled when shooting mode is active) -->
-    <div id="touchLayer"></div>
-
-
-
-
-    <!-- Függőleges detektor -->
     <div id="detector">
         <div id="detectorLine"></div>
         <div id="triangleLeft" class="triangle"></div>
         <div id="triangleRight" class="triangle"></div>
     </div>
-
-
-
 </div>
 
+<div id="touchLayer"></div>
 
-
-<!-- Hangok helye -->
 <audio id="shotSound" src="shot.mp3"></audio>
-
 <audio id="reloadSound" src="reload.mp3"></audio>
-
+<audio id="granatgyujtSound" src="granatgyujt.mp3"></audio>
+<audio id="granateSound" src="granate.mp3"></audio>
+<audio id="granattoltSound" src="granattolt.mp3"></audio>
 <audio id="sirenSound" src="siren.mp3"></audio>
 
-
-
-    
 <script>
-
-
-// Kamera indítása
-
 const camera = document.getElementById("camera");
-
-
-navigator.mediaDevices.getUserMedia({
-
-    video: {
-        facingMode: "environment"
-    },
-
-    audio:false
-
-})
-
-.then(stream => {
-
-    camera.srcObject = stream;
-
-})
-
-.catch(error => {
-
-    alert("A kamera nem érhető el: " + error);
-
-});
-
-
-
-
-
-// Menü elemek
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio:false })
+.then(stream => { camera.srcObject = stream; })
+.catch(error => { alert("A kamera nem érhető el: " + error); });
 
 const settingsButton = document.getElementById("settingsButton");
-
 const menu = document.getElementById("menu");
-
-
-
-// Menü nyitás
-
-settingsButton.addEventListener("click",()=>{
-
-
-    if(menu.style.display === "block"){
-
-        menu.style.display="none";
-
-    }
-
-    else{
-
-        menu.style.display="block";
-
-    }
-
-
-});
-
-
-
-
-
-
-
-// Gombok
-
-const infraButton =
-document.getElementById("infraButton");
-
-
-const detectorButton =
-document.getElementById("detectorButton");
-
-
-const dangerButton =
-document.getElementById("dangerButton");
-
-
-const frameButton =
-document.getElementById("frameButton");
-
-
-const shootButton =
-document.getElementById("shootButton");
-
-
-
-
-
-
-// Effektek
-
-const infraFrame =
-document.getElementById("infraFrame");
-
-
-const screenFrame =
-document.getElementById("screenFrame");
-
-
-const detector =
-document.getElementById("detector");
-
-
-
-
-
-// Kapcsoló segédfüggvény
-
-function toggleButton(button){
-
-    button.classList.toggle("active");
-
-}
-
-
-
-
-
-
-// INFRA KERET
-
-infraButton.addEventListener("click",()=>{
-    toggleButton(infraButton);
-    if(infraButton.classList.contains("active")){
-        startInfra();
-    } else {
-        stopInfra();
-    }
-});
-
-
-
-
-
-
-
-
-
-// HALVÁNY KERET
-
-frameButton.addEventListener("click",()=>{
-
-
-    toggleButton(frameButton);
-
-
-    if(frameButton.classList.contains("active")){
-
-        // create a full-screen 3x3 overlay grid of contiguous squares
-        screenFrame.innerHTML = '';
-        const grid = document.createElement('div');
-        grid.style.position = 'absolute';
-        grid.style.left = '0';
-        grid.style.top = '0';
-        grid.style.width = '100%';
-        grid.style.height = '100%';
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(3,1fr)';
-        grid.style.gridTemplateRows = 'repeat(3,1fr)';
-        grid.style.gap = '0';
-        grid.style.pointerEvents = 'none';
-        for(let i=0;i<9;i++){
-            const cell = document.createElement('div');
-            cell.style.boxSizing = 'border-box';
-            cell.style.border = '2px solid rgba(220,220,220,0.35)';
-            cell.style.background = 'transparent';
-            grid.appendChild(cell);
-        }
-        screenFrame.appendChild(grid);
-        screenFrame.style.display = 'block';
-
-
-    }
-
-    else{
-
-
-        screenFrame.style.display='none';
-        screenFrame.innerHTML = '';
-
-
-    }
-
-
-});
-
-
-
-
-
-
-
-
-
-// FÜGGŐLEGES DETEKTOR
-
-detectorButton.addEventListener("click",()=>{
-
-
-    toggleButton(detectorButton);
-
-
-
-    if(detectorButton.classList.contains("active")){
-
-
-        detector.style.display="block";
-
-
-        startDetector();
-
-
-    }
-
-    else{
-
-
-        detector.style.display="none";
-
-
-        stopDetector();
-
-
-    }
-
-
-
-});
-
-
-
-
-
-
-// Detektor megjelenítés
-
-const motionCanvas = document.getElementById('motionCanvas');
+settingsButton.addEventListener("click",()=>{ if(menu.style.display === "block"){ menu.style.display="none"; } else { menu.style.display="block"; } });
+
+const infraButton = document.getElementById("infraButton");
+const detectorButton = document.getElementById("detectorButton");
+const dangerButton = document.getElementById("dangerButton");
+const frameButton = document.getElementById("frameButton");
+const shootButton = document.getElementById("shootButton");
+const grenadeButton = document.getElementById("grenadeButton");
+const shotEffect = document.getElementById("shotEffect");
+const vrButton = document.getElementById("vrButton");
 const touchLayer = document.getElementById('touchLayer');
+const motionCanvas = document.getElementById('motionCanvas');
 const mCtx = motionCanvas.getContext && motionCanvas.getContext('2d');
 const processCanvas = document.createElement('canvas');
 const pCtx = processCanvas.getContext && processCanvas.getContext('2d');
-let motionInterval = null;
-let detectorMoveInterval = null;
+const infraFrame = document.getElementById("infraFrame");
+const screenFrame = document.getElementById("screenFrame");
+const detector = document.getElementById("detector");
 const triangleLeft = document.getElementById('triangleLeft');
 const triangleRight = document.getElementById('triangleRight');
+const shotSound = document.getElementById("shotSound");
+const reloadSound = document.getElementById("reloadSound");
+const granateSound = document.getElementById("granateSound");
+let vrModeActive = false;
+let dangerActive = false;
+let dangerInterval;
+let motionInterval = null;
+let detectorMoveInterval = null;
+let shotCount = 0;
+let reloadActive = false;
+let shootLocked = false;
+let shootModeActive = false;
+const grenadeHoldThreshold = 500;
+const grenadeMaxThrows = 2;
+let grenadeModeActive = false;
+let grenadeHoldTimer = null;
+let grenadeHoldTriggered = false;
+let grenadeLoading = false;
+let grenadeInProgress = false;
+let grenadeCount = 0;
+let grenadePointerId = null;
+let grenadePointerStart = null;
+let activeGrenadeEgg = null;
+let grenadeChargeCompleteTimeout = null;
+let grenadeChargeListener = null;
+let screenShakeTimer = null;
+let grenadeReturnTimer = null;
 
-function startDetector(){
-    detector.style.display = 'block';
-    if(detectorMoveInterval) return;
-    detectorMoveInterval = setInterval(()=>{
-        const offset = (Math.random() - 0.5) * 30;
-        triangleLeft.style.transform = `translateY(calc(-50% + ${offset}px))`;
-        triangleRight.style.transform = `translateY(calc(-50% + ${offset}px))`;
-    }, 900);
+function toggleButton(button){ button.classList.toggle("active"); }
+
+function startScreenShake(duration = 320){
+    document.body.classList.remove("screen-shake");
+    void document.body.offsetWidth;
+    document.body.classList.add("screen-shake");
+    if (screenShakeTimer) clearTimeout(screenShakeTimer);
+    screenShakeTimer = setTimeout(() => {
+        document.body.classList.remove("screen-shake");
+        screenShakeTimer = null;
+    }, duration);
 }
 
-function startInfra(){
-    if(!mCtx || !pCtx) return;
-    motionCanvas.style.display = 'block';
-    motionCanvas.width = window.innerWidth;
-    motionCanvas.height = window.innerHeight;
-    processCanvas.width = 240;
-    processCanvas.height = 180;
-    motionInterval = setInterval(()=>{
-        try{
-            pCtx.drawImage(camera,0,0,processCanvas.width,processCanvas.height);
-            const img = pCtx.getImageData(0,0,processCanvas.width,processCanvas.height);
-            detectShapes(img);
-        }catch(e){ /* camera not ready yet */ }
-    },200);
-}
+granateSound.addEventListener("play", () => startScreenShake(360));
 
-function stopInfra(){
-    motionCanvas.style.display = 'none';
-    clearInterval(motionInterval);
-    motionInterval = null;
-    if(mCtx) mCtx.clearRect(0,0,motionCanvas.width,motionCanvas.height);
-}
+infraButton.addEventListener("click",()=>{ toggleButton(infraButton); if(infraButton.classList.contains("active")){ startInfra(); } else { stopInfra(); } });
 
-function detectShapes(img){
-    const w = processCanvas.width;
-    const h = processCanvas.height;
-    const gray = new Uint8ClampedArray(w * h);
-    for(let i=0, j=0; i<img.data.length; i+=4, j++){
-        const r = img.data[i];
-        const g = img.data[i+1];
-        const b = img.data[i+2];
-        gray[j] = (0.299*r + 0.587*g + 0.114*b)|0;
-    }
-    const blurred = gaussianBlur(gray, w, h, 5);
-    const edges = canny(blurred, w, h, 80, 160);
-    const contours = findContours(edges, w, h);
-    if(!mCtx) return;
-    mCtx.clearRect(0,0,motionCanvas.width,motionCanvas.height);
-    mCtx.strokeStyle = 'red';
-    mCtx.lineWidth = 4;
-    const scaleX = motionCanvas.width / w;
-    const scaleY = motionCanvas.height / h;
-    contours.forEach(contour=>{
-        if(contour.length < 20) return;
-        const bbox = boundingBox(contour);
-        const area = contour.length;
-        if(area < 800 || bbox.w < 20 || bbox.h < 20) return;
-        const peri = perimeter(contour);
-        const approx = approxPolyDP(contour, 0.02 * peri);
-        if(approx.length === 4){
-            const rectBox = boundingBox(approx);
-            const ratio = rectBox.w / rectBox.h;
-            if(ratio > 0.90 && ratio < 1.10){
-                // near square
-                mCtx.strokeRect(rectBox.x * scaleX, rectBox.y * scaleY, rectBox.w * scaleX, rectBox.h * scaleY);
-            } else {
-                // rectangle
-                mCtx.strokeRect(rectBox.x * scaleX, rectBox.y * scaleY, rectBox.w * scaleX, rectBox.h * scaleY);
-            }
-        }
-    });
-}
+function enterVrMode(){ vrModeActive = true; document.body.classList.add("vr-mode"); menu.style.display = "none"; settingsButton.style.opacity = "1"; if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(() => {}); } if (screen.orientation && screen.orientation.lock) { screen.orientation.lock("landscape").catch(() => {}); } }
+function exitVrMode(){ vrModeActive = false; document.body.classList.remove("vr-mode"); settingsButton.style.opacity = ""; if (document.fullscreenElement && document.exitFullscreen) { document.exitFullscreen().catch(() => {}); } if (screen.orientation && screen.orientation.unlock) { screen.orientation.unlock(); } }
+vrButton.addEventListener("click", ()=>{ toggleButton(vrButton); if (vrButton.classList.contains("active")) { enterVrMode(); } else { exitVrMode(); } });
+frameButton.addEventListener("click",()=>{ toggleButton(frameButton); if(frameButton.classList.contains("active")){ screenFrame.innerHTML = ''; const grid = document.createElement('div'); grid.style.position = 'absolute'; grid.style.left = '0'; grid.style.top = '0'; grid.style.width = '100%'; grid.style.height = '100%'; grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(5,1fr)'; grid.style.gridTemplateRows = 'repeat(5,1fr)'; grid.style.gap = '0'; grid.style.pointerEvents = 'none'; for(let i=0;i<25;i++){ const cell = document.createElement('div'); cell.style.boxSizing = 'border-box'; cell.style.border = '1px solid rgba(255,255,255,0.18)'; cell.style.background = 'transparent'; grid.appendChild(cell); } screenFrame.appendChild(grid); screenFrame.style.display = 'block'; screenFrame.style.pointerEvents = 'none'; } else { screenFrame.style.display='none'; screenFrame.innerHTML = ''; } });
 
-function gaussianBlur(src, w, h, k){
-    const dst = new Uint8ClampedArray(w*h);
-    const kernel = [1, 4, 6, 4, 1];
-    const sum = 16;
-    const temp = new Uint8ClampedArray(w*h);
-    const half = Math.floor(k/2);
-    for(let y=0; y<h; y++){
-        for(let x=0; x<w; x++){
-            let acc = 0;
-            for(let j=-half; j<=half; j++){
-                const sx = Math.min(w-1, Math.max(0, x+j));
-                acc += src[y*w + sx] * kernel[j+half];
-            }
-            temp[y*w + x] = acc / sum | 0;
-        }
-    }
-    for(let x=0; x<w; x++){
-        for(let y=0; y<h; y++){
-            let acc = 0;
-            for(let j=-half; j<=half; j++){
-                const sy = Math.min(h-1, Math.max(0, y+j));
-                acc += temp[sy*w + x] * kernel[j+half];
-            }
-            dst[y*w + x] = acc / sum | 0;
-        }
-    }
-    return dst;
-}
+dangerButton.addEventListener("click",()=>{ toggleButton(dangerButton); if(dangerButton.classList.contains("active")){ dangerActive=true; startDanger(); } else { dangerActive=false; stopDanger(); } });
 
-function canny(gray, w, h, low, high){
-    const mag = new Float32Array(w*h);
-    const edge = new Uint8ClampedArray(w*h);
-    const strong = 255, weak = 128;
-    for(let y=1; y<h-1; y++){
-        for(let x=1; x<w-1; x++){
-            const idx = y*w + x;
-            const gx = -gray[idx-w-1] - 2*gray[idx-1] - gray[idx+w-1] + gray[idx-w+1] + 2*gray[idx+1] + gray[idx+w+1];
-            const gy = -gray[idx-w-1] - 2*gray[idx-w] - gray[idx-w+1] + gray[idx+w-1] + 2*gray[idx+w] + gray[idx+w+1];
-            mag[idx] = Math.hypot(gx, gy);
-            edge[idx] = mag[idx] >= high ? strong : mag[idx] >= low ? weak : 0;
-        }
-    }
-    for(let y=1; y<h-1; y++){
-        for(let x=1; x<w-1; x++){
-            const idx = y*w + x;
-            if(edge[idx] !== weak) continue;
-            let keep = false;
-            for(let dy=-1; dy<=1 && !keep; dy++){
-                for(let dx=-1; dx<=1; dx++){
-                    if(dx===0 && dy===0) continue;
-                    if(edge[(y+dy)*w + x+dx] === strong){
-                        keep = true;
-                        break;
-                    }
-                }
-            }
-            edge[idx] = keep ? strong : 0;
-        }
-    }
-    return edge;
-}
+detectorButton.addEventListener("click",()=>{ toggleButton(detectorButton); if(detectorButton.classList.contains("active")){ detector.style.display="block"; startDetector(); } else { detector.style.display="none"; stopDetector(); } });
 
-function findContours(edge, w, h){
-    const visited = new Uint8Array(w*h);
-    const contours = [];
-    for(let y=0; y<h; y++){
-        for(let x=0; x<w; x++){
-            const idx = y*w + x;
-            if(edge[idx] !== 255 || visited[idx]) continue;
-            const stack = [idx];
-            const points = [];
-            visited[idx] = 1;
-            while(stack.length){
-                const cur = stack.pop();
-                const cy = (cur / w)|0;
-                const cx = cur % w;
-                points.push({x:cx, y:cy});
-                for(let dy=-1; dy<=1; dy++){
-                    for(let dx=-1; dx<=1; dx++){
-                        const nx = cx + dx;
-                        const ny = cy + dy;
-                        if(nx<0||nx>=w||ny<0||ny>=h) continue;
-                        const nidx = ny*w + nx;
-                        if(edge[nidx] === 255 && !visited[nidx]){
-                            visited[nidx] = 1;
-                            stack.push(nidx);
-                        }
-                    }
-                }
-            }
-            contours.push(points);
-        }
-    }
-    return contours;
-}
+grenadeButton.addEventListener("click", ()=>{ toggleButton(grenadeButton); grenadeModeActive = grenadeButton.classList.contains("active"); if(grenadeModeActive){ shootModeActive = false; shootButton.classList.remove('active'); touchLayer.style.pointerEvents = 'auto'; } else if (!shootModeActive) { touchLayer.style.pointerEvents = 'none'; } });
 
-function boundingBox(points){
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    points.forEach(p=>{
-        minX = Math.min(minX, p.x);
-        minY = Math.min(minY, p.y);
-        maxX = Math.max(maxX, p.x);
-        maxY = Math.max(maxY, p.y);
-    });
-    return {x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1};
-}
-
-function perimeter(points){
-    let p = 0;
-    for(let i=1; i<points.length; i++){
-        const dx = points[i].x - points[i-1].x;
-        const dy = points[i].y - points[i-1].y;
-        p += Math.hypot(dx, dy);
-    }
-    return p;
-}
-
-function approxPolyDP(points, epsilon){
-    if(points.length < 3) return points.slice();
-    const dmax = {val:0, idx:0};
-    const [start, end] = [points[0], points[points.length-1]];
-    for(let i=1; i<points.length-1; i++){
-        const d = pointLineDistance(points[i], start, end);
-        if(d > dmax.val){dmax.val = d; dmax.idx = i;}
-    }
-    if(dmax.val > epsilon){
-        const rec1 = approxPolyDP(points.slice(0, dmax.idx+1), epsilon);
-        const rec2 = approxPolyDP(points.slice(dmax.idx), epsilon);
-        return rec1.slice(0, -1).concat(rec2);
-    }
-    return [start, end];
-}
-
-function pointLineDistance(pt, a, b){
-    const A = pt.x - a.x;
-    const B = pt.y - a.y;
-    const C = b.x - a.x;
-    const D = b.y - a.y;
-    const dot = A*C + B*D;
-    const lenSq = C*C + D*D;
-    const param = lenSq !== 0 ? dot / lenSq : -1;
-    let xx, yy;
-    if(param < 0){xx = a.x; yy = a.y;}
-    else if(param > 1){xx = b.x; yy = b.y;}
-    else {xx = a.x + param * C; yy = a.y + param * D;}
-    const dx = pt.x - xx;
-    const dy = pt.y - yy;
-    return Math.hypot(dx, dy);
-}
-
-function isCircleContour(points, bbox){
-    const aspect = bbox.w / bbox.h;
-    if(aspect < 0.7 || aspect > 1.3) return false;
-    const radius = (bbox.w + bbox.h) / 4;
-    const cx = bbox.x + bbox.w/2;
-    const cy = bbox.y + bbox.h/2;
-    let distSum = 0;
-    let count = 0;
-    points.forEach(p=>{
-        const d = Math.hypot(p.x - cx, p.y - cy);
-        distSum += Math.abs(d - radius);
-        count++;
-    });
-    const avgError = distSum / Math.max(count,1);
-    return avgError < radius * 0.35;
-}
-
-window.addEventListener('resize', ()=>{
-    if(motionCanvas.style.display !== 'none'){
-        motionCanvas.width = window.innerWidth;
-        motionCanvas.height = window.innerHeight;
-    }
-});
-
-function stopDetector(){
-    detector.style.display = 'none';
-    if(detectorMoveInterval){
-        clearInterval(detectorMoveInterval);
-        detectorMoveInterval = null;
-        triangleLeft.style.transform = 'translateY(-50%)';
-        triangleRight.style.transform = 'translateY(-50%)';
-    }
-}
-
-
-// ===============================
-// VESZÉLY MÓD
-// ===============================
-
-
+function startDetector(){ detector.style.display = 'block'; if(detectorMoveInterval) return; detectorMoveInterval = setInterval(()=>{ const offset = (Math.random() - 0.5) * 30; triangleLeft.style.transform = `translateY(calc(-50% + ${offset}px))`; triangleRight.style.transform = `translateY(calc(-50% + ${offset}px))`; }, 900); }
+function startInfra(){ if(!mCtx || !pCtx) return; motionCanvas.style.display = 'block'; motionCanvas.width = window.innerWidth; motionCanvas.height = window.innerHeight; processCanvas.width = 240; processCanvas.height = 180; motionInterval = setInterval(()=>{ try{ pCtx.drawImage(camera,0,0,processCanvas.width,processCanvas.height); const img = pCtx.getImageData(0,0,processCanvas.width,processCanvas.height); detectShapes(img); }catch(e){} },200); }
+function stopInfra(){ motionCanvas.style.display = 'none'; clearInterval(motionInterval); motionInterval = null; if(mCtx) mCtx.clearRect(0,0,motionCanvas.width,motionCanvas.height); }
+function detectShapes(img){ const w = processCanvas.width; const h = processCanvas.height; const gray = new Uint8ClampedArray(w * h); for(let i=0, j=0; i<img.data.length; i+=4, j++){ const r = img.data[i]; const g = img.data[i+1]; const b = img.data[i+2]; gray[j] = (0.299*r + 0.587*g + 0.114*b)|0; } const blurred = gaussianBlur(gray, w, h, 5); const edges = canny(blurred, w, h, 80, 160); const contours = findContours(edges, w, h); if(!mCtx) return; mCtx.clearRect(0,0,motionCanvas.width,motionCanvas.height); mCtx.strokeStyle = 'red'; mCtx.lineWidth = 4; const scaleX = motionCanvas.width / w; const scaleY = motionCanvas.height / h; contours.forEach(contour=>{ if(contour.length < 20) return; const bbox = boundingBox(contour); const area = contour.length; if(area < 800 || bbox.w < 20 || bbox.h < 20) return; const peri = perimeter(contour); const approx = approxPolyDP(contour, 0.02 * peri); if(approx.length === 4){ const rectBox = boundingBox(approx); const ratio = rectBox.w / rectBox.h; if(ratio > 0.90 && ratio < 1.10){ mCtx.strokeRect(rectBox.x * scaleX, rectBox.y * scaleY, rectBox.w * scaleX, rectBox.h * scaleY); } else { mCtx.strokeRect(rectBox.x * scaleX, rectBox.y * scaleY, rectBox.w * scaleX, rectBox.h * scaleY); } } }); }
+function gaussianBlur(src, w, h, k){ const dst = new Uint8ClampedArray(w*h); const kernel = [1, 4, 6, 4, 1]; const sum = 16; const temp = new Uint8ClampedArray(w*h); const half = Math.floor(k/2); for(let y=0; y<h; y++){ for(let x=0; x<w; x++){ let acc = 0; for(let j=-half; j<=half; j++){ const sx = Math.min(w-1, Math.max(0, x+j)); acc += src[y*w + sx] * kernel[j+half]; } temp[y*w + x] = acc / sum | 0; } } for(let x=0; x<w; x++){ for(let y=0; y<h; y++){ let acc = 0; for(let j=-half; j<=half; j++){ const sy = Math.min(h-1, Math.max(0, y+j)); acc += temp[sy*w + x] * kernel[j+half]; } dst[y*w + x] = acc / sum | 0; } } return dst; }
+function canny(gray, w, h, low, high){ const mag = new Float32Array(w*h); const edge = new Uint8ClampedArray(w*h); const strong = 255, weak = 128; for(let y=1; y<h-1; y++){ for(let x=1; x<w-1; x++){ const idx = y*w + x; const gx = -gray[idx-w-1] - 2*gray[idx-1] - gray[idx+w-1] + gray[idx-w+1] + 2*gray[idx+1] + gray[idx+w+1]; const gy = -gray[idx-w-1] - 2*gray[idx-w] - gray[idx-w+1] + gray[idx+w-1] + 2*gray[idx+w] + gray[idx+w+1]; mag[idx] = Math.hypot(gx, gy); edge[idx] = mag[idx] >= high ? strong : mag[idx] >= low ? weak : 0; } } for(let y=1; y<h-1; y++){ for(let x=1; x<w-1; x++){ const idx = y*w + x; if(edge[idx] !== weak) continue; let keep = false; for(let dy=-1; dy<=1 && !keep; dy++){ for(let dx=-1; dx<=1; dx++){ if(dx===0 && dy===0) continue; if(edge[(y+dy)*w + x+dx] === strong){ keep = true; break; } } } edge[idx] = keep ? strong : 0; } } return edge; }
+function findContours(edge, w, h){ const visited = new Uint8Array(w*h); const contours = []; for(let y=0; y<h; y++){ for(let x=0; x<w; x++){ const idx = y*w + x; if(edge[idx] !== 255 || visited[idx]) continue; const stack = [idx]; const points = []; visited[idx] = 1; while(stack.length){ const cur = stack.pop(); const cy = (cur / w)|0; const cx = cur % w; points.push({x:cx, y:cy}); for(let dy=-1; dy<=1; dy++){ for(let dx=-1; dx<=1; dx++){ const nx = cx + dx; const ny = cy + dy; if(nx<0||nx>=w||ny<0||ny>=h) continue; const nidx = ny*w + nx; if(edge[nidx] === 255 && !visited[nidx]){ visited[nidx] = 1; stack.push(nidx); } } } } contours.push(points); } } return contours; }
+function boundingBox(points){ let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity; points.forEach(p=>{ minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y); }); return {x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1}; }
+function perimeter(points){ let p = 0; for(let i=1; i<points.length; i++){ const dx = points[i].x - points[i-1].x; const dy = points[i].y - points[i-1].y; p += Math.hypot(dx, dy); } return p; }
+function approxPolyDP(points, epsilon){ if(points.length < 3) return points.slice(); const dmax = {val:0, idx:0}; const [start, end] = [points[0], points[points.length-1]]; for(let i=1; i<points.length-1; i++){ const d = pointLineDistance(points[i], start, end); if(d > dmax.val){dmax.val = d; dmax.idx = i;} } if(dmax.val > epsilon){ const rec1 = approxPolyDP(points.slice(0, dmax.idx+1), epsilon); const rec2 = approxPolyDP(points.slice(dmax.idx), epsilon); return rec1.slice(0, -1).concat(rec2); } return [start, end]; }
+function pointLineDistance(pt, a, b){ const A = pt.x - a.x; const B = pt.y - a.y; const C = b.x - a.x; const D = b.y - a.y; const dot = A*C + B*D; const lenSq = C*C + D*D; const param = lenSq !== 0 ? dot / lenSq : -1; let xx, yy; if(param < 0){xx = a.x; yy = a.y;} else if(param > 1){xx = b.x; yy = b.y;} else {xx = a.x + param * C; yy = a.y + param * D;} const dx = pt.x - xx; const dy = pt.y - yy; return Math.hypot(dx, dy); }
+function isCircleContour(points, bbox){ const aspect = bbox.w / bbox.h; if(aspect < 0.7 || aspect > 1.3) return false; const radius = (bbox.w + bbox.h) / 4; const cx = bbox.x + bbox.w/2; const cy = bbox.y + bbox.h/2; let distSum = 0; let count = 0; points.forEach(p=>{ const d = Math.hypot(p.x - cx, p.y - cy); distSum += Math.abs(d - radius); count++; }); const avgError = distSum / Math.max(count,1); return avgError < radius * 0.35; }
+window.addEventListener('resize', ()=>{ if(motionCanvas.style.display !== 'none'){ motionCanvas.width = window.innerWidth; motionCanvas.height = window.innerHeight; } });
+function stopDetector(){ detector.style.display = 'none'; if(detectorMoveInterval){ clearInterval(detectorMoveInterval); detectorMoveInterval = null; triangleLeft.style.transform = 'translateY(-50%)'; triangleRight.style.transform = 'translateY(-50%)'; } }
 const hud = document.getElementById("hud");
-
-
-// Figyelmeztető felirat létrehozása
-
 const warningText = document.createElement("div");
-
 warningText.innerHTML = "⚠️ VESZÉLY ⚠️";
-
-
 warningText.style.position="absolute";
 warningText.style.top="40px";
 warningText.style.left="50%";
 warningText.style.transform="translateX(-50%)";
-
 warningText.style.color="red";
 warningText.style.fontSize="35px";
 warningText.style.fontWeight="bold";
-
 warningText.style.display="none";
-
-
 hud.appendChild(warningText);
-
-
-
-
-
-// Piros villódzó réteg
-
 const dangerFlash = document.createElement("div");
-
-
 dangerFlash.style.position="absolute";
 dangerFlash.style.left="0";
 dangerFlash.style.top="0";
-
 dangerFlash.style.width="100%";
 dangerFlash.style.height="100%";
-
 dangerFlash.style.border="25px solid red";
-
 dangerFlash.style.display="none";
-
 dangerFlash.style.pointerEvents="none";
-
-
 hud.appendChild(dangerFlash);
 
-
-
-
-
-
-
-let dangerActive=false;
-
-let dangerInterval;
-
-
-
-
-
-
-dangerButton.addEventListener("click",()=>{
-
-
-    toggleButton(dangerButton);
-
-
-
-    if(dangerButton.classList.contains("active")){
-
-
-        dangerActive=true;
-
-
-        startDanger();
-
-
-    }
-
-    else{
-
-
-        dangerActive=false;
-
-
-        stopDanger();
-
-
-    }
-
-
-});
-
-
-
-
-
-
-
-
-function startDanger(){
-
-
-    dangerInterval=setInterval(()=>{
-
-
-        if(!dangerActive) return;
-
-
-
-        warningText.style.display="block";
-
-
-        dangerFlash.style.display="block";
-
-
-
-        dangerFlash.animate(
-
-            [
-                {
-                    opacity:0.2
-                },
-
-                {
-                    opacity:1
-                },
-
-                {
-                    opacity:0.2
-                }
-
-            ],
-
-            {
-
-                duration:800,
-                iterations:3
-
-            }
-
-
-        );
-
-
-
-        let siren =
-        document.getElementById("sirenSound");
-
-
-        siren.currentTime=0;
-
-        siren.play().catch(()=>{});
-
-        setTimeout(()=>{
-
-            warningText.style.display="none";
-
-            dangerFlash.style.display="none";
-
-
-        },4000);
-
-    },120000); // 2 perc
-
-
-}
-
-function stopDanger(){
- clearInterval(dangerInterval);
- warningText.style.display="none";
- dangerFlash.style.display="none";
-
-
-}
-
-// ===============================
-// LÖVÉS FUNKCIÓ
-// ===============================
-
-
-const shotSound =
-document.getElementById("shotSound");
-
-
-const reloadSound =
-document.getElementById("reloadSound");
-
-let shotCount = 0;
-let reloadActive = false;
-
-shootButton.addEventListener("click",()=>{
-    toggleButton(shootButton);
-    if(shootButton.classList.contains('active')){
-        touchLayer.style.pointerEvents = 'auto';
-    } else {
-        touchLayer.style.pointerEvents = 'none';
-    }
-});
-
-// shoot by tapping/clicking the screen (works on mobile via pointer events)
-touchLayer.addEventListener('pointerdown',(e)=>{
-    e.preventDefault();
-    touchLayer.style.pointerEvents = 'none';
-    const underlying = document.elementFromPoint(e.clientX, e.clientY);
-    touchLayer.style.pointerEvents = 'auto';
-
-    if(underlying){
-        const menuElem = underlying.closest && underlying.closest('#menu');
-        const settingsElem = underlying.closest && underlying.closest('#settingsButton');
-        if(menuElem || settingsElem){
-            underlying.click();
-            return;
-        }
-    }
-
-    if(!shootButton.classList.contains('active') || reloadActive) return;
+dangerButton.addEventListener("click",()=>{ toggleButton(dangerButton); if(dangerButton.classList.contains("active")){ dangerActive=true; startDanger(); } else { dangerActive=false; stopDanger(); } });
+function startDanger(){ clearInterval(dangerInterval); dangerInterval=setInterval(()=>{ if(!dangerActive) return; warningText.style.display="block"; dangerFlash.style.display="block"; dangerFlash.animate([{ opacity:0.2},{ opacity:1},{ opacity:0.2}], { duration:800, iterations:3 }); const siren = document.getElementById("sirenSound"); siren.currentTime=0; siren.play().catch(()=>{}); setTimeout(()=>{ warningText.style.display="none"; dangerFlash.style.display="none"; },4000); },120000); }
+function stopDanger(){ clearInterval(dangerInterval); warningText.style.display="none"; dangerFlash.style.display="none"; }
+function setShootMode(enabled){ shootModeActive = enabled; if(enabled){ shootButton.classList.add('active'); touchLayer.style.pointerEvents = 'auto'; } else { shootButton.classList.remove('active'); touchLayer.style.pointerEvents = 'none'; } }
+shootButton.addEventListener("click",()=>{ if(shootModeActive){ if(shootLocked) return; setShootMode(false); return; } setShootMode(true); });
+function createShotBeam(){ const flash = document.createElement('div'); flash.className = 'shotFlash'; shotEffect.appendChild(flash); if(vrModeActive){ createVrShotBalls(flash); shootLocked = true; return; } const orb = document.createElement('div'); orb.className = 'shotOrb'; for(let i=0; i<5; i++){ const spark = document.createElement('div'); spark.className = 'spark'; const angle = Math.random() * Math.PI * 2; const distance = 50 + Math.random()*40; spark.style.setProperty('--dx', `${Math.cos(angle)*distance}px`); spark.style.setProperty('--dy', `${Math.sin(angle)*distance}px`); spark.style.left = '50%'; spark.style.top = '50%'; orb.appendChild(spark); } shotEffect.appendChild(orb); shootLocked = true; requestAnimationFrame(()=> orb.classList.add('active')); orb.addEventListener('animationend', ()=> { orb.remove(); flash.remove(); shootLocked = false; }); }
+function createVrShotBalls(flash){ const left = document.createElement('div'); left.className = 'vrShotBall vrLeft'; const right = document.createElement('div'); right.className = 'vrShotBall vrRight'; shotEffect.appendChild(left); shotEffect.appendChild(right); requestAnimationFrame(()=>{ left.classList.add('active'); right.classList.add('active'); }); let cleaned = false; const cleanup = ()=>{ if(cleaned) return; cleaned = true; left.remove(); right.remove(); if(flash) flash.remove(); shootLocked = false; }; left.addEventListener('animationend', cleanup, { once: true }); right.addEventListener('animationend', cleanup, { once: true }); }
+
+function triggerShot(){
+    if (reloadActive) return;
     shotCount++;
     shotSound.currentTime = 0;
     shotSound.play().catch(()=>{});
-
-    if(shotCount % 5 === 0){
+    createShotBeam();
+    if (shotCount % 5 === 0){
         reloadActive = true;
+        shootLocked = true;
         setTimeout(()=>{
             reloadSound.currentTime = 0;
             reloadSound.play().catch(()=>{});
-            reloadSound.onended = () => {
-                reloadActive = false;
-            };
-            const unlockDelay = Math.max((reloadSound.duration || 0) - 2, 0) * 1000;
-            if(unlockDelay > 0){
-                setTimeout(() => { reloadActive = false; }, unlockDelay);
-            }
+            reloadSound.onended = () => { reloadActive = false; shootLocked = false; };
         }, 200);
     }
-});
+}
+
+touchLayer.addEventListener('pointerdown',(e)=>{ e.preventDefault(); touchLayer.setPointerCapture && touchLayer.setPointerCapture(e.pointerId); touchLayer.style.pointerEvents = 'none'; const underlying = document.elementFromPoint(e.clientX, e.clientY); touchLayer.style.pointerEvents = 'auto'; if(underlying){ const menuElem = underlying.closest && underlying.closest('#menu'); const settingsElem = underlying.closest && underlying.closest('#settingsButton'); if(menuElem || settingsElem){ underlying.click(); return; } } if(grenadeModeActive){ if(grenadeInProgress || reloadActive) return; grenadeHoldTriggered = false; grenadePointerId = e.pointerId; grenadePointerStart = { x: e.clientX, y: e.clientY }; if (grenadeHoldTimer) { clearTimeout(grenadeHoldTimer); grenadeHoldTimer = null; } grenadeHoldTimer = setTimeout(() => { grenadeHoldTriggered = true; grenadeHoldTimer = null; grenadeLoading = true; grenadeInProgress = true; createGrenadeEgg(false); const granatgyujt = document.getElementById('granatgyujtSound'); granatgyujt.currentTime = 0; granatgyujt.play().catch(()=>{}); if (grenadeChargeListener){ granatgyujt.removeEventListener('ended', grenadeChargeListener); grenadeChargeListener = null; } grenadeChargeListener = completeGrenadeCharge; granatgyujt.addEventListener('ended', grenadeChargeListener, { once: true }); if (grenadeChargeCompleteTimeout){ clearTimeout(grenadeChargeCompleteTimeout); grenadeChargeCompleteTimeout = null; } grenadeChargeCompleteTimeout = setTimeout(completeGrenadeCharge, Math.max((granatgyujt.duration || 1.2) * 1000 + 150, 1400)); }, grenadeHoldThreshold); return; } if(!shootModeActive || reloadActive) return; triggerShot(); });
+
+touchLayer.addEventListener('pointerup', handlePointerRelease);
+touchLayer.addEventListener('pointercancel', cancelGrenadeHold);
+touchLayer.addEventListener('pointerleave', cancelGrenadeHold);
+touchLayer.addEventListener('pointermove', trackGrenadeHoldMove);
+touchLayer.addEventListener('pointerout', cancelGrenadeHold);
+touchLayer.addEventListener('lostpointercapture', cancelGrenadeHold);
+
+function completeGrenadeCharge(){ if (!grenadeLoading) return; grenadeLoading = false; grenadeInProgress = false; grenadeHoldTriggered = false; if (grenadeChargeCompleteTimeout){ clearTimeout(grenadeChargeCompleteTimeout); grenadeChargeCompleteTimeout = null; } if (grenadeChargeListener){ const granatgyujt = document.getElementById('granatgyujtSound'); granatgyujt.removeEventListener('ended', grenadeChargeListener); grenadeChargeListener = null; } const explosionEgg = activeGrenadeEgg; if(explosionEgg){ explosionEgg.classList.remove('spark'); } if(activeGrenadeEgg){ activeGrenadeEgg = null; } const granate = document.getElementById('granateSound'); granate.currentTime = 0; granate.play().catch(()=>{}); grenadeCount++; if(grenadeCount >= grenadeMaxThrows){ grenadeCount = 0; queueGrenadeReturn(explosionEgg); } }
+function trackGrenadeHoldMove(e){ if (!grenadeModeActive || grenadeHoldTimer == null) return; if (e.pointerId !== grenadePointerId) return; const dx = e.clientX - grenadePointerStart.x; const dy = e.clientY - grenadePointerStart.y; const distance = Math.hypot(dx, dy); if (distance > 24) { cancelGrenadeHold(); } }
+function handlePointerRelease(e){
+    if (e && e.pointerId && grenadePointerId && e.pointerId !== grenadePointerId) return;
+    const shouldShootOnRelease = e.type === 'pointerup' && !grenadeHoldTriggered && grenadeModeActive && grenadeHoldTimer !== null && !grenadeInProgress && !reloadActive;
+    if (shouldShootOnRelease) {
+        triggerShot();
+    }
+    cancelGrenadeHold(e);
+}
+function cancelGrenadeHold(e){ if (e && e.pointerId && grenadePointerId && e.pointerId !== grenadePointerId) return; if(grenadeHoldTimer){ clearTimeout(grenadeHoldTimer); grenadeHoldTimer = null; } if(!grenadeHoldTriggered){ const granatgyujt = document.getElementById('granatgyujtSound'); granatgyujt.pause(); granatgyujt.currentTime = 0; grenadeHoldTriggered = false; } grenadePointerId = null; grenadePointerStart = null; }
+function createGrenadeEgg(reverse){ const egg = document.createElement('div'); egg.className = 'grenadeEgg'; if(reverse){ egg.classList.add('reverse'); egg.classList.remove('spark'); } else { egg.classList.add('drop'); egg.classList.remove('spark'); } shotEffect.appendChild(egg); activeGrenadeEgg = egg; egg.addEventListener('animationend', ()=>{ if(activeGrenadeEgg === egg){ activeGrenadeEgg = null; } egg.remove(); }, { once: true }); return egg; }
+function queueGrenadeReturn(explosionEgg){
+    if (grenadeReturnTimer) {
+        clearTimeout(grenadeReturnTimer);
+        grenadeReturnTimer = null;
+    }
+    if (!explosionEgg) {
+        playGrenadeReturn();
+        return;
+    }
+    const handleExplosionEnd = () => {
+        explosionEgg.removeEventListener('animationend', handleExplosionEnd);
+        playGrenadeReturn();
+    };
+    explosionEgg.addEventListener('animationend', handleExplosionEnd, { once: true });
+    grenadeReturnTimer = setTimeout(() => {
+        grenadeReturnTimer = null;
+        explosionEgg.removeEventListener('animationend', handleExplosionEnd);
+        playGrenadeReturn();
+    }, 1450);
+}
+function playGrenadeReturn(){ const granattolt = document.getElementById('granattoltSound'); granattolt.currentTime = 0; granattolt.play().catch(()=>{}); createGrenadeEgg(true); }
+
+function startDanger(){ clearInterval(dangerInterval); dangerInterval=setInterval(()=>{ if(!dangerActive) return; warningText.style.display="block"; dangerFlash.style.display="block"; dangerFlash.animate([{ opacity:0.2},{ opacity:1},{ opacity:0.2}], { duration:800, iterations:3 }); const siren = document.getElementById("sirenSound"); siren.currentTime=0; siren.play().catch(()=>{}); setTimeout(()=>{ warningText.style.display="none"; dangerFlash.style.display="none"; },4000); },120000); }
 
 </script>
 
-
 </body>
-
 </html>
