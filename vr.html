@@ -3,11 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="icon" ... <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
-  <link rel="shortcut icon" href="favicon/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
 <title>Vr Extra játék</title>
 
 <style>
@@ -853,7 +848,6 @@ dangerFlash.style.display="none";
 dangerFlash.style.pointerEvents="none";
 hud.appendChild(dangerFlash);
 
-dangerButton.addEventListener("click",()=>{ toggleButton(dangerButton); if(dangerButton.classList.contains("active")){ dangerActive=true; startDanger(); } else { dangerActive=false; stopDanger(); } });
 function startDanger(){ clearInterval(dangerInterval); dangerInterval=setInterval(()=>{ if(!dangerActive) return; warningText.style.display="block"; dangerFlash.style.display="block"; dangerFlash.animate([{ opacity:0.2},{ opacity:1},{ opacity:0.2}], { duration:800, iterations:3 }); const siren = document.getElementById("sirenSound"); siren.currentTime=0; siren.play().catch(()=>{}); setTimeout(()=>{ warningText.style.display="none"; dangerFlash.style.display="none"; },4000); },120000); }
 function stopDanger(){ clearInterval(dangerInterval); warningText.style.display="none"; dangerFlash.style.display="none"; }
 function setShootMode(enabled){ shootModeActive = enabled; if(enabled){ shootButton.classList.add('active'); touchLayer.style.pointerEvents = 'auto'; } else { shootButton.classList.remove('active'); touchLayer.style.pointerEvents = 'none'; } }
@@ -920,8 +914,6 @@ function queueGrenadeReturn(explosionEgg){
     }, 1450);
 }
 function playGrenadeReturn(){ const granattolt = document.getElementById('granattoltSound'); granattolt.currentTime = 0; granattolt.play().catch(()=>{}); createGrenadeEgg(true); }
-
-function startDanger(){ clearInterval(dangerInterval); dangerInterval=setInterval(()=>{ if(!dangerActive) return; warningText.style.display="block"; dangerFlash.style.display="block"; dangerFlash.animate([{ opacity:0.2},{ opacity:1},{ opacity:0.2}], { duration:800, iterations:3 }); const siren = document.getElementById("sirenSound"); siren.currentTime=0; siren.play().catch(()=>{}); setTimeout(()=>{ warningText.style.display="none"; dangerFlash.style.display="none"; },4000); },120000); }
 
 </script>
 
