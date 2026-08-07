@@ -4,6 +4,8 @@
 <head>
       <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+                <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap">
       <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Coral+Pixels&display=swap">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +30,9 @@
       color: #01f405;
       background-color: #ceff99;
       border-radius: 7px;
+    }
+    .betu {
+      font-family: "Fjalla One", cursive;
     }
        .cim {
             font-family: "Press Start 2P", cursive;
@@ -88,6 +93,104 @@
     transform: translateY(150%);
   }
 }
+.money-card{
+    margin:40px 0;
+    width:180px;
+    height:70px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#66bb6a,#29b6f6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+    animation:appear 1s ease,float 4s ease-in-out infinite,glow 3s infinite;
+}
+
+.money-card::before{
+    content:"";
+    position:absolute;
+    width:60px;
+    height:200%;
+    background:rgba(255,255,255,.5);
+    transform:rotate(25deg);
+    left:-100px;
+    animation:light 5s infinite;
+}
+
+.money-card::after{
+    content:"Új!\00a0\00a0\00a0\00a0Új!\00a0\00a0\00a0\00a0Új!";
+    position:absolute;
+    bottom:-25px;
+    right:15px;
+    font-size:20px;
+    color:rgba(0,0,0,0.35);
+    animation:coins 5s linear infinite;
+}
+
+.money-card:hover{
+    transform:scale(1.05);
+}@keyframes appear{
+    from{
+        transform:scale(.3);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+@keyframes glow{
+    0%,100%{
+        box-shadow:0 10px 25px rgba(0,0,0,.25);
+    }
+    50%{
+        box-shadow:0 10px 35px rgba(33,150,243,.7);
+    }
+}
+
+@keyframes light{
+    0%{
+        left:-100px;
+    }
+    60%,100%{
+        left:400px;
+    }
+}
+
+@keyframes coins{
+    0%{
+        transform:translateY(40px);
+        opacity:0;
+    }
+    30%{
+        opacity:1;
+    }
+    100%{
+        transform:translateY(-130px);
+        opacity:0;
+    }
+}
+h4 {
+    font-size: 44px;
+    font-family: "", cursive;
+}
+.sor{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
   </style>
 </head>
 <body>
@@ -104,9 +207,15 @@
   <h3>
     <a target="_self" href="rohogjvelem.html">A legjobb viccek </a>
   </h3>
+  <div class="sor">
       <h3>
             <a target="_self" href="derus.html">Legyél derűs </a>
       </h3>
+        <h4 class="money-card">
+    Új!
+  </h4>
+
+      </div>
       <h3>
   <a target="_self" href="sajatszerencsekerek.html">Csinálj szerencsekereket </a>
   <h3>
@@ -129,10 +238,17 @@
      <a target="_self" href="mese/mesenap.html">Mesenap</a> <img src="https://e7.pngegg.com/pngimages/106/129/png-clipart-keyhole-computer-icons-hole-logo-creative-market-thumbnail.png" width="21">
   </a>
   </h3>
-       <h3>
-     <a target="_self" href="sajatszerencsekerek.html">Készíts szerencsekereket</a><!-- <img src="https://e7.pngegg.com/pngimages/106/129/png-clipart-keyhole-computer-icons-hole-logo-creative-market-thumbnail.png" width="21">
-  </a>
+<div class="sor">
+  <h3>
+    <a target="_self" href="sajatszerencsekerek.html">
+      Készíts szerencsekereket
+    </a>
   </h3>
+
+  <h4 class="money-card">
+    Új!
+  </h4>
+</div>
   <!--   <h3> <a target="_blank"
       href="jatek.html">
  Játsz!--> 
