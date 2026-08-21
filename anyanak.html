@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <link rel="icon" type="image/png" href="./favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="shortcut icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="manifest" href="./site.webmanifest">
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Maszzázs</title>
+
+    <style>
+
+        /* ========================================
+           ALAPOK
+        ======================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f4f4;
+            color: #222;
+            overflow-x: hidden;
+        }
+
+
+        /* ========================================
+           FIX FELSŐ SÁV
+        ======================================== */
+
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: #111;
+
+            display: flex;
+            align-items: center;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+
+
+        /* ========================================
+           HAMBURGER MENÜ
+        ======================================== */
+
+        .menu-button {
+            width: 70px;
+            height: 70px;
+
+            border: none;
+            background: transparent;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            gap: 6px;
+
+            cursor: pointer;
+        }
+
+        .menu-button span {
+            width: 32px;
+            height: 3px;
+
+            background: white;
+            border-radius: 5px;
+
+            transition:
+                transform 0.35s ease,
+                opacity 0.25s ease;
+        }
+
+
+        /* ========================================
+           HAMBURGER → X
+        ======================================== */
+
+        .menu-button.active span:nth-child(1) {
+            transform:
+                translateY(9px)
+                rotate(45deg);
+        }
+
+        .menu-button.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-button.active span:nth-child(3) {
+            transform:
+                translateY(-9px)
+                rotate(-45deg);
+        }
+
+
+        /* ========================================
+           LOGÓ
+        ======================================== */
+
+        .logo {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+
+        /* ========================================
+           OLDALSÓ MENÜ
+        ======================================== */
+
+        .side-menu {
+            position: fixed;
+
+            top: 70px;
+            left: 0;
+
+            width: 280px;
+            height: calc(100vh - 70px);
+
+            background: #181818;
+
+            padding: 30px 20px;
+
+            transform: translateX(-100%);
+
+            transition:
+                transform 0.4s ease;
+
+            z-index: 999;
+        }
+
+        .side-menu.active {
+            transform: translateX(0);
+        }
+
+        .side-menu ul {
+            list-style: none;
+        }
+
+        .side-menu li {
+            margin-bottom: 10px;
+        }
+
+        .side-menu a {
+            display: block;
+
+            padding: 15px 20px;
+
+            color: white;
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            transition:
+                background 0.25s ease,
+                padding-left 0.25s ease;
+        }
+
+        .side-menu a:hover {
+            background: #333;
+            padding-left: 28px;
+        }
+
+
+        /* ========================================
+           SÖTÉTÍTŐ RÉTEG
+        ======================================== */
+
+        .overlay {
+            position: fixed;
+
+            top: 70px;
+            left: 0;
+
+            width: 100%;
+            height: calc(100vh - 70px);
+
+            background: rgba(0, 0, 0, 0.5);
+
+            opacity: 0;
+            visibility: hidden;
+
+            transition:
+                opacity 0.3s ease,
+                visibility 0.3s ease;
+
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* ========================================
+           FŐ TARTALOM
+        ======================================== */
+
+        main {
+            padding-top: 70px;
+        }
+
+
+        /* ========================================
+           HERO / FŐOLDAL
+        ======================================== */
+
+        .hero {
+            min-height: 650px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            padding: 40px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #111,
+                    #333,
+                    #555
+                );
+
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 850px;
+
+            animation:
+                heroAppear 1s ease forwards;
+        }
+
+        .hero h1 {
+            font-size:
+                clamp(45px, 8vw, 90px);
+
+            margin-bottom: 25px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.7;
+            color: #ddd;
+        }
+
+        @keyframes heroAppear {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* ========================================
+           BEMUTATKOZÁS
+        ======================================== */
+
+        .about-section {
+            padding: 100px 30px;
+
+            background: white;
+
+            text-align: center;
+        }
+
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-container h2 {
+            font-size: 42px;
+            margin-bottom: 30px;
+        }
+
+        .about-container p {
+            font-size: 18px;
+            line-height: 1.8;
+
+            color: #555;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ========================================
+           LASSÚ MEGJELENÉS
+        ======================================== */
+
+        .fade-text {
+            opacity: 0;
+
+            transform:
+                translateY(35px);
+
+            transition:
+                opacity 1.2s ease,
+                transform 1.2s ease;
+        }
+
+        .fade-text.show {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+        .downloads-header h2.fade-text {
+            transition-delay: 0s;
+        }
+
+        .downloads-header p.fade-text {
+            transition-delay: 0.25s;
+        }
+
+        .about-container h2.fade-text {
+            transition-delay: 0s;
+        }
+
+        .about-container p:nth-of-type(1).fade-text {
+            transition-delay: 0.25s;
+        }
+
+        .about-container p:nth-of-type(2).fade-text {
+            transition-delay: 0.5s;
+        }
+
+
+        /* ========================================
+           LETÖLTHETŐ KÉPEK
+        ======================================== */
+
+        .downloads-section {
+            padding: 100px 30px;
+        }
+
+        .downloads-header {
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            text-align: center;
+        }
+
+        .downloads-header h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .downloads-header p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #555;
+        }
+
+
+        /* ========================================
+           KÁRTYÁK
+        ======================================== */
+
+        .cards {
+            max-width: 1100px;
+
+            margin: 60px auto 0;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 40px;
+        }
+
+        .card {
+            width: 100%;
+            min-height: 300px;
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 8px 30px
+                rgba(0, 0, 0, 0.08);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 35px;
+
+            opacity: 0;
+
+            transform:
+                translateY(120px);
+
+            transition:
+                opacity 1s ease,
+                transform 1s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .card.show {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+        .card:nth-child(1) {
+            transition-delay: 0s;
+        }
+
+        .card:nth-child(2) {
+            transition-delay: 0.15s;
+        }
+
+        .card:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .card:nth-child(4) {
+            transition-delay: 0.45s;
+        }
+
+        .card:nth-child(5) {
+            transition-delay: 0.6s;
+        }
+
+        .card:nth-child(6) {
+            transition-delay: 0.75s;
+        }
+
+        .card:nth-child(7) {
+            transition-delay: 0.9s;
+        }
+
+        .card:hover {
+            box-shadow:
+                0 15px 40px
+                rgba(0, 0, 0, 0.15);
+        }
+
+
+        /* ========================================
+           KÉP
+        ======================================== */
+
+        .image-preview {
+            width: 320px;
+            height: 230px;
+
+            object-fit: contain;
+
+            border-radius: 14px;
+
+            flex-shrink: 0;
+
+            background: #eeeeee;
+
+            padding: 8px;
+
+            display: block;
+        }
+
+
+        /* ========================================
+           KÁRTYA SZÖVEGE
+        ======================================== */
+
+        .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card h3 {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 17px;
+            line-height: 1.7;
+
+            color: #666;
+        }
+
+
+        /* ========================================
+           MEGNYITÓ GOMB
+        ======================================== */
+
+        .download-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            padding: 14px 24px;
+
+            background: #22c55e;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            border-radius: 9px;
+
+            border: none;
+
+            cursor: pointer;
+
+            flex-shrink: 0;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .download-button:hover {
+            background: #16a34a;
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 7px 20px
+                rgba(34, 197, 94, 0.35);
+        }
+
+        .download-button:active {
+            transform:
+                translateY(0);
+        }
+
+        .download-icon {
+            font-size: 19px;
+        }
+
+
+        /* ========================================
+           EXTRA TÉR
+        ======================================== */
+
+        .spacer {
+            height: 100px;
+        }
+
+
+        /* ========================================
+           KAPCSOLAT
+        ======================================== */
+
+        .contact {
+            min-height: 400px;
+
+            background: #181818;
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            padding: 50px 30px;
+        }
+
+        .contact h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .contact h4 {
+            font-size: 20px;
+
+            margin-bottom: 15px;
+
+            color: #ccc;
+        }
+
+        .contact h3 {
+            font-size: 25px;
+
+            color: white;
+
+            margin-bottom: 25px;
+        }
+
+
+        /* ========================================
+           EMAIL MÁSOLÁS
+        ======================================== */
+
+        .copy-box {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            background: #222;
+
+            color: white;
+
+            padding: 12px 16px;
+
+            border-radius: 10px;
+
+            font-size: 18px;
+        }
+
+        .copy-button {
+            border: none;
+
+            background: #333;
+
+            color: white;
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: #444;
+
+            transform:
+                scale(1.05);
+        }
+
+        .copy-button:active {
+            transform:
+                scale(0.95);
+        }
+
+
+        /* ========================================
+           TABLET
+        ======================================== */
+
+        @media (max-width: 1000px) {
+
+            .card {
+                gap: 25px;
+            }
+
+            .image-preview {
+                width: 270px;
+                height: 210px;
+            }
+
+            .card h3 {
+                font-size: 27px;
+            }
+
+            .download-button {
+                padding: 13px 18px;
+            }
+        }
+
+
+        /* ========================================
+           MOBIL
+        ======================================== */
+
+        @media (max-width: 800px) {
+
+            .top-bar {
+                height: 60px;
+            }
+
+            .menu-button {
+                width: 60px;
+                height: 60px;
+            }
+
+            .side-menu {
+                top: 60px;
+
+                height:
+                    calc(100vh - 60px);
+            }
+
+            .overlay {
+                top: 60px;
+
+                height:
+                    calc(100vh - 60px);
+            }
+
+            main {
+                padding-top: 60px;
+            }
+
+            .hero {
+                min-height: 550px;
+
+                padding: 30px 20px;
+            }
+
+            .hero p {
+                font-size: 17px;
+            }
+
+            .about-section {
+                padding: 70px 20px;
+            }
+
+            .about-container h2 {
+                font-size: 34px;
+            }
+
+            .about-container p {
+                font-size: 16px;
+            }
+
+            .downloads-section {
+                padding: 70px 20px;
+            }
+
+            .downloads-header h2 {
+                font-size: 34px;
+            }
+
+            .downloads-header p {
+                font-size: 16px;
+            }
+
+            .card {
+                min-height: 0;
+
+                padding: 25px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 22px;
+            }
+
+            .image-preview {
+                width: 100%;
+
+                height: 300px;
+
+                object-fit: contain;
+
+                order: -1;
+            }
+
+            .card h3 {
+                font-size: 25px;
+            }
+
+            .card p {
+                font-size: 16px;
+            }
+
+            .download-button {
+                width: 100%;
+            }
+
+            .contact h1 {
+                font-size: 34px;
+            }
+        }
+
+
+        /* ========================================
+           KIS TELEFON
+        ======================================== */
+
+        @media (max-width: 450px) {
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .downloads-header h2 {
+                font-size: 30px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .image-preview {
+                height: 240px;
+            }
+        }
+
+
+        /* ========================================
+           MOZGÁS CSÖKKENTÉSE
+        ======================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+
+                animation-duration:
+                    0.01ms !important;
+
+                animation-iteration-count:
+                    1 !important;
+
+                transition-duration:
+                    0.01ms !important;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         FIX FELSŐ SÁV
+    ======================================== -->
+
+    <header class="top-bar">
+
+        <button
+            class="menu-button"
+            id="menuButton"
+            aria-label="Menü"
+            aria-expanded="false"
+        >
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+        <div class="logo">
+            MACSESZ
+        </div>
+
+    </header>
+
+
+    <!-- ========================================
+         OLDALSÓ MENÜ
+    ======================================== -->
+
+    <nav
+        class="side-menu"
+        id="sideMenu"
+    >
+
+        <ul>
+
+            <li>
+                <a href="#fooldal">
+                    Főoldal
+                </a>
+            </li>
+
+            <li>
+                <a href="#bemutatkozas">
+                    Bemutatkozás
+                </a>
+            </li>
+
+            <li>
+                <a href="#kepek">
+                    Letölthető képek
+                </a>
+            </li>
+
+            <li>
+                <a href="#kapcsolat">
+                    Kapcsolat
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <!-- ========================================
+         SÖTÉTÍTŐ RÉTEG
+    ======================================== -->
+
+    <div
+        class="overlay"
+        id="overlay"
+    ></div>
+
+
+    <!-- ========================================
+         FŐ TARTALOM
+    ======================================== -->
+
+    <main>
+
+
+        <!-- ====================================
+             FŐOLDAL / HERO
+        ===================================== -->
+
+        <section
+            class="hero"
+            id="fooldal"
+        >
+
+            <div class="hero-content">
+
+                <h1>
+                    Macsesz
+                </h1>
+
+                <p>
+                    Az igazi YouTube channel
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             BEMUTATKOZÁS
+        ===================================== -->
+
+        <section
+            class="about-section"
+            id="bemutatkozas"
+        >
+
+            <div class="about-container">
+
+                <h2 class="fade-text">
+                    Bemutatkozás
+                </h2>
+
+                <p class="fade-text">
+                    Szia! Én Macsesz vagyok!
+                    Ezen az oldalon megtalálod
+                    a legfontosabb dolgokat rólam,
+                    valamint különféle képeket
+                    és tartalmakat is.
+                </p>
+
+                <p class="fade-text">
+                    Ha szereted a zenét,
+                    a kreatív tartalmakat és
+                    Macsesz világát, akkor jó helyen jársz!
+                    Nézz körül az oldalon, és fedezd fel
+                    a képeket és a többi tartalmat.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             LETÖLTHETŐ KÉPEK
+        ===================================== -->
+
+        <section
+            class="downloads-section"
+            id="kepek"
+        >
+
+            <div class="downloads-header">
+
+                <h2 class="fade-text">
+                    Letölthető képeink
+                </h2>
+
+                <p class="fade-text">
+                    Nyisd meg kedvenc képeinket
+                    egyetlen kattintással.
+                </p>
+
+            </div>
+
+
+            <!-- KÁRTYÁK -->
+
+            <div class="cards">
+
+
+                <!-- 1. SVÉD MASSZÁZS -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_1.png"
+                        alt="Macsesz kép 1"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Svéd masszázs
+                        </h3>
+
+                        <p>
+                            A svéd masszázs egy klasszikus,
+                            lazító masszázstechnika, amelynek
+                            célja az izmok ellazítása, a vérkeringés
+                            serkentése és a testi-lelki feszültség
+                            csökkentése. Hosszú, simító mozdulatokat,
+                            gyúrást, dörzsölést és finomabb ütögető
+                            technikákat alkalmaz. Különösen kellemes
+                            lehet stressz, izomfáradtság vagy
+                            általános merevség esetén.
+                        </p>
+
+                    </div>
+
+
+                    <!-- SVÉD MASSZÁZS OLDAL -->
+
+                    <a
+                        class="download-button"
+                        href="svedmasszazs.html"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+
+                <!-- 2. -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_2.png"
+                        alt="Macsesz kép 2"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Macsesz viszi a pálmát
+                        </h3>
+
+                        <p>
+                            Macsesz, a fantasztikus DJ,
+                            aki mindig a legjobb zenéket
+                            hozza el neked!
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="download-button"
+                        href="macsesz_kep_2.png"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+
+                <!-- 3. -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_3.png"
+                        alt="Macsesz kép 3"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Macsesz, az igaz DJ
+                        </h3>
+
+                        <p>
+                            Megint itt az igazi DJ,
+                            Macsesz! Nézd meg a legújabb
+                            képét és élvezd a zenét!
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="download-button"
+                        href="macsesz_kep_3.png"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+
+                <!-- 4. -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_4.png"
+                        alt="Macsesz kép 4"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Macsesz a hiper DJ
+                        </h3>
+
+                        <p>
+                            Macsesz, a hiper DJ,
+                            aki mindig a legjobb zenéket
+                            hozza el neked!
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="download-button"
+                        href="macsesz_kep_4.png"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+
+                <!-- 5. -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_5.png"
+                        alt="Macsesz kép 5"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Macsesz ördöngős
+                            zenéket játszik
+                        </h3>
+
+                        <p>
+                            Itt a brutálisan jó DJ,
+                            Macsesz!
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="download-button"
+                        href="macsesz_kep_5.png"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+
+                <!-- 6. -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_6.png"
+                        alt="Macsesz kép 6"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Macsesz a király
+                        </h3>
+
+                        <p>
+                            Nézd meg Macsesz PRO DJ
+                            képét, és élvezd a fantasztikus
+                            zenét, amit játszik!
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="download-button"
+                        href="macsesz_kep_6.png"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+
+                <!-- 7. -->
+
+                <div class="card">
+
+                    <img
+                        class="image-preview"
+                        src="macsesz_kep_7.png"
+                        alt="Macsesz kép 7"
+                    >
+
+                    <div class="card-content">
+
+                        <h3>
+                            Macsesz fej rajzolt
+                        </h3>
+
+                        <p>
+                            Nézd meg Macsesz
+                            rajzolt fejét!
+                        </p>
+
+                    </div>
+
+                    <a
+                        class="download-button"
+                        href="macsesz_kep_7.png"
+                    >
+                        FELKERESÉS
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================
+             EXTRA TÉR
+        ===================================== -->
+
+        <div class="spacer"></div>
+
+
+        <!-- ====================================
+             KAPCSOLAT
+        ===================================== -->
+
+        <section
+            class="contact"
+            id="kapcsolat"
+        >
+
+            <div>
+
+                <h1 class="fade-text">
+                    Kapcsolat
+                </h1>
+
+                <h4 class="fade-text">
+                    Szeretnél Macsesznek e-mailt írni?
+                </h4>
+
+                <h3 class="fade-text">
+                    Itt a nagy lehetőség!
+                </h3>
+
+
+                <div class="copy-box">
+
+                    <span id="copyText">
+                        macsesz.yt@gmail.com
+                    </span>
+
+                    <button
+                        class="copy-button"
+                        onclick="copyEmail()"
+                        title="Másolás"
+                    >
+                        📋
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ========================================
+         JAVASCRIPT
+    ======================================== -->
+
+    <script>
+
+        /* ======================================
+           MENÜ ELEMEK
+        ====================================== */
+
+        const menuButton =
+            document.getElementById("menuButton");
+
+        const sideMenu =
+            document.getElementById("sideMenu");
+
+        const overlay =
+            document.getElementById("overlay");
+
+
+        /* ======================================
+           MENÜ MEGNYITÁSA / BEZÁRÁSA
+        ====================================== */
+
+        function toggleMenu() {
+
+            menuButton.classList.toggle("active");
+
+            sideMenu.classList.toggle("active");
+
+            overlay.classList.toggle("active");
+
+
+            const isOpen =
+                menuButton.classList.contains("active");
+
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                isOpen
+            );
+        }
+
+
+        /* ======================================
+           MENÜ BEZÁRÁSA
+        ====================================== */
+
+        function closeMenu() {
+
+            menuButton.classList.remove("active");
+
+            sideMenu.classList.remove("active");
+
+            overlay.classList.remove("active");
+
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        }
+
+
+        /* ======================================
+           HAMBURGER GOMB
+        ====================================== */
+
+        menuButton.addEventListener(
+            "click",
+            toggleMenu
+        );
+
+
+        /* ======================================
+           SÖTÉT HÁTTÉR
+        ====================================== */
+
+        overlay.addEventListener(
+            "click",
+            closeMenu
+        );
+
+
+        /* ======================================
+           MENÜ LINKEK
+        ====================================== */
+
+        document
+            .querySelectorAll(".side-menu a")
+            .forEach((link) => {
+
+                link.addEventListener(
+                    "click",
+                    closeMenu
+                );
+
+            });
+
+
+        /* ======================================
+           ESC BILLENTYŰ
+        ====================================== */
+
+        document.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (event.key === "Escape") {
+                    closeMenu();
+                }
+
+            }
+        );
+
+
+        /* ======================================
+           KÁRTYÁK
+           GÖRGETÉSI ANIMÁCIÓJA
+        ====================================== */
+
+        const cards =
+            document.querySelectorAll(".card");
+
+
+        const cardObserver =
+            new IntersectionObserver(
+
+                (entries) => {
+
+                    entries.forEach(
+                        (entry) => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target
+                                    .classList
+                                    .add("show");
+
+
+                                cardObserver.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+
+                {
+                    threshold: 0.15
+                }
+
+            );
+
+
+        cards.forEach(
+            (card) => {
+
+                cardObserver.observe(card);
+
+            }
+        );
+
+
+        /* ======================================
+           SZÖVEGEK
+           GÖRGETÉSI ANIMÁCIÓJA
+        ====================================== */
+
+        const fadeTexts =
+            document.querySelectorAll(".fade-text");
+
+
+        const textObserver =
+            new IntersectionObserver(
+
+                (entries) => {
+
+                    entries.forEach(
+                        (entry) => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target
+                                    .classList
+                                    .add("show");
+
+
+                                textObserver.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+
+                {
+                    threshold: 0.15
+                }
+
+            );
+
+
+        fadeTexts.forEach(
+            (text) => {
+
+                textObserver.observe(text);
+
+            }
+        );
+
+
+        /* ======================================
+           EMAIL MÁSOLÁSA
+        ====================================== */
+
+        function copyEmail() {
+
+            const text =
+                document
+                    .getElementById("copyText")
+                    .innerText
+                    .trim();
+
+
+            navigator.clipboard
+                .writeText(text)
+
+                .then(() => {
+
+                    alert(
+                        "Az e-mail cím kimásolva!"
+                    );
+
+                })
+
+                .catch(() => {
+
+                    alert(
+                        "Nem sikerült kimásolni."
+                    );
+
+                });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
