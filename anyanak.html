@@ -2,11 +2,18 @@
 <html lang="hu">
 
 <head>
+
     <link rel="icon" type="image/png" href="./favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <link rel="shortcut icon" href="./favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap">
 
     <meta charset="UTF-8">
 
@@ -15,7 +22,8 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Maszzázs</title>
+    <title>e-Mese Masszázs</title>
+
 
     <style>
 
@@ -42,6 +50,20 @@
 
 
         /* ========================================
+           BETŰTÍPUSOK
+        ======================================== */
+
+        .betut {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .betut2 {
+            font-family: 'Comic Neue', cursive;
+            font-size: 60px;
+        }
+
+
+        /* ========================================
            FIX FELSŐ SÁV
         ======================================== */
 
@@ -49,8 +71,10 @@
             position: fixed;
             top: 0;
             left: 0;
+
             width: 100%;
             height: 70px;
+
             background: #111;
 
             display: flex;
@@ -59,7 +83,8 @@
             z-index: 1000;
 
             box-shadow:
-                0 2px 15px rgba(0, 0, 0, 0.3);
+                0 2px 15px
+                rgba(135, 255, 79, 0.3);
         }
 
 
@@ -76,6 +101,7 @@
 
             display: flex;
             flex-direction: column;
+
             justify-content: center;
             align-items: center;
 
@@ -89,6 +115,7 @@
             height: 3px;
 
             background: white;
+
             border-radius: 5px;
 
             transition:
@@ -124,8 +151,10 @@
 
         .logo {
             color: white;
+
             font-size: 22px;
             font-weight: bold;
+
             margin-left: 10px;
         }
 
@@ -173,6 +202,7 @@
             padding: 15px 20px;
 
             color: white;
+
             text-decoration: none;
 
             border-radius: 8px;
@@ -184,6 +214,7 @@
 
         .side-menu a:hover {
             background: #333;
+
             padding-left: 28px;
         }
 
@@ -201,9 +232,11 @@
             width: 100%;
             height: calc(100vh - 70px);
 
-            background: rgba(0, 0, 0, 0.5);
+            background:
+                rgba(0, 190, 183, 0.5);
 
             opacity: 0;
+
             visibility: hidden;
 
             transition:
@@ -230,49 +263,96 @@
 
         /* ========================================
            HERO / FŐOLDAL
+           HÁTTÉRKÉP
         ======================================== */
 
         .hero {
-            min-height: 650px;
+            min-height: 900px;
 
             display: flex;
+
             justify-content: center;
             align-items: center;
 
             text-align: center;
 
-            padding: 40px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #111,
-                    #333,
-                    #555
-                );
+            padding: 50px 20px;
 
             color: white;
+
+            position: relative;
+
+            background-image:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.25),
+                    rgba(0, 0, 0, 0.25)
+                ),
+                url("masszazs1.png");
+
+            background-size: cover;
+
+            background-position: center;
+
+            background-repeat: no-repeat;
         }
 
+
+        /* ========================================
+           HERO TARTALOM
+        ======================================== */
+
         .hero-content {
-            max-width: 850px;
+            width: 100%;
+
+            max-width: 1000px;
+
+            position: relative;
+
+            z-index: 2;
 
             animation:
                 heroAppear 1s ease forwards;
         }
+
+
+        /* ========================================
+           HERO CÍM
+        ======================================== */
 
         .hero h1 {
             font-size:
                 clamp(45px, 8vw, 90px);
 
             margin-bottom: 25px;
+
+            text-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.5);
         }
 
+
+        /* ========================================
+           HERO ALATTI SZÖVEG
+        ======================================== */
+
         .hero p {
-            font-size: 20px;
+            font-size: 25px;
+
             line-height: 1.7;
-            color: #ddd;
+
+            color: white;
+
+            margin-bottom: 30px;
+
+            text-shadow:
+                0 3px 10px
+                rgba(0, 0, 0, 0.6);
         }
+
+
+        /* ========================================
+           HERO ANIMÁCIÓ
+        ======================================== */
 
         @keyframes heroAppear {
 
@@ -299,23 +379,26 @@
         .about-section {
             padding: 100px 30px;
 
-            background: white;
+            background: rgb(235, 254, 255);
 
             text-align: center;
         }
 
         .about-container {
             max-width: 900px;
+
             margin: 0 auto;
         }
 
         .about-container h2 {
             font-size: 42px;
+
             margin-bottom: 30px;
         }
 
         .about-container p {
             font-size: 18px;
+
             line-height: 1.8;
 
             color: #555;
@@ -368,11 +451,15 @@
 
 
         /* ========================================
-           LETÖLTHETŐ KÉPEK
+           SZOLGÁLTATÁSOK
         ======================================== */
 
         .downloads-section {
             padding: 100px 30px;
+
+            color: #a15959;
+
+            background: #fff8f8;
         }
 
         .downloads-header {
@@ -385,12 +472,15 @@
 
         .downloads-header h2 {
             font-size: 42px;
+
             margin-bottom: 20px;
         }
 
         .downloads-header p {
             font-size: 18px;
+
             line-height: 1.8;
+
             color: #555;
         }
 
@@ -405,6 +495,7 @@
             margin: 60px auto 0;
 
             display: flex;
+
             flex-direction: column;
 
             gap: 40px;
@@ -412,6 +503,7 @@
 
         .card {
             width: 100%;
+
             min-height: 300px;
 
             background: white;
@@ -422,10 +514,12 @@
 
             box-shadow:
                 0 8px 30px
-                rgba(0, 0, 0, 0.08);
+                rgba(183, 6, 6, 0.08);
 
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
 
             gap: 35px;
@@ -484,11 +578,12 @@
 
 
         /* ========================================
-           KÉP
+           KÉPEK A KÁRTYÁKBAN
         ======================================== */
 
         .image-preview {
             width: 320px;
+
             height: 230px;
 
             object-fit: contain;
@@ -511,16 +606,19 @@
 
         .card-content {
             flex: 1;
+
             min-width: 0;
         }
 
         .card h3 {
             font-size: 30px;
+
             margin-bottom: 15px;
         }
 
         .card p {
             font-size: 17px;
+
             line-height: 1.7;
 
             color: #666;
@@ -581,10 +679,6 @@
                 translateY(0);
         }
 
-        .download-icon {
-            font-size: 19px;
-        }
-
 
         /* ========================================
            EXTRA TÉR
@@ -600,24 +694,31 @@
         ======================================== */
 
         .contact {
-            min-height: 400px;
+            min-height: 700px;
 
-            background: #181818;
+            background: #7b7c7b;
 
             color: white;
 
             display: flex;
 
             justify-content: center;
+
             align-items: center;
 
             text-align: center;
 
-            padding: 50px 30px;
+            padding: 70px 30px;
+        }
+
+        .contact-content {
+            width: 100%;
+            max-width: 900px;
         }
 
         .contact h1 {
             font-size: 42px;
+
             margin-bottom: 20px;
         }
 
@@ -626,7 +727,7 @@
 
             margin-bottom: 15px;
 
-            color: #ccc;
+            color: #eee;
         }
 
         .contact h3 {
@@ -639,8 +740,76 @@
 
 
         /* ========================================
-           EMAIL MÁSOLÁS
+           TELEFONSZÁM
         ======================================== */
+
+        .phone-box {
+            margin: 20px auto;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 12px;
+
+            max-width: 360px;
+        }
+
+        .phone-button {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 10px;
+
+            width: 100%;
+
+            padding: 15px 20px;
+
+            background: #22c55e;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            border-radius: 10px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .phone-button:hover {
+            background: #16a34a;
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 8px 25px
+                rgba(34, 197, 94, 0.35);
+        }
+
+        .phone-button:active {
+            transform:
+                translateY(0);
+        }
+
+
+        /* ========================================
+           EMAIL
+        ======================================== */
+
+        .email-title {
+            margin-top: 30px;
+        }
 
         .copy-box {
             display: inline-flex;
@@ -658,6 +827,8 @@
             border-radius: 10px;
 
             font-size: 18px;
+
+            max-width: 100%;
         }
 
         .copy-button {
@@ -675,6 +846,8 @@
             cursor: pointer;
 
             font-size: 18px;
+
+            flex-shrink: 0;
 
             transition:
                 background 0.2s ease,
@@ -695,6 +868,49 @@
 
 
         /* ========================================
+           MAPS KÉP
+        ======================================== */
+
+        .map-title {
+            margin-top: 40px;
+
+            margin-bottom: 15px;
+
+            font-size: 24px;
+        }
+
+        .map-box {
+            width: 100%;
+
+            max-width: 800px;
+
+            margin: 0 auto;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            background: white;
+
+            box-shadow:
+                0 10px 35px
+                rgba(0, 0, 0, 0.25);
+        }
+
+        .map-box img {
+            display: block;
+
+            width: 100%;
+
+            height: auto;
+
+            max-height: 450px;
+
+            object-fit: cover;
+        }
+
+
+        /* ========================================
            TABLET
         ======================================== */
 
@@ -706,6 +922,7 @@
 
             .image-preview {
                 width: 270px;
+
                 height: 210px;
             }
 
@@ -731,6 +948,7 @@
 
             .menu-button {
                 width: 60px;
+
                 height: 60px;
             }
 
@@ -753,13 +971,23 @@
             }
 
             .hero {
-                min-height: 550px;
+                min-height: 700px;
 
-                padding: 30px 20px;
+                padding: 40px 20px;
+
+                background-position: center;
+            }
+
+            .hero h1 {
+                font-size: 60px;
+            }
+
+            .betut2 {
+                font-size: 50px;
             }
 
             .hero p {
-                font-size: 17px;
+                font-size: 20px;
             }
 
             .about-section {
@@ -820,8 +1048,44 @@
                 width: 100%;
             }
 
+            .contact {
+                padding: 70px 20px;
+            }
+
             .contact h1 {
                 font-size: 34px;
+            }
+
+            .contact h4 {
+                font-size: 18px;
+            }
+
+            .contact h3 {
+                font-size: 22px;
+            }
+
+            .phone-button {
+                font-size: 18px;
+            }
+
+            .copy-box {
+                width: 100%;
+
+                justify-content: space-between;
+
+                font-size: 16px;
+            }
+
+            .map-title {
+                font-size: 21px;
+            }
+
+            .map-box {
+                border-radius: 14px;
+            }
+
+            .map-box img {
+                max-height: 350px;
             }
         }
 
@@ -832,8 +1096,20 @@
 
         @media (max-width: 450px) {
 
+            .hero {
+                min-height: 650px;
+            }
+
             .hero h1 {
                 font-size: 48px;
+            }
+
+            .betut2 {
+                font-size: 42px;
+            }
+
+            .hero p {
+                font-size: 18px;
             }
 
             .downloads-header h2 {
@@ -846,6 +1122,21 @@
 
             .image-preview {
                 height: 240px;
+            }
+
+            .contact {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .copy-box {
+                font-size: 14px;
+
+                gap: 8px;
+            }
+
+            .phone-button {
+                padding: 14px 15px;
             }
         }
 
@@ -876,6 +1167,7 @@
         }
 
     </style>
+
 </head>
 
 
@@ -933,7 +1225,7 @@
 
             <li>
                 <a href="#kepek">
-                    Letölthető képek
+                    Szolgáltatások
                 </a>
             </li>
 
@@ -966,7 +1258,7 @@
 
 
         <!-- ====================================
-             FŐOLDAL / HERO
+             FŐOLDAL
         ===================================== -->
 
         <section
@@ -976,12 +1268,18 @@
 
             <div class="hero-content">
 
-                <h1>
-                    Macsesz
+                <h1 class="betut">
+
+                    e-Mese
+
+                    <span class="betut2">
+                        masszázs
+                    </span>
+
                 </h1>
 
                 <p>
-                    Az igazi YouTube channel
+                    Mesés feltöltődés
                 </p>
 
             </div>
@@ -1026,7 +1324,7 @@
 
 
         <!-- ====================================
-             LETÖLTHETŐ KÉPEK
+             SZOLGÁLTATÁSOK
         ===================================== -->
 
         <section
@@ -1037,18 +1335,15 @@
             <div class="downloads-header">
 
                 <h2 class="fade-text">
-                    Letölthető képeink
+                    Szolgáltatások
                 </h2>
 
                 <p class="fade-text">
-                    Nyisd meg kedvenc képeinket
-                    egyetlen kattintással.
+                    Kattints a kártyára a további információkért.
                 </p>
 
             </div>
 
-
-            <!-- KÁRTYÁK -->
 
             <div class="cards">
 
@@ -1059,8 +1354,8 @@
 
                     <img
                         class="image-preview"
-                        src="macsesz_kep_1.png"
-                        alt="Macsesz kép 1"
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj1qVQ8AWGhf2ZvGDYJAXjBDrtZeilOtLYn0no99DkAA&s=10"
+                        alt="Svéd masszázs"
                     >
 
                     <div class="card-content">
@@ -1082,9 +1377,6 @@
                         </p>
 
                     </div>
-
-
-                    <!-- SVÉD MASSZÁZS OLDAL -->
 
                     <a
                         class="download-button"
@@ -1148,7 +1440,7 @@
 
                         <p>
                             Megint itt az igazi DJ,
-sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
+                            képét és élvezd a zenét!
                         </p>
 
                     </div>
@@ -1318,14 +1610,14 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
             id="kapcsolat"
         >
 
-            <div>
+            <div class="contact-content">
 
                 <h1 class="fade-text">
                     Kapcsolat
                 </h1>
 
                 <h4 class="fade-text">
-                    Szeretnél Macsesznek e-mailt írni?
+                    Elérhetőségeim:
                 </h4>
 
                 <h3 class="fade-text">
@@ -1333,10 +1625,34 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
                 </h3>
 
 
+                <!-- =================================
+                     TELEFONSZÁM
+                ================================== -->
+
+                <div class="phone-box">
+
+                    <a
+                        class="phone-button"
+                        href="tel:+36301234567"
+                    >
+                        📞 +36 70 365 98 37
+                    </a>
+
+                </div>
+
+
+                <!-- =================================
+                     E-MAIL
+                ================================== -->
+
+                <h4 class="email-title fade-text">
+                    E-mail:
+                </h4>
+
                 <div class="copy-box">
 
                     <span id="copyText">
-                        macsesz.yt@gmail.com
+                        szabo.emi@gmail.com
                     </span>
 
                     <button
@@ -1346,6 +1662,24 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
                     >
                         📋
                     </button>
+
+                </div>
+
+
+                <!-- =================================
+                     MAPS KÉP
+                ================================== -->
+
+                <h4 class="map-title fade-text">
+                    Helyszín:
+                </h4>
+
+                <div class="map-box">
+
+                    <img
+                        src="maps.png"
+                        alt="Térkép a helyszínhez"
+                    >
 
                 </div>
 
@@ -1388,10 +1722,8 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
 
             overlay.classList.toggle("active");
 
-
             const isOpen =
                 menuButton.classList.contains("active");
-
 
             menuButton.setAttribute(
                 "aria-expanded",
@@ -1411,7 +1743,6 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
             sideMenu.classList.remove("active");
 
             overlay.classList.remove("active");
-
 
             menuButton.setAttribute(
                 "aria-expanded",
@@ -1497,7 +1828,6 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
                                     .classList
                                     .add("show");
 
-
                                 cardObserver.unobserve(
                                     entry.target
                                 );
@@ -1549,7 +1879,6 @@ sdsfsdfdsfffdsfs                            képét és élvezd a zenét!
                                 entry.target
                                     .classList
                                     .add("show");
-
 
                                 textObserver.unobserve(
                                     entry.target
