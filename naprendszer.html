@@ -1,33 +1,485 @@
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 
 <head>
-  <link rel="icon" ... <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
-  <link rel="shortcut icon" href="favicon/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+
   <title>Naprendszer</title>
+
+  <!-- Faviconok -->
+  <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+
+      /* Átmenetes háttér */
+      background: linear-gradient(
+        135deg,
+        #020617,
+        #172554,
+        #312e81,
+        #581c87,
+        #020617
+      );
+
+      /* A háttér mozgása */
+      background-size: 400% 400%;
+      animation: hatterMozgas 15s ease infinite;
+
+      min-height: 100vh;
+    }
+
+    /* Háttér animáció */
+    @keyframes hatterMozgas {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    header {
+      padding: 50px 20px;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(5px);
+    }
+
     h1 {
-      color: #FFA500;
+      color: #ffa500;
+      font-size: 55px;
+      margin: 0 0 10px 0;
+      text-shadow:
+        0 0 10px #ffa500,
+        0 0 25px #ff6600;
     }
+
+    header p {
+      font-size: 20px;
+      color: #dbeafe;
+    }
+
+    .tartalom {
+      max-width: 1100px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    /* Fő kép */
+
+    .naprendszer-kep {
+      width: 90%;
+      max-width: 900px;
+      border-radius: 20px;
+      margin: 30px auto;
+      display: block;
+
+      box-shadow:
+        0 0 20px rgba(255, 165, 0, 0.5),
+        0 0 50px rgba(59, 130, 246, 0.3);
+    }
+
+    h2 {
+      color: #38bdf8;
+      font-size: 34px;
+      margin-top: 50px;
+      text-shadow: 0 0 10px #38bdf8;
+    }
+
     h3 {
-     color: #008000;
+      color: #22c55e;
+      font-size: 24px;
     }
-    </style>
-    <body>
-      <h1>
-        Naprendszer
-      </h1>
-      <img src="napkep2.png">
-      <h3>
-        Itt a merkúrt láthatjuk:
-         <img src="napkep1.png">
-      </h3>
-      <h3>
-        A <a trarget="_self" href="https://www.solarsystemscope.com/" Solar System Scope-on ></a> lehet ezeket megnézni
-      </h3>
-    </body>
+
+    p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: #dbeafe;
+    }
+
+    /* Bolygók */
+
+    .bolygok {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .kartya {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px;
+      border-radius: 20px;
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+
+      backdrop-filter: blur(8px);
+
+      transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .kartya:hover {
+      transform: translateY(-10px) scale(1.02);
+
+      background: rgba(255, 255, 255, 0.15);
+
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(56, 189, 248, 0.2);
+    }
+
+    .kartya h3 {
+      color: #facc15;
+      margin-top: 0;
+      font-size: 26px;
+    }
+
+    .kartya p {
+      font-size: 16px;
+      color: #cbd5e1;
+    }
+
+    /* Merkúr */
+
+    .merkur-kep {
+      width: 280px;
+      max-width: 90%;
+      border-radius: 50%;
+      margin: 20px;
+
+      box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.3),
+        0 0 50px rgba(148, 163, 184, 0.3);
+
+      transition: transform 0.5s ease;
+    }
+
+    .merkur-kep:hover {
+      transform: rotate(10deg) scale(1.08);
+    }
+
+    /* Gomb */
+
+    .gomb {
+      display: inline-block;
+
+      margin: 30px 0;
+      padding: 16px 35px;
+
+      background: linear-gradient(
+        135deg,
+        #f97316,
+        #ea580c
+      );
+
+      color: white;
+      text-decoration: none;
+
+      border-radius: 12px;
+
+      font-size: 18px;
+      font-weight: bold;
+
+      box-shadow:
+        0 5px 20px rgba(249, 115, 22, 0.4);
+
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .gomb:hover {
+      transform: translateY(-5px) scale(1.05);
+
+      box-shadow:
+        0 10px 30px rgba(249, 115, 22, 0.7);
+    }
+
+    /* Elválasztó */
+
+    .vonal {
+      width: 70%;
+      height: 2px;
+      margin: 50px auto;
+
+      background: linear-gradient(
+        to right,
+        transparent,
+        #38bdf8,
+        transparent
+      );
+    }
+
+    /* Lábléc */
+
+    footer {
+      margin-top: 60px;
+      padding: 30px;
+
+      background: rgba(0, 0, 0, 0.5);
+
+      color: #94a3b8;
+
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    footer p {
+      font-size: 14px;
+      color: #94a3b8;
+      margin: 5px;
+    }
+
+    /* Mobiltelefon */
+
+    @media (max-width: 600px) {
+
+      h1 {
+        font-size: 40px;
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      header p {
+        font-size: 17px;
+      }
+
+      .tartalom {
+        padding: 20px 15px;
+      }
+
+      .bolygok {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Fejléc -->
+
+  <header>
+
+    <h1>🌌 Naprendszer</h1>
+
+    <p>
+      Fedezd fel a Napot és a körülötte keringő bolygókat! 🪐
+    </p>
+
+  </header>
+
+
+  <!-- Tartalom -->
+
+  <main class="tartalom">
+
+    <!-- Naprendszer képe -->
+
+    <img
+      class="naprendszer-kep"
+      src="napkep2.png"
+      alt="A Naprendszer">
+
+    <h2>☀️ A Naprendszer</h2>
+
+    <p>
+      A Naprendszer középpontjában a Nap található,
+      amely körül nyolc bolygó és számos kisebb égitest kering.
+      A Naprendszer a Tejútrendszer egyik részén helyezkedik el.
+    </p>
+
+
+    <div class="vonal"></div>
+
+
+    <!-- Bolygók -->
+
+    <h2>🪐 A Naprendszer bolygói</h2>
+
+    <div class="bolygok">
+
+      <div class="kartya">
+        <h3>☿ Merkúr</h3>
+
+        <p>
+          A Merkúr a Naphoz legközelebbi bolygó.
+          Kicsi, sziklás felszínű égitest,
+          és mindössze 88 nap alatt kerüli meg a Napot.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>♀ Vénusz</h3>
+
+        <p>
+          A Vénusz mérete hasonló a Földéhez.
+          Rendkívül sűrű légköre miatt azonban
+          a felszíne nagyon forró.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>🌍 Föld</h3>
+
+        <p>
+          A Föld az otthonunk.
+          Jelenleg ez az egyetlen bolygó,
+          amelyről bizonyítottan tudjuk, hogy élet található rajta.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>♂ Mars</h3>
+
+        <p>
+          A Mars vöröses színéről ismert.
+          Felszínén hatalmas vulkánok,
+          kanyonok és egykori víz nyomai találhatók.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>♃ Jupiter</h3>
+
+        <p>
+          A Jupiter a Naprendszer legnagyobb bolygója.
+          Híres hatalmas viharrendszeréről,
+          a Nagy Vörös Foltról.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>♄ Szaturnusz</h3>
+
+        <p>
+          A Szaturnusz látványos gyűrűrendszeréről híres.
+          A bolygó főként hidrogénből és héliumból áll.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>♅ Uránusz</h3>
+
+        <p>
+          Az Uránusz különleges tengelyferdesége miatt
+          szinte az oldalán forog a Nap körül.
+        </p>
+      </div>
+
+
+      <div class="kartya">
+        <h3>♆ Neptunusz</h3>
+
+        <p>
+          A Neptunusz a Naprendszer legtávolabbi bolygója.
+          Nagyon hideg és erős szelek jellemzik.
+        </p>
+      </div>
+
+    </div>
+
+
+    <div class="vonal"></div>
+
+
+    <!-- Merkúr -->
+
+    <h2>☿ A Merkúr</h2>
+
+    <h3>
+      Itt a Merkúrt láthatjuk:
+    </h3>
+
+    <img
+      class="merkur-kep"
+      src="napkep1.png"
+      alt="A Merkúr">
+
+
+    <p>
+      A Merkúr a Naprendszer legkisebb bolygója
+      és a Naphoz legközelebbi bolygó.
+      Nincs jelentős légköre, ezért a nappali
+      és éjszakai hőmérséklet között hatalmas különbség lehet.
+    </p>
+
+
+    <div class="vonal"></div>
+
+
+    <!-- Interaktív oldal -->
+
+    <h2>🔭 Fedezd fel a Naprendszert!</h2>
+
+    <p>
+      A Solar System Scope segítségével interaktívan is
+      felfedezheted a Naprendszert, és közelebbről
+      megismerheted a bolygókat.
+    </p>
+
+
+    <a
+      class="gomb"
+      href="https://www.solarsystemscope.com/"
+      target="_blank"
+      rel="noopener noreferrer">
+
+      🚀 Solar System Scope megnyitása
+
+    </a>
+
+  </main>
+
+
+  <!-- Lábléc -->
+
+  <footer>
+
+    <p>🌠 Naprendszer projekt</p>
+
+    <p>
+      Készítette:Nándi
+    </p>
+
+    <p>
+      © 2026 – Minden jog fenntartva
+    </p>
+
+  </footer>
+
+</body>
+
+</html>
