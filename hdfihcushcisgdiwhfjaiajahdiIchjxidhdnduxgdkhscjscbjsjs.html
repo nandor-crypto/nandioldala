@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Zenelejátszó</title>
+
 
     <style>
 
@@ -18,15 +25,61 @@
             padding: 0;
         }
 
+
+        html,
         body {
-            font-family: Arial, Helvetica, sans-serif;
+
+            -webkit-tap-highlight-color: transparent;
+
+        }
+
+
+        button,
+        input,
+        .music-card,
+        .playlist-card,
+        .track,
+        .slider {
+
+            -webkit-tap-highlight-color: transparent;
+
+        }
+
+
+        button:focus,
+        button:active {
+
+            outline: none;
+
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
             background: #0d0d12;
+
             color: white;
+
             min-height: 100vh;
 
-            /* Hely az alsó menünek */
-            padding-bottom: 100px;
+            padding-bottom: 115px;
+
+            user-select: none;
+
         }
+
+
+        input {
+
+            user-select: text;
+
+        }
+
 
 
         /* =================================
@@ -34,23 +87,31 @@
         ================================= */
 
         header {
+
             padding: 25px 25px 15px;
 
             position: sticky;
+
             top: 0;
 
             z-index: 10;
 
-            background: rgba(13, 13, 18, 0.94);
+            background:
+                rgba(13, 13, 18, 0.94);
 
             backdrop-filter: blur(12px);
+
         }
 
+
         header h1 {
+
             font-size: 30px;
 
             margin-bottom: 18px;
+
         }
+
 
 
         /* =================================
@@ -58,11 +119,13 @@
         ================================= */
 
         .search-box input {
+
             width: 100%;
 
             padding: 15px 18px;
 
             border: none;
+
             outline: none;
 
             border-radius: 14px;
@@ -72,11 +135,16 @@
             color: white;
 
             font-size: 16px;
+
         }
 
+
         .search-box input::placeholder {
+
             color: #888894;
+
         }
+
 
 
         /* =================================
@@ -84,20 +152,29 @@
         ================================= */
 
         .page {
+
             display: none;
 
             padding: 20px 25px;
+
         }
+
 
         .page.active {
+
             display: block;
+
         }
 
+
         .page-title {
+
             font-size: 26px;
 
             margin: 10px 0 25px;
+
         }
+
 
 
         /* =================================
@@ -108,17 +185,14 @@
 
             display: grid;
 
-            /*
-             * 240px = minimum kártyaszélesség
-             */
             grid-template-columns:
-                repeat(auto-fill, minmax(240px, 1fr));
+                repeat(
+                    auto-fill,
+                    minmax(240px, 1fr)
+                );
 
-            /*
-             * Ez szabályozza a kártyák
-             * közötti távolságot.
-             */
             gap: 30px;
+
         }
 
 
@@ -139,6 +213,7 @@
                 box-shadow 0.2s ease;
 
             border: 1px solid transparent;
+
         }
 
 
@@ -151,7 +226,9 @@
             border-color: #7c3aed;
 
             box-shadow:
-                0 12px 30px rgba(0, 0, 0, 0.3);
+                0 12px 30px
+                rgba(0, 0, 0, 0.3);
+
         }
 
 
@@ -160,7 +237,9 @@
             border-color: #8b5cf6;
 
             box-shadow:
-                0 0 25px rgba(139, 92, 246, 0.3);
+                0 0 25px
+                rgba(139, 92, 246, 0.3);
+
         }
 
 
@@ -177,6 +256,7 @@
             display: block;
 
             margin-bottom: 15px;
+
         }
 
 
@@ -187,6 +267,7 @@
             font-weight: bold;
 
             line-height: 1.4;
+
         }
 
 
@@ -197,7 +278,9 @@
             font-size: 13px;
 
             margin-top: 7px;
+
         }
+
 
 
         /* =================================
@@ -211,6 +294,7 @@
             flex-direction: column;
 
             gap: 20px;
+
         }
 
 
@@ -235,6 +319,7 @@
             transition: 0.2s;
 
             border: 1px solid transparent;
+
         }
 
 
@@ -245,12 +330,14 @@
             border-color: #7c3aed;
 
             transform: translateX(4px);
+
         }
 
 
         .playlist-image {
 
             width: 90px;
+
             height: 90px;
 
             border-radius: 14px;
@@ -260,6 +347,7 @@
             margin-right: 18px;
 
             flex-shrink: 0;
+
         }
 
 
@@ -268,6 +356,7 @@
             font-size: 19px;
 
             margin-bottom: 7px;
+
         }
 
 
@@ -278,7 +367,9 @@
             font-size: 14px;
 
             line-height: 1.4;
+
         }
+
 
 
         /* =================================
@@ -288,12 +379,14 @@
         .playlist-view {
 
             display: none;
+
         }
 
 
         .playlist-view.active {
 
             display: block;
+
         }
 
 
@@ -314,12 +407,14 @@
             margin-bottom: 20px;
 
             font-size: 14px;
+
         }
 
 
         .back-button:hover {
 
             background: #343441;
+
         }
 
 
@@ -337,19 +432,23 @@
             border-radius: 20px;
 
             margin-bottom: 20px;
+
         }
 
 
         .playlist-header h2 {
 
             margin-bottom: 8px;
+
         }
 
 
         .playlist-header p {
 
             color: #aaaab5;
+
         }
+
 
 
         /* =================================
@@ -365,6 +464,7 @@
             align-items: center;
 
             gap: 10px;
+
         }
 
 
@@ -375,12 +475,14 @@
             width: 48px;
 
             height: 26px;
+
         }
 
 
         .switch input {
 
             display: none;
+
         }
 
 
@@ -397,6 +499,7 @@
             cursor: pointer;
 
             transition: 0.2s;
+
         }
 
 
@@ -419,19 +522,24 @@
             background: white;
 
             transition: 0.2s;
+
         }
 
 
         .switch input:checked + .slider {
 
             background: #7c3aed;
+
         }
 
 
         .switch input:checked + .slider::before {
 
-            transform: translateX(22px);
+            transform:
+                translateX(22px);
+
         }
+
 
 
         /* =================================
@@ -445,6 +553,7 @@
             flex-direction: column;
 
             gap: 10px;
+
         }
 
 
@@ -465,12 +574,14 @@
             cursor: pointer;
 
             transition: 0.15s;
+
         }
 
 
         .track:hover {
 
             background: #252530;
+
         }
 
 
@@ -479,6 +590,7 @@
             background: #2a1d46;
 
             color: #c4a5ff;
+
         }
 
 
@@ -491,6 +603,7 @@
             color: #777783;
 
             flex-shrink: 0;
+
         }
 
 
@@ -505,6 +618,7 @@
             object-fit: cover;
 
             flex-shrink: 0;
+
         }
 
 
@@ -513,7 +627,9 @@
             font-weight: bold;
 
             line-height: 1.4;
+
         }
+
 
 
         /* =================================
@@ -526,11 +642,12 @@
 
             left: 50%;
 
-            bottom: 88px;
+            bottom: 105px;
 
             transform: translateX(-50%);
 
-            width: calc(100% - 30px);
+            width:
+                calc(100% - 30px);
 
             max-width: 700px;
 
@@ -551,17 +668,20 @@
             z-index: 90;
 
             box-shadow:
-                0 10px 40px rgba(0, 0, 0, 0.4);
+                0 10px 40px
+                rgba(0, 0, 0, 0.4);
+
         }
 
 
         .player.visible {
 
             display: flex;
+
         }
 
 
-        .player img {
+        .player img.player-cover {
 
             width: 55px;
 
@@ -572,6 +692,7 @@
             object-fit: cover;
 
             flex-shrink: 0;
+
         }
 
 
@@ -580,6 +701,7 @@
             flex: 1;
 
             min-width: 0;
+
         }
 
 
@@ -594,13 +716,104 @@
             text-overflow: ellipsis;
 
             margin-bottom: 3px;
+
         }
 
 
         .player-info small {
 
             color: #888894;
+
         }
+
+
+
+        /* =================================
+           PLAYLIST IKON
+        ================================= */
+
+        .playlist-badge {
+
+            display: none;
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 11px;
+
+            overflow: hidden;
+
+            flex-shrink: 0;
+
+            border: 1px solid #4a3b63;
+
+            background: #181820;
+
+        }
+
+
+        .playlist-badge.visible {
+
+            display: block;
+
+        }
+
+
+        .playlist-badge img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+        }
+
+
+
+        /* =================================
+           ISMÉTLÉS GOMB
+        ================================= */
+
+        .replay-button {
+
+            display: none;
+
+            width: 44px;
+
+            height: 44px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: #8b5cf6;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 20px;
+
+            flex-shrink: 0;
+
+        }
+
+
+        .replay-button.visible {
+
+            display: block;
+
+        }
+
+
+        .replay-button:hover {
+
+            background: #a06cff;
+
+        }
+
 
 
         /* =================================
@@ -618,6 +831,7 @@
             margin-top: 8px;
 
             width: 100%;
+
         }
 
 
@@ -628,12 +842,14 @@
             font-size: 10px;
 
             min-width: 30px;
+
         }
 
 
         .progress-container span:last-child {
 
             text-align: right;
+
         }
 
 
@@ -656,10 +872,9 @@
             cursor: pointer;
 
             outline: none;
+
         }
 
-
-        /* Chrome / Edge / Safari */
 
         #progressBar::-webkit-slider-thumb {
 
@@ -676,10 +891,9 @@
             border-radius: 50%;
 
             cursor: pointer;
+
         }
 
-
-        /* Firefox */
 
         #progressBar::-moz-range-thumb {
 
@@ -694,11 +908,13 @@
             border-radius: 50%;
 
             cursor: pointer;
+
         }
 
 
+
         /* =================================
-           PLAY / PAUSE GOMB
+           PLAY / PAUSE
         ================================= */
 
         .play-button {
@@ -720,13 +936,16 @@
             font-size: 17px;
 
             flex-shrink: 0;
+
         }
 
 
         .play-button:hover {
 
             background: #a06cff;
+
         }
+
 
 
         /* =================================
@@ -743,7 +962,7 @@
 
             right: 0;
 
-            height: 76px;
+            height: 100px;
 
             background:
                 rgba(22, 22, 30, 0.97);
@@ -756,11 +975,14 @@
 
             justify-content: center;
 
+            align-items: flex-start;
+
             gap: 10px;
 
             z-index: 100;
 
-            padding: 10px;
+            padding: 10px 10px 5px;
+
         }
 
 
@@ -769,6 +991,8 @@
             flex: 1;
 
             max-width: 220px;
+
+            height: 60px;
 
             border: none;
 
@@ -783,6 +1007,7 @@
             cursor: pointer;
 
             transition: 0.2s;
+
         }
 
 
@@ -793,6 +1018,7 @@
             font-size: 23px;
 
             margin-bottom: 3px;
+
         }
 
 
@@ -801,7 +1027,28 @@
             background: #241b35;
 
             color: #b78aff;
+
         }
+
+
+        .version {
+
+            position: absolute;
+
+            bottom: 3px;
+
+            left: 0;
+
+            right: 0;
+
+            text-align: center;
+
+            color: #555560;
+
+            font-size: 10px;
+
+        }
+
 
 
         /* =================================
@@ -817,7 +1064,9 @@
             padding: 50px 10px;
 
             display: none;
+
         }
+
 
 
         /* =================================
@@ -829,20 +1078,20 @@
             .page {
 
                 padding: 15px;
+
             }
 
 
             .music-grid {
 
-                /*
-                 * Telefonon két kártya
-                 * egymás mellett.
-                 */
-
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    );
 
                 gap: 18px;
+
             }
 
 
@@ -851,6 +1100,7 @@
                 padding: 10px;
 
                 border-radius: 17px;
+
             }
 
 
@@ -859,18 +1109,21 @@
                 border-radius: 13px;
 
                 margin-bottom: 10px;
+
             }
 
 
             .music-name {
 
                 font-size: 14px;
+
             }
 
 
             .music-file {
 
                 font-size: 11px;
+
             }
 
 
@@ -879,12 +1132,14 @@
                 padding-left: 15px;
 
                 padding-right: 15px;
+
             }
 
 
             header h1 {
 
                 font-size: 25px;
+
             }
 
 
@@ -893,36 +1148,42 @@
                 width: 75px;
 
                 height: 75px;
+
             }
 
 
             .playlist-info h3 {
 
                 font-size: 16px;
+
             }
 
 
             .playlist-info p {
 
                 font-size: 12px;
+
             }
 
 
             .player {
 
-                bottom: 84px;
+                bottom: 108px;
 
-                width: calc(100% - 20px);
+                width:
+                    calc(100% - 20px);
 
                 padding: 10px;
+
             }
 
 
-            .player img {
+            .player img.player-cover {
 
                 width: 48px;
 
                 height: 48px;
+
             }
 
 
@@ -931,9 +1192,29 @@
                 width: 40px;
 
                 height: 40px;
+
+            }
+
+
+            .replay-button {
+
+                width: 40px;
+
+                height: 40px;
+
+            }
+
+
+            .playlist-badge {
+
+                width: 38px;
+
+                height: 38px;
+
             }
 
         }
+
 
 
         /* =================================
@@ -947,18 +1228,22 @@
                 grid-template-columns: 1fr;
 
                 gap: 20px;
+
             }
 
 
             .music-name {
 
                 font-size: 17px;
+
             }
 
         }
 
     </style>
+
 </head>
+
 
 
 <body>
@@ -1010,14 +1295,12 @@
         >
 
 
-            <!-- =========================
-                 BEASTMODE
-            ========================== -->
+            <!-- BEASTMODE -->
 
             <div
                 class="music-card"
                 data-name="Teminte - Beastmode"
-                onclick="playSong(0)"
+                onclick="playSong(0, false)"
             >
 
                 <img
@@ -1043,14 +1326,12 @@
 
 
 
-            <!-- =========================
-                 SHADOW RIDE
-            ========================== -->
+            <!-- SHADOW RIDE -->
 
             <div
                 class="music-card"
                 data-name="FullplayzoneFX – Shadow Ride | Hard Drift Phonk"
-                onclick="playSong(1)"
+                onclick="playSong(1, false)"
             >
 
                 <img
@@ -1120,7 +1401,7 @@
 
                 <img
                     class="playlist-image"
-                    src="teminte.jpg"
+                    src="playlist1.jpg"
                     alt="Kezdő számok"
                 >
 
@@ -1133,8 +1414,11 @@
 
 
                     <p>
-                        2 szám • Teminte - Beastmode •
+
+                        2 szám •
+                        Teminte - Beastmode •
                         Shadow Ride
+
                     </p>
 
                 </div>
@@ -1219,7 +1503,7 @@
             <div
                 class="track"
                 id="track-0"
-                onclick="playSong(0)"
+                onclick="playSong(0, true)"
             >
 
                 <div class="track-number">
@@ -1250,7 +1534,7 @@
             <div
                 class="track"
                 id="track-1"
-                onclick="playSong(1)"
+                onclick="playSong(1, true)"
             >
 
                 <div class="track-number">
@@ -1292,19 +1576,19 @@
     >
 
 
-        <!-- Borítókép -->
+        <!-- BORÍTÓ -->
 
         <img
+            class="player-cover"
             id="playerImage"
             src=""
             alt=""
         >
 
 
-        <!-- Információ -->
+        <!-- INFORMÁCIÓ -->
 
         <div class="player-info">
-
 
             <strong id="playerTitle">
                 -
@@ -1316,12 +1600,9 @@
             </small>
 
 
-            <!-- =================================
-                 TEKERŐS SÁV
-            ================================= -->
+            <!-- TEKERŐS SÁV -->
 
             <div class="progress-container">
-
 
                 <span id="currentTime">
                     0:00
@@ -1342,10 +1623,42 @@
                     0:00
                 </span>
 
-
             </div>
 
         </div>
+
+
+
+        <!-- PLAYLIST IKON -->
+
+        <div
+            class="playlist-badge"
+            id="playlistBadge"
+            title="Kezdő számok"
+        >
+
+            <img
+                src="playlist1.jpg"
+                alt="Kezdő számok playlist"
+            >
+
+        </div>
+
+
+
+        <!-- ISMÉTLÉS -->
+
+        <button
+            class="replay-button"
+            id="replayButton"
+            onclick="replaySong()"
+            title="Zene újraindítása"
+        >
+
+            🔁
+
+        </button>
+
 
 
         <!-- PLAY / PAUSE -->
@@ -1411,6 +1724,12 @@
         </button>
 
 
+        <div class="version">
+
+            version 02.02
+
+        </div>
+
     </nav>
 
 
@@ -1425,21 +1744,30 @@
         const songs = [
 
             {
-                name: "Teminte - Beastmode",
 
-                file: "beastmode.mp3",
+                name:
+                    "Teminte - Beastmode",
 
-                image: "teminte.jpg"
+                file:
+                    "beastmode.mp3",
+
+                image:
+                    "teminte.jpg"
+
             },
 
 
             {
+
                 name:
                     "FullplayzoneFX – Shadow Ride | Hard Drift Phonk",
 
-                file: "shadowride.mp3",
+                file:
+                    "shadowride.mp3",
 
-                image: "shadowride.png"
+                image:
+                    "shadowride.png"
+
             }
 
         ];
@@ -1451,6 +1779,14 @@
         ================================= */
 
         let currentSong = -1;
+
+
+        /*
+         * true = playlistből indítottuk
+         * false = simán a Zenék oldalról
+         */
+
+        let playingFromPlaylist = false;
 
 
 
@@ -1479,27 +1815,31 @@
 
 
         const playPauseButton =
-            document.getElementById(
-                "playPauseButton"
-            );
+            document.getElementById("playPauseButton");
 
 
         const progressBar =
-            document.getElementById(
-                "progressBar"
-            );
+            document.getElementById("progressBar");
 
 
         const currentTime =
-            document.getElementById(
-                "currentTime"
-            );
+            document.getElementById("currentTime");
 
 
         const duration =
-            document.getElementById(
-                "duration"
-            );
+            document.getElementById("duration");
+
+
+        const playlistBadge =
+            document.getElementById("playlistBadge");
+
+
+        const replayButton =
+            document.getElementById("replayButton");
+
+
+        const repeatToggle =
+            document.getElementById("repeatToggle");
 
 
 
@@ -1507,7 +1847,10 @@
            ZENE LEJÁTSZÁSA
         ================================= */
 
-        function playSong(index) {
+        function playSong(
+            index,
+            fromPlaylist = false
+        ) {
 
 
             if (!songs[index]) {
@@ -1520,756 +1863,36 @@
             currentSong = index;
 
 
+            playingFromPlaylist =
+                fromPlaylist;
+
+
             const song =
                 songs[index];
 
 
             /*
-             * Új hangfájl betöltése
+             * Ha új szám indul,
+             * az ismétlés gomb eltűnik.
              */
 
-            audio.src =
-                song.file;
-
-
-            /*
-             * Lejátszó frissítése
-             */
-
-            playerTitle.textContent =
-                song.name;
-
-
-            playerImage.src =
-                song.image;
-
-
-            playerStatus.textContent =
-                "Lejátszás...";
-
-
-            player.classList.add(
+            replayButton.classList.remove(
                 "visible"
             );
 
 
             /*
-             * Tekerősáv nullázása
+             * Playlist ikon kezelése.
              */
 
-            progressBar.value = 0;
+            if (playingFromPlaylist) {
 
-            currentTime.textContent =
-                "0:00";
-
-            duration.textContent =
-                "0:00";
-
-
-            /*
-             * Zene indítása
-             */
-
-            audio.play()
-                .then(() => {
-
-                    playPauseButton.textContent =
-                        "❚❚";
-
-                    playerStatus.textContent =
-                        "Lejátszás...";
-
-                })
-                .catch(error => {
-
-                    console.log(
-                        "Lejátszási hiba:",
-                        error
-                    );
-
-                    playerStatus.textContent =
-                        "Kattints újra a lejátszáshoz.";
-
-                });
-
-
-            updateActiveTrack();
-
-        }
-
-
-
-        /* =================================
-           PLAY / PAUSE
-        ================================= */
-
-        function togglePlay() {
-
-
-            /*
-             * Ha még nincs kiválasztott szám
-             */
-
-            if (currentSong === -1) {
-
-                playSong(0);
-
-                return;
+                playlistBadge.classList.add(
+                    "visible"
+                );
 
             }
-
-
-            /*
-             * Ha szünetel
-             */
-
-            if (audio.paused) {
-
-                audio.play();
-
-                playPauseButton.textContent =
-                    "❚❚";
-
-                playerStatus.textContent =
-                    "Lejátszás...";
-
-            }
-
-
-            /*
-             * Ha éppen megy
-             */
 
             else {
 
-                audio.pause();
-
-                playPauseButton.textContent =
-                    "▶";
-
-                playerStatus.textContent =
-                    "Szüneteltetve";
-
-            }
-
-        }
-
-
-
-        /* =================================
-           AUTOMATIKUS KÖVETKEZŐ SZÁM
-        ================================= */
-
-        audio.addEventListener(
-            "ended",
-            function() {
-
-
-                const repeat =
-                    document.getElementById(
-                        "repeatToggle"
-                    ).checked;
-
-
-
-                /*
-                 * Ha van következő szám
-                 */
-
-                if (
-                    currentSong <
-                    songs.length - 1
-                ) {
-
-                    playSong(
-                        currentSong + 1
-                    );
-
-                    return;
-
-                }
-
-
-
-                /*
-                 * Ha az utolsó szám véget ért
-                 * és az újrajátszás be van kapcsolva
-                 */
-
-                if (repeat) {
-
-                    playSong(0);
-
-                    return;
-
-                }
-
-
-
-                /*
-                 * Nincs több szám
-                 */
-
-                playPauseButton.textContent =
-                    "▶";
-
-
-                playerStatus.textContent =
-                    "Lejátszás vége";
-
-
-                progressBar.value =
-                    audio.duration;
-
-            }
-        );
-
-
-
-        /* =================================
-           AKTÍV SZÁM MEGJELÖLÉSE
-        ================================= */
-
-        function updateActiveTrack() {
-
-
-            /*
-             * Playlist számok törlése
-             */
-
-            document
-                .querySelectorAll(".track")
-                .forEach(track => {
-
-                    track.classList.remove(
-                        "active"
-                    );
-
-                });
-
-
-
-            /*
-             * Aktív playlist szám
-             */
-
-            const activeTrack =
-                document.getElementById(
-                    "track-" + currentSong
-                );
-
-
-            if (activeTrack) {
-
-                activeTrack.classList.add(
-                    "active"
-                );
-
-            }
-
-
-
-            /*
-             * Főoldali kártyák törlése
-             */
-
-            document
-                .querySelectorAll(".music-card")
-                .forEach(card => {
-
-                    card.classList.remove(
-                        "playing"
-                    );
-
-                });
-
-
-
-            /*
-             * Aktív főoldali kártya
-             */
-
-            const cards =
-                document.querySelectorAll(
-                    ".music-card"
-                );
-
-
-            if (cards[currentSong]) {
-
-                cards[currentSong]
-                    .classList.add(
-                        "playing"
-                    );
-
-            }
-
-        }
-
-
-
-        /* =================================
-           OLDALVÁLTÁS
-        ================================= */
-
-        function showPage(page) {
-
-
-            const musicPage =
-                document.getElementById(
-                    "musicPage"
-                );
-
-
-            const playlistPage =
-                document.getElementById(
-                    "playlistPage"
-                );
-
-
-            const playlistView =
-                document.getElementById(
-                    "playlistView"
-                );
-
-
-            const musicNav =
-                document.getElementById(
-                    "musicNav"
-                );
-
-
-            const playlistNav =
-                document.getElementById(
-                    "playlistNav"
-                );
-
-
-
-            /*
-             * Playlist nézet bezárása
-             */
-
-            playlistView.classList.remove(
-                "active"
-            );
-
-
-
-            /*
-             * Zenék oldal
-             */
-
-            if (page === "music") {
-
-
-                musicPage.classList.add(
-                    "active"
-                );
-
-
-                playlistPage.classList.remove(
-                    "active"
-                );
-
-
-                musicNav.classList.add(
-                    "active"
-                );
-
-
-                playlistNav.classList.remove(
-                    "active"
-                );
-
-
-                document.getElementById(
-                    "mainTitle"
-                ).textContent =
-                    "Zenék";
-
-            }
-
-
-
-            /*
-             * Playlists oldal
-             */
-
-            if (page === "playlists") {
-
-
-                musicPage.classList.remove(
-                    "active"
-                );
-
-
-                playlistPage.classList.add(
-                    "active"
-                );
-
-
-                musicNav.classList.remove(
-                    "active"
-                );
-
-
-                playlistNav.classList.add(
-                    "active"
-                );
-
-
-                document.getElementById(
-                    "mainTitle"
-                ).textContent =
-                    "Playlists";
-
-            }
-
-
-
-            /*
-             * Kereső törlése
-             */
-
-            document.getElementById(
-                "searchInput"
-            ).value = "";
-
-
-            filterSongs();
-
-        }
-
-
-
-        /* =================================
-           PLAYLIST MEGNYITÁSA
-        ================================= */
-
-        function openPlaylist() {
-
-
-            document.getElementById(
-                "musicPage"
-            ).classList.remove(
-                "active"
-            );
-
-
-            document.getElementById(
-                "playlistPage"
-            ).classList.remove(
-                "active"
-            );
-
-
-            document.getElementById(
-                "playlistView"
-            ).classList.add(
-                "active"
-            );
-
-
-            document.getElementById(
-                "mainTitle"
-            ).textContent =
-                "Kezdő számok";
-
-
-            document.getElementById(
-                "musicNav"
-            ).classList.remove(
-                "active"
-            );
-
-
-            document.getElementById(
-                "playlistNav"
-            ).classList.add(
-                "active"
-            );
-
-        }
-
-
-
-        /* =================================
-           PLAYLIST BEZÁRÁSA
-        ================================= */
-
-        function closePlaylist() {
-
-
-            document.getElementById(
-                "playlistView"
-            ).classList.remove(
-                "active"
-            );
-
-
-            document.getElementById(
-                "playlistPage"
-            ).classList.add(
-                "active"
-            );
-
-
-            document.getElementById(
-                "mainTitle"
-            ).textContent =
-                "Playlists";
-
-        }
-
-
-
-        /* =================================
-           KERESÉS
-        ================================= */
-
-        const searchInput =
-            document.getElementById(
-                "searchInput"
-            );
-
-
-        searchInput.addEventListener(
-            "input",
-            filterSongs
-        );
-
-
-
-        function filterSongs() {
-
-
-            const search =
-                searchInput.value
-                    .toLowerCase()
-                    .trim();
-
-
-            const cards =
-                document.querySelectorAll(
-                    ".music-card"
-                );
-
-
-            let found = false;
-
-
-
-            cards.forEach(card => {
-
-
-                const name =
-                    card.dataset.name
-                        .toLowerCase();
-
-
-
-                if (
-                    name.includes(search)
-                ) {
-
-
-                    card.style.display =
-                        "block";
-
-
-                    found = true;
-
-                }
-
-
-                else {
-
-
-                    card.style.display =
-                        "none";
-
-                }
-
-            });
-
-
-
-            document.getElementById(
-                "noResults"
-            ).style.display =
-                found ? "none" : "block";
-
-        }
-
-
-
-        /* =================================
-           IDŐ FORMÁZÁSA
-        ================================= */
-
-        function formatTime(seconds) {
-
-
-            if (
-                isNaN(seconds) ||
-                !isFinite(seconds)
-            ) {
-
-                return "0:00";
-
-            }
-
-
-            const minutes =
-                Math.floor(
-                    seconds / 60
-                );
-
-
-            const secs =
-                Math.floor(
-                    seconds % 60
-                );
-
-
-            return (
-                minutes +
-                ":" +
-                String(secs).padStart(2, "0")
-            );
-
-        }
-
-
-
-        /* =================================
-           ZENE BETÖLTŐDÉSE
-        ================================= */
-
-        audio.addEventListener(
-            "loadedmetadata",
-            function() {
-
-
-                /*
-                 * A teljes hossz beállítása
-                 */
-
-                progressBar.max =
-                    audio.duration;
-
-
-                /*
-                 * Teljes idő kiírása
-                 */
-
-                duration.textContent =
-                    formatTime(
-                        audio.duration
-                    );
-
-            }
-        );
-
-
-
-        /* =================================
-           LEJÁTSZÁSI IDŐ FRISSÍTÉSE
-        ================================= */
-
-        audio.addEventListener(
-            "timeupdate",
-            function() {
-
-
-                /*
-                 * Tekerősáv mozgatása
-                 */
-
-                progressBar.value =
-                    audio.currentTime;
-
-
-                /*
-                 * Aktuális idő kiírása
-                 */
-
-                currentTime.textContent =
-                    formatTime(
-                        audio.currentTime
-                    );
-
-            }
-        );
-
-
-
-        /* =================================
-           BELETEKERÉS
-        ================================= */
-
-        progressBar.addEventListener(
-            "input",
-            function() {
-
-
-                /*
-                 * A zene pozícióját
-                 * a csúszka értékére állítjuk.
-                 */
-
-                audio.currentTime =
-                    Number(
-                        progressBar.value
-                    );
-
-            }
-        );
-
-
-
-        /* =================================
-           HA A ZENE PAUSE
-        ================================= */
-
-        audio.addEventListener(
-            "pause",
-            function() {
-
-                if (
-                    !audio.ended
-                ) {
-
-                    playPauseButton.textContent =
-                        "▶";
-
-                }
-
-            }
-        );
-
-
-
-        /* =================================
-           HA A ZENE ELINDUL
-        ================================= */
-
-        audio.addEventListener(
-            "play",
-            function() {
-
-                playPauseButton.textContent =
-                    "❚❚";
-
-                playerStatus.textContent =
-                    "Lejátszás...";
-
-            }
-        );
-
-
-    </script>
-
-</body>
-</html>
+                playlistBadge.classList.remove(
