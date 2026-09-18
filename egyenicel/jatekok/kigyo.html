@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szuper Snake Játék 🐍</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Ikonok -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d25b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .clock-blink {
+            animation: redBlink 0.5s infinite;
+        }
+        @keyframes redBlink {
+            0%, 100% { color: #ef4444; opacity: 1; }
+            50% { color: #ffffff; opacity: 0.3; }
+        }
+
+        .snake-dead {
+            animation: snakeFlash 0.3s infinite;
+        }
+        @keyframes snakeFlash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between items-center relative text-white">
+
+    <!-- AUDIO ELEMEK -->
+    <audio id="snd-tetris" loop src="tetris_zene.mp3"></audio>
+    <audio id="snd-warning" src="warning.mp3"></audio>
+    <audio id="snd-321" src="321.mp3"></audio>
+    <audio id="snd-where" src="where.mp3"></audio>
+    <audio id="snd-set" src="set.mp3"></audio>
+    <audio id="snd-stop" src="stop.mp3"></audio>
+    <audio id="snd-click" src="click.mp3"></audio>
+    <audio id="snd-levelup" src="levelup.mp3"></audio>
+    <audio id="snd-almadone" src="almadone.mp3"></audio>
+    <audio id="snd-kigyolost" src="kigyolost.mp3"></audio>
+    <audio id="snd-lost" src="lost.mp3"></audio>
+    <audio id="snd-clock" src="clock.mp3"></audio>
+
+    <!-- 1. WARNING MODAL -->
+    <div id="modal-warning" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-4 border-yellow-500 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl">
+            <div class="text-yellow-400 text-5xl mb-4 animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h2 class="text-2xl font-black text-yellow-400 mb-2">FIGYELEM!</h2>
+            <p class="text-lg font-bold text-slate-200 mb-6">A pont számokat nem tudom elmenteni!</p>
+            <div id="warning-timer" class="text-3xl font-black text-slate-400 mb-2">3</div>
+            <button id="btn-warning-ok" class="hidden w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xl py-3 px-6 rounded-2xl shadow-lg transition active:scale-95">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- BEÁLLÍTÁSOK MENÜ -->
+    <div id="modal-settings" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-40 flex items-center justify-center p-4">
+        <div class="bg-slate-900/95 border-4 border-emerald-400 rounded-3xl p-6 max-w-sm w-full relative shadow-2xl">
+            <button id="btn-close-settings" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 class="text-2xl font-black text-center text-emerald-400 mb-6 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gear"></i> Beállítások
+            </h2>
+
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-lg">Zene</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-music" class="sr-only peer" checked>
+                        <div class="w-14 h-8 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-lg">Effektek</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-effects" class="sr-only peer" checked>
+                        <div class="w-14 h-8 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <span class="font-bold text-lg">Irányítás módja</span>
+                    <select id="select-control" class="bg-slate-800 border-2 border-slate-700 rounded-xl p-3 text-white font-bold outline-none focus:border-emerald-400">
+                        <option value="buttons">Gombok (⬅️⬇️⬆️➡️)</option>
+                        <option value="swipe">Húzás (Swipe)</option>
+                    </select>
+                </div>
+
+                <div id="ingame-options" class="hidden border-t-2 border-slate-800 pt-4 space-y-3">
+                    <button id="btn-resume" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-xl flex flex-col items-center justify-center">
+                        <span class="text-xl">▶</span>
+                        <span class="text-xs font-normal">folytatás</span>
+                    </button>
+                    <button id="btn-exit-game" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-2 px-4 rounded-xl flex flex-col items-center justify-center">
+                        <span class="text-xl">❌</span>
+                        <span class="text-xs font-normal">kilépés a játékból</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KILÉPÉS CONFIRM MODAL -->
+    <div id="modal-confirm-exit" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-4 border-rose-500 rounded-3xl p-6 max-w-xs w-full text-center shadow-2xl">
+            <h3 class="text-2xl font-black text-white mb-6">KILÉPSZ?</h3>
+            <div class="flex justify-between gap-4">
+                <button id="btn-exit-cancel" class="w-1/2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-xl">
+                    mégse
+                </button>
+                <button id="btn-exit-confirm" class="w-1/2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl">
+                    igen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="modal-gameover" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-4 border-amber-400 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <h2 id="gameover-title" class="text-3xl font-black text-amber-400 mb-6">Baleset</h2>
+            <div class="flex flex-col gap-3">
+                <button id="btn-restart" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl text-lg">
+                    Újrakezdés (elölről)
+                </button>
+                <button id="btn-main-menu" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-black py-3 rounded-xl text-lg">
+                    Főmenü
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FŐOLDAL -->
+    <div id="screen-main" class="w-full h-full flex flex-col justify-between items-center p-6 relative">
+        <button id="btn-main-settings" class="absolute top-6 left-6 text-4xl hover:scale-110 transition active:scale-95">
+            ⚙️
+        </button>
+
+        <div class="flex flex-col items-center justify-center my-auto text-center">
+            <div class="text-8xl sm:text-9xl mb-4 animate-pulse">🐍</div>
+            <h1 class="text-5xl sm:text-7xl font-black tracking-wider text-yellow-300 drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)]">
+                SNAKE
+            </h1>
+            <p class="text-emerald-200 font-bold mt-2 text-lg">Klasszikus Kígyós Játék</p>
+        </div>
+
+        <button id="btn-start" class="mb-8 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-3xl py-5 px-16 rounded-full border-4 border-white shadow-[0_10px_25px_rgba(16,185,129,0.5)] transform transition hover:scale-105 active:scale-95">
+            START 🚀
+        </button>
+    </div>
+
+    <!-- JÁTÉK SZEKCIÓ -->
+    <div id="screen-game" class="hidden w-full h-full flex flex-col items-center justify-between p-4 relative">
+        <div id="countdown-overlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-30 flex items-center justify-center">
+            <div id="countdown-number" class="text-9xl font-black text-yellow-400"></div>
+        </div>
+
+        <div class="w-full max-w-lg flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border-2 border-slate-700 shadow-lg">
+            <button id="btn-game-menu" class="text-2xl px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-xl">
+                ⏸
+            </button>
+            <div id="lives-display" class="text-xl sm:text-2xl tracking-widest text-red-500">
+                ❤️❤️❤️
+            </div>
+            <div id="game-clock" class="text-2xl font-mono font-black text-emerald-400">
+                00:18
+            </div>
+            <div class="text-lg font-bold text-yellow-300 flex items-center gap-1">
+                <span>🍎</span> <span id="apple-count">0 / 2</span>
+            </div>
+            <div class="text-sm font-bold text-slate-300">
+                Lvl: <span id="level-display" class="text-emerald-400">1</span>
+            </div>
+        </div>
+
+        <div class="relative flex-grow flex items-center justify-center my-2 w-full max-w-lg">
+            <canvas id="gameCanvas" class="bg-slate-950/90 border-4 border-slate-800 rounded-2xl shadow-2xl w-full max-w-[400px] aspect-square"></canvas>
+        </div>
+
+        <div id="control-buttons" class="w-full max-w-xs grid grid-cols-3 gap-2 mb-2">
+            <div></div>
+            <button id="btn-up" class="bg-slate-800/80 hover:bg-slate-700 text-3xl py-3 rounded-2xl border-2 border-slate-600 active:bg-emerald-600">⬆️</button>
+            <div></div>
+            <button id="btn-left" class="bg-slate-800/80 hover:bg-slate-700 text-3xl py-3 rounded-2xl border-2 border-slate-600 active:bg-emerald-600">⬅️</button>
+            <button id="btn-down" class="bg-slate-800/80 hover:bg-slate-700 text-3xl py-3 rounded-2xl border-2 border-slate-600 active:bg-emerald-600">⬇️</button>
+            <button id="btn-right" class="bg-slate-800/80 hover:bg-slate-700 text-3xl py-3 rounded-2xl border-2 border-slate-600 active:bg-emerald-600">➡️</button>
+        </div>
+    </div>
+
+    <!-- JÁTÉK LOGIKA JS -->
+    <script>
+        const audioList = {
+            tetris: document.getElementById('snd-tetris'),
+            warning: document.getElementById('snd-warning'),
+            c321: document.getElementById('snd-321'),
+            where: document.getElementById('snd-where'),
+            set: document.getElementById('snd-set'),
+            stop: document.getElementById('snd-stop'),
+            click: document.getElementById('snd-click'),
+            levelup: document.getElementById('snd-levelup'),
+            almadone: document.getElementById('snd-almadone'),
+            kigyolost: document.getElementById('snd-kigyolost'),
+            lost: document.getElementById('snd-lost'),
+            clock: document.getElementById('snd-clock')
+        };
+
+        let config = { music: true, effects: true, control: 'buttons' };
+
+        function playSFX(name) {
+            if (config.effects && audioList[name]) {
+                audioList[name].currentTime = 0;
+                audioList[name].play().catch(() => {});
+            }
+        }
+
+        function updateMusicState() {
+            const isGameActive = !document.getElementById('screen-game').classList.contains('hidden');
+            if (config.music && !isGameActive) {
+                audioList.tetris.play().catch(() => {});
+            } else {
+                audioList.tetris.pause();
+            }
+        }
+
+        // WARNING MODAL LOGIKA
+        let warningTime = 3;
+        const warningTimerEl = document.getElementById('warning-timer');
+        const warningOkBtn = document.getElementById('btn-warning-ok');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            playSFX('warning');
+            const interval = setInterval(() => {
+                warningTime--;
+                if (warningTime > 0) {
+                    warningTimerEl.textContent = warningTime;
+                } else {
+                    clearInterval(interval);
+                    warningTimerEl.classList.add('hidden');
+                    warningOkBtn.classList.remove('hidden');
+                }
+            }, 1000);
+        });
+
+        warningOkBtn.addEventListener('click', () => {
+            document.getElementById('modal-warning').classList.add('hidden');
+            updateMusicState();
+        });
+
+        // BEÁLLÍTÁSOK MENÜ
+        const settingsModal = document.getElementById('modal-settings');
+        const toggleMusic = document.getElementById('toggle-music');
+        const toggleEffects = document.getElementById('toggle-effects');
+        const selectControl = document.getElementById('select-control');
+        const ingameOptions = document.getElementById('ingame-options');
+
+        function openSettings(isIngame = false) {
+            playSFX('click');
+            if (isIngame) {
+                ingameOptions.classList.remove('hidden');
+                pauseGame();
+            } else {
+                ingameOptions.classList.add('hidden');
+            }
+            settingsModal.classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            settingsModal.classList.add('hidden');
+        }
+
+        document.getElementById('btn-main-settings').addEventListener('click', () => openSettings(false));
+        document.getElementById('btn-game-menu').addEventListener('click', () => openSettings(true));
+        document.getElementById('btn-close-settings').addEventListener('click', closeSettings);
+
+        toggleMusic.addEventListener('change', (e) => {
+            config.music = e.target.checked;
+            updateMusicState();
+            playSFX('set');
+        });
+
+        toggleEffects.addEventListener('change', (e) => {
+            config.effects = e.target.checked;
+            playSFX('set');
+        });
+
+        selectControl.addEventListener('change', (e) => {
+            config.control = e.target.value;
+            playSFX('set');
+            updateControlUI();
+        });
+
+        function updateControlUI() {
+            const btnGroup = document.getElementById('control-buttons');
+            if (config.control === 'buttons') {
+                btnGroup.classList.remove('hidden');
+            } else {
+                btnGroup.classList.add('hidden');
+            }
+        }
+
+        const confirmExitModal = document.getElementById('modal-confirm-exit');
+        document.getElementById('btn-exit-game').addEventListener('click', () => {
+            confirmExitModal.classList.remove('hidden');
+        });
+        document.getElementById('btn-exit-cancel').addEventListener('click', () => {
+            confirmExitModal.classList.add('hidden');
+        });
+        document.getElementById('btn-exit-confirm').addEventListener('click', () => {
+            confirmExitModal.classList.add('hidden');
+            closeSettings();
+            exitToMainMenu();
+        });
+
+        document.getElementById('btn-resume').addEventListener('click', () => {
+            closeSettings();
+            waitingForFirstMove = true;
+        });
+
+        // CANVAS ÉS SNAKE LOGIKA
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20;
+        const tileCount = 20;
+        canvas.width = tileCount * gridSize;
+        canvas.height = tileCount * gridSize;
+
+        let snake = [];
+        let dir = { x: 0, y: 0 };
+        let apple = { x: 0, y: 0 };
+        let obstacles = [];
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+        let maxLives = 3;
+        let timeLeft = 18;
+        let timerInterval = null;
+        let gameInterval = null;
+        let isPaused = false;
+        let waitingForFirstMove = false;
+        let isAnimating = false;
+
+        function updateLivesDisplay() {
+            let hearts = '';
+            for (let i = 0; i < maxLives; i++) {
+                if (i < lives) {
+                    hearts += '❤️';
+                } else {
+                    hearts += '🖤'; // Üres szív jelzi a lost életet!
+                }
+            }
+            document.getElementById('lives-display').textContent = hearts;
+        }
+
+        function resetSnakePos() {
+            snake = [
+                { x: 10, y: 10 },
+                { x: 10, y: 11 },
+                { x: 10, y: 12 }
+            ];
+            dir = { x: 0, y: 0 };
+            waitingForFirstMove = true;
+        }
+
+        function initLevel() {
+            // Sorsolás az 1-6 level között: 2 vagy 3 élet
+            if (level <= 6) {
+                maxLives = Math.random() < 0.5 ? 2 : 3;
+            } else {
+                maxLives = 2;
+            }
+            lives = maxLives;
+
+            // Időkorlát: 1-9 levelig 18 mp, utána 24 mp
+            if (level <= 9) {
+                timeLeft = 18;
+            } else {
+                timeLeft = 24;
+            }
+
+            score = 0;
+            updateLivesDisplay();
+            updateClockDisplay();
+            document.getElementById('apple-count').textContent = `${score} / 2`;
+            document.getElementById('level-display').textContent = level;
+            document.getElementById('game-clock').classList.remove('clock-blink');
+            resetSnakePos();
+            generateObstacles();
+            spawnApple();
+            draw();
+        }
+
+        function generateObstacles() {
+            obstacles = [];
+            if (level > 1) {
+                const count = (level - 1) * 3;
+                for (let i = 0; i < count; i++) {
+                    let obs;
+                    do {
+                        obs = {
+                            x: Math.floor(Math.random() * tileCount),
+                            y: Math.floor(Math.random() * tileCount)
+                        };
+                    } while (
+                        (obs.x === 10 && Math.abs(obs.y - 10) < 4) ||
+                        obstacles.some(o => o.x === obs.x && o.y === obs.y)
+                    );
+                    obstacles.push(obs);
+                }
+            }
+        }
+
+        function spawnApple() {
+            do {
+                apple = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount)
+                };
+            } while (
+                snake.some(s => s.x === apple.x && s.y === apple.y) ||
+                obstacles.some(o => o.x === apple.x && o.y === apple.y)
+            );
+        }
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            document.getElementById('screen-main').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            updateMusicState();
+            level = 1;
+            updateControlUI();
+            startCountdown();
+        });
+
+        function startCountdown() {
+            isAnimating = true;
+            const overlay = document.getElementById('countdown-overlay');
+            const numEl = document.getElementById('countdown-number');
+            overlay.classList.remove('hidden');
+            
+            let count = 3;
+            numEl.textContent = count;
+            playSFX('c321');
+
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    numEl.textContent = count;
+                } else {
+                    clearInterval(timer);
+                    overlay.classList.add('hidden');
+                    isAnimating = false;
+                    initLevel();
+                    startGameLoop();
+                }
+            }, 1000);
+        }
+
+        function startGameLoop() {
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+
+            gameInterval = setInterval(gameStep, 130 - Math.min(level * 5, 50));
+            
+            timerInterval = setInterval(() => {
+                if (!isPaused && !waitingForFirstMove && !isAnimating) {
+                    timeLeft--;
+                    updateClockDisplay();
+                    if (timeLeft <= 0) {
+                        handleTimeOut();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateClockDisplay() {
+            const clockEl = document.getElementById('game-clock');
+            const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+            const secs = String(timeLeft % 60).padStart(2, '0');
+            clockEl.textContent = `${mins}:${secs}`;
+        }
+
+        function gameStep() {
+            if (isPaused || waitingForFirstMove || isAnimating) return;
+            if (dir.x === 0 && dir.y === 0) return;
+
+            const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+            // Ütközés ellenőrzése
+            if (
+                head.x < 0 || head.x >= tileCount ||
+                head.y < 0 || head.y >= tileCount ||
+                obstacles.some(o => o.x === head.x && o.y === head.y) ||
+                snake.some(s => s.x === head.x && s.y === head.y)
+            ) {
+                handleCrash();
+                return;
+            }
+
+            snake.unshift(head);
+
+            // Alma megevése
+            if (head.x === apple.x && head.y === apple.y) {
+                score++;
+                document.getElementById('apple-count').textContent = `${score} / 2`;
+                
+                if (score >= 2) {
+                    dir = { x: 0, y: 0 }; // AZONNAL MEGÁLLJ!
+                    playSFX('levelup');
+                    triggerDoorAnimation();
+                } else {
+                    playSFX('almadone');
+                    spawnApple();
+                }
+            } else {
+                snake.pop();
+            }
+
+            draw();
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Rács
+            ctx.strokeStyle = '#1e293b';
+            for (let i = 0; i < tileCount; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * gridSize, 0); ctx.lineTo(i * gridSize, canvas.height); ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i * gridSize); ctx.lineTo(canvas.width, i * gridSize); ctx.stroke();
+            }
+
+            // Akadályok
+            ctx.fillStyle = '#64748b';
+            obstacles.forEach(o => {
+                ctx.fillRect(o.x * gridSize + 1, o.y * gridSize + 1, gridSize - 2, gridSize - 2);
+            });
+
+            // Alma
+            if (score < 2) {
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc((apple.x + 0.5) * gridSize, (apple.y + 0.5) * gridSize, gridSize / 2 - 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Ajtó 🚪
+            if (score >= 2) {
+                ctx.font = `${gridSize * 1.5}px serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🚪', (18 + 0.5) * gridSize, (18 + 0.5) * gridSize);
+            }
+
+            // Kígyó
+            snake.forEach((part, index) => {
+                ctx.fillStyle = index === 0 ? '#34d399' : '#059669';
+                ctx.beginPath();
+                ctx.fillRect(part.x * gridSize + 1, part.y * gridSize + 1, gridSize - 2, gridSize - 2);
+            });
+        }
+
+        function triggerDoorAnimation() {
+            isAnimating = true;
+            const doorInterval = setInterval(() => {
+                if (snake.length > 0) {
+                    snake.pop();
+                    draw();
+                } else {
+                    clearInterval(doorInterval);
+                    level++;
+                    startCountdown();
+                }
+            }, 150);
+        }
+
+        function handleCrash() {
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            isAnimating = true;
+            dir = { x: 0, y: 0 };
+
+            lives--;
+            updateLivesDisplay(); // Azonnal elhalványul a szív!
+            playSFX('kigyolost');
+
+            canvas.classList.add('snake-dead');
+            
+            setTimeout(() => {
+                canvas.classList.remove('snake-dead');
+                if (lives > 0) {
+                    resetSnakePos();
+                    isAnimating = false;
+                    draw();
+                    startGameLoop();
+                } else {
+                    playSFX('lost');
+                    showGameOverModal("Baleset");
+                }
+            }, 1500);
+        }
+
+        function handleTimeOut() {
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            isAnimating = true;
+            
+            document.getElementById('game-clock').classList.add('clock-blink');
+            playSFX('clock');
+
+            setTimeout(() => {
+                playSFX('lost');
+                showGameOverModal("Idő vége");
+            }, 1500);
+        }
+
+        function showGameOverModal(title) {
+            document.getElementById('gameover-title').textContent = title;
+            document.getElementById('modal-gameover').classList.remove('hidden');
+        }
+
+        function pauseGame() {
+            isPaused = true;
+        }
+
+        function exitToMainMenu() {
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-main').classList.remove('hidden');
+            document.getElementById('modal-gameover').classList.add('hidden');
+            updateMusicState();
+        }
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            document.getElementById('modal-gameover').classList.add('hidden');
+            level = 1;
+            startCountdown();
+        });
+
+        document.getElementById('btn-main-menu').addEventListener('click', () => {
+            exitToMainMenu();
+        });
+
+        // IRÁNYÍTÁS
+        function changeDirection(newDir) {
+            if (isAnimating) return;
+            if (waitingForFirstMove) {
+                waitingForFirstMove = false;
+                isPaused = false;
+            }
+            if (newDir.x === -dir.x && newDir.y === -dir.y) return;
+            dir = newDir;
+        }
+
+        document.getElementById('btn-up').addEventListener('click', () => changeDirection({ x: 0, y: -1 }));
+        document.getElementById('btn-down').addEventListener('click', () => changeDirection({ x: 0, y: 1 }));
+        document.getElementById('btn-left').addEventListener('click', () => changeDirection({ x: -1, y: 0 }));
+        document.getElementById('btn-right').addEventListener('click', () => changeDirection({ x: 1, y: 0 }));
+
+        window.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp': case 'w': case 'W': changeDirection({ x: 0, y: -1 }); break;
+                case 'ArrowDown': case 's': case 'S': changeDirection({ x: 0, y: 1 }); break;
+                case 'ArrowLeft': case 'a': case 'A': changeDirection({ x: -1, y: 0 }); break;
+                case 'ArrowRight': case 'd': case 'D': changeDirection({ x: 1, y: 0 }); break;
+            }
+        });
+
+        // SWIPE
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (config.control !== 'swipe' || isAnimating) return;
+            let diffX = e.changedTouches[0].clientX - touchStartX;
+            let diffY = e.changedTouches[0].clientY - touchStartY;
+            
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 30) changeDirection({ x: 1, y: 0 });
+                else if (diffX < -30) changeDirection({ x: -1, y: 0 });
+            } else {
+                if (diffY > 30) changeDirection({ x: 0, y: 1 });
+                else if (diffY < -30) changeDirection({ x: 0, y: -1 });
+            }
+        });
+    </script>
+</body>
+</html>
