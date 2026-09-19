@@ -1,283 +1,309 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="hu">
 <head>
-      <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
-                <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap">
-      <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Coral+Pixels&display=swap">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="icon" ... <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
-  <link rel="shortcut icon" href="favicon/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    h1 {
-      color: #0040ff;
-      background-color: #dae3fc;
-      border-radius: 7px;
-      box-shadow:  5px 5px 5px 2px #312ec9 ;
-    }
-
-    h2 {
-      margin: 10px;
-      color: #01f405;
-      background-color: #ceff99;
-      border-radius: 7px;
-    }
-    .betu {
-      font-family: "Fjalla One", cursive;
-    }
-       .cim {
-            font-family: "Press Start 2P", cursive;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szeva, ez az én egyéni célom!</title>
+    <!-- Tailwind CSS for utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Fredoka', cursive, sans-serif;
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 35%, #00f2fe 70%, #10b981 100%);
+            background-size: 300% 300%;
+            animation: gradientShift 12s ease infinite;
         }
-        .cimke{
-          font-family: "Coral Pixels", cursive;
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-    body {
-      background-color: #eff71b;
-    }
 
-    h6 {
-      color: #e05050;
-    }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-12px) rotate(1deg); }
+        }
 
-    h5 {
-      color: #4d4be5;
-    }
+        .animate-float {
+            animation: float 3.5s ease-in-out infinite;
+        }
 
-    /* Általános mobil méret (600px alatt) */
-    @media screen and (max-width: 600px) {
+        .gif-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-      /* Ide tehetsz még más mobil stílust is, pl: */
-      body {
-        font-size: 18px;
-      }
-    }
-    .container {
-  position: relative;
-  width: 246px; /* kép mérete */
-  overflow: hidden;
-}
+        .gif-card:hover {
+            transform: scale(1.08) rotate(2deg) translateY(-6px);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+        }
 
-.container img {
-  width: 100%;
-  display: block;
-}
+        .official-goal-badge {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            z-index: 10;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #facc15 0%, #f59e0b 42%, #fbbf24 100%);
+            color: #111827;
+            font-size: 0.68rem;
+            font-weight: 900;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            border: 4px solid rgba(15, 23, 42, 0.9);
+            border-radius: 0.8rem 0.8rem 0.7rem 0.7rem;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.38);
+            padding: 0.9rem 1.7rem 0.9rem 1.5rem;
+            transform: rotate(12deg);
+            clip-path: polygon(0 0, 100% 0, 100% 72%, 96% 100%, 0 100%);
+            overflow: visible;
+        }
 
-/* takaró réteg */
-.cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+        .official-goal-badge::before,
+        .official-goal-badge::after {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #facc15 0%, #f59e0b 100%);
+            border: 3px solid rgba(15, 23, 42, 0.9);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-  background: #eff71b; /* háttér színe */
+        .official-goal-badge::before {
+            left: -11px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
+        }
 
-  animation: reveal 4s ease forwards;
-}
+        .official-goal-badge::after {
+            right: -11px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
+        }
 
-@keyframes reveal {
-  from {
-    transform: translateY(0%);
-  }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
 
-  to {
-    transform: translateY(150%);
-  }
-}
-.money-card{
-    margin:40px 0;
-    width:180px;
-    height:70px;
-    border-radius:20px;
-    background:linear-gradient(135deg,#66bb6a,#29b6f6);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,.25);
-    animation:appear 1s ease,float 4s ease-in-out infinite,glow 3s infinite;
-}
-
-.money-card::before{
-    content:"";
-    position:absolute;
-    width:60px;
-    height:200%;
-    background:rgba(255,255,255,.5);
-    transform:rotate(25deg);
-    left:-100px;
-    animation:light 5s infinite;
-}
-
-.money-card::after{
-    content:"Új!\00a0\00a0\00a0\00a0Új!\00a0\00a0\00a0\00a0Új!";
-    position:absolute;
-    bottom:-25px;
-    right:15px;
-    font-size:20px;
-    color:rgba(0,0,0,0.35);
-    animation:coins 5s linear infinite;
-}
-
-.money-card:hover{
-    transform:scale(1.05);
-}@keyframes appear{
-    from{
-        transform:scale(.3);
-        opacity:0;
-    }
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-10px);
-    }
-}
-
-@keyframes glow{
-    0%,100%{
-        box-shadow:0 10px 25px rgba(0,0,0,.25);
-    }
-    50%{
-        box-shadow:0 10px 35px rgba(33,150,243,.7);
-    }
-}
-
-@keyframes light{
-    0%{
-        left:-100px;
-    }
-    60%,100%{
-        left:400px;
-    }
-}
-
-@keyframes coins{
-    0%{
-        transform:translateY(40px);
-        opacity:0;
-    }
-    30%{
-        opacity:1;
-    }
-    100%{
-        transform:translateY(-130px);
-        opacity:0;
-    }
-}
-h4 {
-    font-size: 44px;
-    font-family: "", cursive;
-}
-.sor{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-  </style>
+        .pulse-notice {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+    </style>
 </head>
-<body>
-  <h2  class="cim">Szia!</h2>
-  <h1>
-    Ez itt Nándi oldala!
-  </h1>
-  <h3>
-    Hova menjünk?
-  </h3>
-  <h3>
-    <a target="_self" href="kipattantafejembol.html">Amik fogalmazáson jólsikerült mesék </a>
-  </h3>
-  <h3>
-    <a target="_self" href="rohogjvelem.html">A legjobb viccek </a>
-  </h3>
-  <div class="sor">
-      <h3>
-            <a target="_self" href="derus.html">Legyél derűs </a>
-      </h3>
-        <h4 class="money-card">
-    Új!
-  </h4>
+<body class="min-h-screen text-slate-800 flex flex-col items-center justify-start pt-6 pb-96 px-4 sm:px-8">
 
-      </div>
-      <h3>
-  <a target="_self" href="sajatszerencsekerek.html">Csinálj szerencsekereket </a>
-  <h3>
-  <a  target="_self" href="Kamat.html">Kamatok felvétele Nándival</a> <img src="https://e7.pngegg.com/pngimages/106/129/png-clipart-keyhole-computer-icons-hole-logo-creative-market-thumbnail.png" width="21">
-  </a>
-  </h3>
-  <h3>
-    <a target="_blank"
-      href="https://docs.google.com/presentation/d/17EyIWyxxQG3g2SCl8uj-eceVuYuk8t97yemk7MwYYl8/edit?usp=sharing">
-      Online tudod megnézni az étterem megrendelőit
-      <img src="https://ps.w.org/open-external-links-in-a-new-window/assets/icon-256x256.png" width="16" alt="">
-    </a>
+    <!-- Interactive Audio Banner for Browser Autoplay Fix -->
+    <div id="audioStartBanner" onclick="enableAudio()" class="pulse-notice w-full max-w-5xl bg-amber-400 hover:bg-amber-300 text-slate-900 cursor-pointer font-black py-3 px-6 rounded-2xl shadow-xl border-4 border-amber-200 text-center mb-6 flex items-center justify-center gap-3 transition-all">
+        <span class="text-2xl animate-bounce">🎵</span>
+        <span class="text-base sm:text-lg">KATTINTS BÁRHOVA AZ OLDALON A ZENE (BULI1.MP3) INDÍTÁSÁHOZ!</span>
+        <span class="text-2xl animate-bounce">🚀</span>
+    </div>
 
-  </h3>
-  <h3>
-    <a target="_self"
-    href="mediatartalom.html"> Média tartalmak </a>
-  </h3>
-  <h3>
-     <a target="_self" href="mese/mesenap.html">Mesenap</a> <img src="https://e7.pngegg.com/pngimages/106/129/png-clipart-keyhole-computer-icons-hole-logo-creative-market-thumbnail.png" width="21">
-  </a>
-  </h3>
-<div class="sor">
-  <h3>
-    <a target="_self" href="sajatszerencsekerek.html">
-      Készíts szerencsekereket
-    </a>
-  </h3>
+    <!-- Main Card Container -->
+    <main class="w-full max-w-5xl bg-white/95 backdrop-blur-lg rounded-3xl p-6 sm:p-12 shadow-2xl border-4 border-emerald-300 text-center relative overflow-visible transition-all">
+        
+        <!-- Decorative Badge -->
+        <div class="official-goal-badge">
+            100% Hivatalos Cél 🎯
+        </div>
 
-  <h4 class="money-card">
-    Új!
-  </h4>
-</div>
-  <!--   <h3> <a target="_blank"
-      href="jatek.html">
- Játsz!--> 
-  <h3>
-    <a target="_blank"
-    href="Atiranyitas.html">Lesd meg az ajándékaidat</a>
-  </h3>
- 
- <h3 class="cimke">
-    <a target="_blank" href="https://www.w3schools.com/">
-        Tanulj programozni
-    </a>
-     <img src="https://ps.w.org/open-external-links-in-a-new-window/assets/icon-256x256.png" width="16" alt="">
-</h3>
-  
-  <h1>
-    Érezd jól magad!
-  </h1>
-  <h5>
-    Povered by VINA (Nándi)
-  </h5>
-  <h6>
-    Hiba esetén <a target="_blank"
-      href="https://mail.google.com/mail/?view=cm&fs=1&to=rafynandi@gmail.com&su=Hiba%20targy&body=Ez%20a%20hiba:%20">
-      üzenj!
-    </a> <img src="https://ps.w.org/open-external-links-in-a-new-window/assets/icon-256x256.png" width="13" alt="">
-    <img src="data:image/png;base64,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" width="22" alt="">
-  </h6>
-     <div class="cover"></div>
+        <!-- Main Title (Kiemelt sötét kontrasztos háttérrel a jó olvashatóságért) -->
+        <div class="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border-4 border-amber-400 shadow-xl my-4 transform -rotate-1 hover:rotate-0 transition-transform">
+            <h1 class="animate-float text-3xl sm:text-5xl md:text-6xl font-black text-amber-300 tracking-wide drop-shadow-lg leading-tight uppercase">
+                szeva, ez az én egyéni célom! 🔥🚀 😎
+            </h1>
+            <p class="text-emerald-300 text-lg sm:text-xl font-bold mt-2">
+                Nincs több kérdés, nincs több magyarázkodás. Az irány be van lőve! 🎉✨
+            </p>
+        </div>
+
+        <!-- GIFs Container (object-contain a teljes képmegjelenítésért) -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-10 my-8">
+            
+            <!-- GIF 1: Sheen -->
+            <div class="gif-card bg-gradient-to-tr from-cyan-400 to-blue-500 p-4 rounded-3xl shadow-xl border-4 border-white w-full sm:w-1/2 max-w-sm cursor-pointer" onclick="triggerConfetti()">
+                <div class="relative overflow-hidden rounded-2xl bg-black/20 p-2 flex items-center justify-center min-h-[260px]">
+                    <img src="https://media.tenor.com/n6SqL663YHoAAAAM/sheen.gif" 
+                         alt="Sheen GIF" 
+                         class="max-w-full max-h-64 object-contain rounded-xl shadow-md"
+                         onerror="this.src='https://placehold.co/400x300/0072ff/fff?text=Sheen+GIF'">
+                </div>
+                <div class="mt-3 bg-white/95 py-2 px-4 rounded-xl font-black text-slate-800 text-base shadow">
+                    Maximális Fókusz 🧠⚡
+                </div>
+            </div>
+
+            <!-- GIF 2: Dancing Cat (TELJES KIÍRÁS OBJECT-CONTAIN SEGYTSÉGÉVEL) -->
+            <div class="gif-card bg-gradient-to-tr from-emerald-400 to-teal-500 p-4 rounded-3xl shadow-xl border-4 border-white w-full sm:w-1/2 max-w-sm cursor-pointer" onclick="triggerConfetti()">
+                <div class="relative overflow-hidden rounded-2xl bg-black/20 p-2 flex items-center justify-center min-h-[260px]">
+                    <img src="https://media.tenor.com/r0R0N3dI3kIAAAAM/dancing-cat-dance.gif" 
+                         alt="Dancing Cat GIF" 
+                         class="max-w-full max-h-64 object-contain rounded-xl shadow-md"
+                         onerror="this.src='https://placehold.co/400x300/00f2fe/fff?text=Dancing+Cat'">
+                </div>
+                <div class="mt-3 bg-white/95 py-2 px-4 rounded-xl font-black text-slate-800 text-base shadow">
+                    Táncoló Sikerek 🐱🕺
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Interactive Controls -->
+        <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+            <button onclick="triggerConfetti()" class="px-8 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-900 font-black text-xl rounded-2xl shadow-lg border-2 border-yellow-200 transform active:scale-95 transition-all flex items-center gap-2">
+                <span>🎉</span> Buli & Konfetti!
+            </button>
+
+            <!-- Big Audio Play / Pause Toggle -->
+            <button id="playAudioBtn" onclick="toggleMusic()" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xl rounded-2xl shadow-lg border-2 border-emerald-200 transform active:scale-95 transition-all flex items-center gap-3">
+                <span id="musicIcon">🎵</span> <span id="musicBtnText">Buli zene indítása!</span>
+            </button>
+        </div>
+
+        <!-- Clean Volume Controller (0% - 100% with Clean Integer Rounding) -->
+        <div class="mt-6 inline-flex flex-col sm:flex-row items-center gap-4 bg-slate-100/90 backdrop-blur-sm px-6 py-3 rounded-2xl border border-slate-200 shadow-inner">
+            <div class="flex items-center gap-3">
+                <span class="text-xs sm:text-sm font-black text-slate-600 uppercase tracking-wider">Hangerő:</span>
+                <input id="volumeControl" type="range" min="0" max="100" step="1" value="80" oninput="changeVolume(this.value)" class="w-36 accent-teal-600 cursor-pointer">
+                <span id="volumeValue" class="text-xs sm:text-sm font-black text-slate-800 bg-emerald-200 px-3 py-1 rounded-full border border-emerald-300">80%</span>
+            </div>
+        </div>
+
+        <!-- Local buli1.mp3 Audio Element -->
+        <audio id="winAudio" loop preload="auto">
+            <source src="jatekok/buli1.mp3" type="audio/mpeg">
+            A böngésződ nem támogatja az audio elemet.
+        </audio>
+
+        <!-- ================================================================= -->
+        <!--  HATALMAS ÜRES HELY A HTML-BEN (IDE BÁRMILYEN SAJÁT TARTALMAT ÍRHATSZ)  -->
+        <!-- ================================================================= -->
+        
+        <div class="w-full my-16 py-20 min-h-[600px] border-4 border-dashed border-teal-300/60 rounded-3xl bg-teal-50/30 flex flex-col items-center justify-center text-slate-500 font-bold p-8">
+            <p class="text-2xl mb-2">✨ ÓRIÁSI SZABAD HELY A HTML KÓDBAN ✨</p>
+            <p class="text-base font-medium max-w-lg text-center opacity-80">
+                Ide a HTML kódba közvetlenül illeszthetsz be további gombokat, képeket, táblázatokat, videókat vagy hosszú szövegeket!
+            </p>
+        </div>
+
+        <!-- ================================================================= -->
+        <!--                     HATALMAS ÜRES HELY VÉGE                      -->
+        <!-- ================================================================= -->
+
+    </main>
+
+    <!-- Legalsó különálló Jegyzet Szekció hatalmas margóval felette -->
+    <section class="w-full max-w-5xl mt-24 sm:mt-32 bg-white/95 backdrop-blur-lg rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-emerald-300 text-left">
+        <label for="userNotes" class="block text-slate-800 font-black text-2xl mb-4 flex items-center gap-3">
+            <span class="text-3xl">📝</span> Ide írhatsz bármit (Egyéni célok, tervek, jegyzetek):
+        </label>
+        <textarea id="userNotes" rows="16" placeholder="Írd ide a céljaidat, gondolataidat vagy bármit, ami eszedbe jut... Ami eszedbe jut, mi az ami jó és az ami rossz az egyéni célomban, azt írd ide!" class="w-full p-6 rounded-2xl border-2 border-slate-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 outline-none text-slate-800 font-medium text-xl resize-y transition-all bg-white shadow-inner leading-relaxed"></textarea>
+    </section>
+
+    <!-- Extra space at bottom -->
+    <footer class="mt-20 text-center text-white/95 font-bold text-xl tracking-wide drop-shadow-md">
+        <p>🚀 Készülj fel a sikerre!</p>
+        <div class="h-96"></div> <!-- Extra room for scrolling -->
+    </footer>
+
+    <script>
+        const audio = document.getElementById('winAudio');
+        const playBtnText = document.getElementById('musicBtnText');
+        const musicIcon = document.getElementById('musicIcon');
+        const volumeControl = document.getElementById('volumeControl');
+        const volumeValue = document.getElementById('volumeValue');
+        const audioStartBanner = document.getElementById('audioStartBanner');
+
+        let audioHasStarted = false;
+
+        // Set initial volume cleanly using Math.round to avoid rounding precision bugs
+        function setAudioVolume(percent) {
+            const cleanPercent = Math.min(100, Math.max(0, Math.round(Number(percent))));
+            audio.volume = cleanPercent / 100;
+            if (volumeValue) {
+                volumeValue.innerText = cleanPercent + '%';
+            }
+            if (volumeControl) {
+                volumeControl.value = cleanPercent;
+            }
+        }
+
+        // Initialize volume to 80% clean
+        setAudioVolume(80);
+
+        // Enable and play audio reliably
+        function enableAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    audioHasStarted = true;
+                    if (playBtnText) playBtnText.innerText = "Zene Megállítása ⏸️";
+                    if (musicIcon) musicIcon.innerText = "🎶";
+                    if (audioStartBanner) {
+                        audioStartBanner.style.display = 'none';
+                    }
+                }).catch(err => {
+                    console.log("Audio play deferred until direct user interaction.");
+                });
+            }
+        }
+
+        // Toggle play/pause music
+        function toggleMusic() {
+            if (audio.paused) {
+                enableAudio();
+                triggerConfetti();
+            } else {
+                audio.pause();
+                if (playBtnText) playBtnText.innerText = "Buli1.mp3 Lejátszása 🎵";
+                if (musicIcon) musicIcon.innerText = "🔊";
+            }
+        }
+
+        // Change volume with clean integer display (0% - 100%)
+        function changeVolume(val) {
+            setAudioVolume(val);
+        }
+
+        // Confetti effect
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        // Global event listener to trigger audio on FIRST click or keypress anywhere on page
+        function autoPlayOnFirstInteraction() {
+            if (!audioHasStarted) {
+                enableAudio();
+            }
+            document.removeEventListener('click', autoPlayOnFirstInteraction);
+            document.removeEventListener('keydown', autoPlayOnFirstInteraction);
+            document.removeEventListener('touchstart', autoPlayOnFirstInteraction);
+        }
+
+        document.addEventListener('click', autoPlayOnFirstInteraction);
+        document.addEventListener('keydown', autoPlayOnFirstInteraction);
+        document.addEventListener('touchstart', autoPlayOnFirstInteraction);
+
+        // AZONNALI KONFETTI DURRANÁS AZ OLDAL BETÖLTÉSEKOR
+        window.addEventListener('load', () => {
+            enableAudio();
+            triggerConfetti();
+            setTimeout(triggerConfetti, 300);
+        });
+    </script>
 </body>
-
 </html>
