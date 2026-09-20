@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dobókocka</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at 50% 20%, #30343b 0%, #15171b 45%, #090a0c 100%);
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        width: min(500px, 92vw);
+        text-align: center;
+    }
+
+    h1 {
+        margin: 0 0 18px;
+        font-size: 30px;
+        letter-spacing: 1px;
+    }
+
+    #rollButton {
+        border: 0;
+        border-radius: 12px;
+        padding: 14px 42px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(180deg, #ff4747, #c71919);
+        box-shadow:
+            0 5px 0 #851111,
+            0 10px 25px rgba(0,0,0,.4);
+        cursor: pointer;
+        transition: .12s;
+    }
+
+    #rollButton:hover {
+        filter: brightness(1.08);
+    }
+
+    #rollButton:active {
+        transform: translateY(4px);
+        box-shadow:
+            0 1px 0 #851111,
+            0 5px 15px rgba(0,0,0,.4);
+    }
+
+    #rollButton:disabled {
+        opacity: .65;
+        cursor: not-allowed;
+    }
+
+    .scene {
+        width: 220px;
+        height: 220px;
+        margin: 45px auto 25px;
+        perspective: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cube {
+        width: 120px;
+        height: 120px;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: rotateX(-18deg) rotateY(25deg);
+    }
+
+    .cube.rolling {
+        animation: roll .65s cubic-bezier(.18,.8,.25,1);
+    }
+
+    @keyframes roll {
+        0% {
+            transform:
+                translateY(-100px)
+                rotateX(0deg)
+                rotateY(0deg)
+                rotateZ(0deg);
+        }
+
+        20% {
+            transform:
+                translateY(-35px)
+                rotateX(160deg)
+                rotateY(110deg)
+                rotateZ(60deg);
+        }
+
+        45% {
+            transform:
+                translateY(15px)
+                rotateX(330deg)
+                rotateY(260deg)
+                rotateZ(150deg);
+        }
+
+        70% {
+            transform:
+                translateY(-5px)
+                rotateX(520deg)
+                rotateY(390deg)
+                rotateZ(250deg);
+        }
+
+        100% {
+            transform:
+                translateY(0)
+                rotateX(720deg)
+                rotateY(540deg)
+                rotateZ(360deg);
+        }
+    }
+
+    .face {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background:
+            linear-gradient(145deg, #ffffff 0%, #e8e8e8 45%, #bcbcbc 100%);
+        border: 2px solid #999;
+        border-radius: 15px;
+        box-shadow:
+            inset 5px 5px 10px rgba(255,255,255,.9),
+            inset -7px -7px 12px rgba(0,0,0,.25),
+            0 3px 8px rgba(0,0,0,.3);
+        padding: 14px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+
+    .front  { transform: rotateY(0deg) translateZ(60px); }
+    .back   { transform: rotateY(180deg) translateZ(60px); }
+    .right  { transform: rotateY(90deg) translateZ(60px); }
+    .left   { transform: rotateY(-90deg) translateZ(60px); }
+    .top    { transform: rotateX(90deg) translateZ(60px); }
+    .bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+    .pip {
+        width: 19px;
+        height: 19px;
+        align-self: center;
+        justify-self: center;
+        border-radius: 50%;
+        background:
+            radial-gradient(circle at 35% 30%, #444 0%, #111 45%, #000 100%);
+        box-shadow:
+            inset 2px 2px 3px rgba(255,255,255,.15),
+            1px 2px 3px rgba(0,0,0,.45);
+        opacity: 0;
+    }
+
+    .pip.show {
+        opacity: 1;
+    }
+
+    .result {
+        min-height: 80px;
+        margin-top: 5px;
+    }
+
+    .result-label {
+        color: #aaa;
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    #result {
+        font-size: 42px;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 2px 10px rgba(255,255,255,.15);
+    }
+
+    .history-box {
+        margin-top: 22px;
+        padding: 18px;
+        border-radius: 15px;
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .history-title {
+        color: #bbb;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    #history {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 28px;
+    }
+
+    .history-item {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: #25282d;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        box-shadow: inset 0 1px 2px rgba(255,255,255,.08);
+    }
+
+    .empty {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .floor-shadow {
+        position: absolute;
+        width: 130px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(0,0,0,.6);
+        filter: blur(9px);
+        transform: translateY(82px);
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎲 Dobókocka</h1>
+
+    <button id="rollButton">Dobás</button>
+
+    <div class="scene">
+        <div class="floor-shadow"></div>
+
+        <div class="cube" id="cube">
+
+            <!-- 1 -->
+            <div class="face front">
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+            </div>
+
+            <!-- 2 -->
+            <div class="face back">
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+            </div>
+
+            <!-- 3 -->
+            <div class="face right">
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+            </div>
+
+            <!-- 4 -->
+            <div class="face left">
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+            </div>
+
+            <!-- 5 -->
+            <div class="face top">
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+            </div>
+
+            <!-- 6 -->
+            <div class="face bottom">
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+                <span class="pip show"></span>
+                <span class="pip"></span>
+                <span class="pip show"></span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="result">
+        <div class="result-label">Dobás eredménye</div>
+        <div id="result">–</div>
+    </div>
+
+    <div class="history-box">
+        <div class="history-title">Előzmények</div>
+        <div id="history">
+            <span class="empty">Még nem dobtál.</span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const cube = document.getElementById("cube");
+const button = document.getElementById("rollButton");
+const result = document.getElementById("result");
+const historyBox = document.getElementById("history");
+
+let history = [];
+
+/*
+ * Beállítjuk, hogy a kocka elülső lapján
+ * mindig a ténylegesen kidobott szám legyen.
+ */
+const faces = document.querySelectorAll(".face");
+
+const pipPatterns = {
+    1: [4],
+    2: [0, 8],
+    3: [0, 4, 8],
+    4: [0, 2, 6, 8],
+    5: [0, 2, 4, 6, 8],
+    6: [0, 2, 3, 5, 6, 8]
+};
+
+function setFrontNumber(number) {
+    const front = document.querySelector(".front");
+    const pips = front.querySelectorAll(".pip");
+
+    pips.forEach(pip => pip.classList.remove("show"));
+
+    pipPatterns[number].forEach(index => {
+        pips[index].classList.add("show");
+    });
+}
+
+function updateHistory() {
+    if (history.length === 0) {
+        historyBox.innerHTML =
+            '<span class="empty">Még nem dobtál.</span>';
+        return;
+    }
+
+    historyBox.innerHTML = history
+        .map(number => `<div class="history-item">${number}</div>`)
+        .join("");
+}
+
+button.addEventListener("click", () => {
+
+    button.disabled = true;
+
+    // Véletlen szám 1–6
+    const number = Math.floor(Math.random() * 6) + 1;
+
+    // Már az animáció előtt beállítjuk a megfelelő pöttyöket.
+    setFrontNumber(number);
+
+    cube.classList.remove("rolling");
+
+    // Újraindítjuk az animációt
+    void cube.offsetWidth;
+
+    cube.classList.add("rolling");
+
+    // Eredmény csak a dobás végén jelenik meg
+    setTimeout(() => {
+
+        result.textContent = number;
+
+        history.unshift(number);
+
+        // Legfeljebb az utolsó 12 dobást tároljuk
+        if (history.length > 12) {
+            history.pop();
+        }
+
+        updateHistory();
+
+        button.disabled = false;
+
+    }, 650);
+});
+</script>
+
+</body>
+  </html>
+                  
