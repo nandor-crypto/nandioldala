@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utazás Terv</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9ed2, #a8d8ff);
+            color: #222;
+            text-align: center;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .doboz {
+            max-width: 900px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 42px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            font-size: 20px;
+            line-height: 1.7;
+        }
+
+        a {
+            color: #0066cc;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #e60073;
+            text-decoration: underline;
+        }
+
+        .kep {
+            width: 80%;
+            max-width: 700px;
+            margin: 15px auto;
+            display: block;
+            border-radius: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .izgalmas {
+            color: #ff1493;
+            font-size: 50px;
+            margin-top: 35px;
+        }
+
+        .gomb {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 15px 30px;
+            background: #ff4fa3;
+            color: white;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .gomb:hover {
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="doboz">
+
+        <h1>Utazás terv</h1>
+
+        <p>
+            El autózunk a
+            <a target="_self" href="https://maps.app.goo.gl/MUqW5UvZiXrR8TAd6?g_st=am">
+                gödöllői vasútállomáshoz
+            </a>
+            <br>
+
+            majd <b>elvonatozunk</b> a
+            <a target="_self" href="https://maps.app.goo.gl/rJjHhn4ECUFNRJmv7">
+                Keleti
+            </a>-ig,
+
+            majd folytatjuk a végállomáshoz az utat tömegközlekedve.
+        </p>
+
+        <img src="tomegkoz.jpg" alt="Tömegközlekedés" class="kep">
+
+        <p>
+            Az M3 metróval megyünk a
+            <a target="_self" href="https://maps.app.goo.gl/a963TnUwA7rZ7vfP7?g_st=am">
+                Kálvin tér
+            </a>-ig,
+
+            majd átszállunk az
+            <a target="_self" href="https://maps.app.goo.gl/vRTn4WMZ5WnsWYoR9?g_st=am">
+                M4-es buszra
+            </a>.
+        </p>
+
+        <h1 class="izgalmas">
+            IZGALMAS!
+        </h1>
+
+        <p>
+            És ott vagyunk a
+            <a target="_self" href="https://maps.app.goo.gl/NZBFjdZ1WtgHtwwp9?g_st=am">
+                Light Art Museum-ban!
+            </a>
+        </p>
+        <img src="muzeum.jpg" alt="Múzeum" class="kep">
+        <img src="pottyok.jpg" alt="Pöttyök" class="kep">
+        <img src="szinkavalkad.jpg" alt="Színkavalkád" class="kep">
+       
+
+        <a href="gombben.jpg" class="gomb">
+            🎨 Utolsó Kép megnyitása
+        </a>
+
+    </div>
+
+</body>
+</html>
