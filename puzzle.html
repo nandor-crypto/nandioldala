@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>15 Puzzle</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #3b4cca, #17172b 65%);
+      color: white;
+    }
+
+    .game {
+      width: min(92vw, 500px);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 42px;
+      text-shadow: 0 4px 15px rgba(0,0,0,.4);
+    }
+
+    .subtitle {
+      color: #cbd0ff;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .box {
+      flex: 1;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 12px;
+      padding: 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    .label {
+      display: block;
+      font-size: 12px;
+      color: #bfc4ff;
+      text-transform: uppercase;
+    }
+
+    .value {
+      display: block;
+      font-size: 23px;
+      font-weight: bold;
+      margin-top: 3px;
+    }
+
+    #board {
+      width: 100%;
+      aspect-ratio: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 8px;
+      background: rgba(0,0,0,.3);
+      border-radius: 18px;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,.4),
+        inset 0 0 20px rgba(0,0,0,.2);
+    }
+
+    .tile {
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #6d7cff, #4654df);
+      color: white;
+      font-size: clamp(25px, 8vw, 42px);
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow:
+        0 5px 0 #303bb0,
+        0 8px 15px rgba(0,0,0,.25);
+      transition: transform .12s, filter .12s;
+      user-select: none;
+    }
+
+    .tile:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+
+    .tile:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #303bb0;
+    }
+
+    .empty {
+      background: transparent;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .empty:hover {
+      filter: none;
+      transform: none;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button.control {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background: #5865f2;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    button.control:hover {
+      background: #6975ff;
+      transform: translateY(-2px);
+    }
+
+    .message {
+      min-height: 30px;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffe66d;
+    }
+
+    .instructions {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #aeb3dc;
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      #board {
+        gap: 5px;
+        padding: 5px;
+      }
+
+      .tile {
+        border-radius: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="game">
+
+    <h1>🧩 15 Puzzle</h1>
+    <div class="subtitle">Rakd sorba a számokat 1-től 15-ig!</div>
+
+    <div class="info">
+      <div class="box">
+        <span class="label">Lépések</span>
+        <span class="value" id="moves">0</span>
+      </div>
+
+      <div class="box">
+        <span class="label">Idő</span>
+        <span class="value" id="time">00:00</span>
+      </div>
+
+      <div class="box">
+        <span class="label">Legjobb</span>
+        <span class="value" id="best">--</span>
+      </div>
+    </div>
+
+    <div id="board"></div>
+
+    <div class="buttons">
+      <button class="control" onclick="newGame()">🔀 Új játék</button>
+      <button class="control" onclick="shuffleBoard()">🎲 Keverés</button>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <div class="instructions">
+      Kattints egy szomszédos számra, hogy az üres mezőre lépjen.
+    </div>
+
+  </div>
+
+<script>
+  const boardElement = document.getElementById("board");
+  const movesElement = document.getElementById("moves");
+  const timeElement = document.getElementById("time");
+  const bestElement = document.getElementById("best");
+  const messageElement = document.getElementById("message");
+
+  let board = [];
+  let moves = 0;
+  let seconds = 0;
+  let timer = null;
+  let gameStarted = false;
+
+  let bestTime = localStorage.getItem("puzzleBestTime");
+
+  if (bestTime) {
+    bestElement.textContent = formatTime(Number(bestTime));
+  }
+
+  function formatTime(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+
+    return String(minutes).padStart(2, "0") + ":" +
+           String(secs).padStart(2, "0");
+  }
+
+  function startTimer() {
+    if (timer !== null) return;
+
+    timer = setInterval(() => {
+      seconds++;
+      timeElement.textContent = formatTime(seconds);
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  function isSolvable(arr) {
+    let inversions = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === 0) continue;
+
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[j] !== 0 && arr[i] > arr[j]) {
+          inversions++;
+        }
+      }
+    }
+
+    const emptyIndex = arr.indexOf(0);
+    const emptyRowFromBottom = 4 - Math.floor(emptyIndex / 4);
+
+    if (emptyRowFromBottom % 2 === 0) {
+      return inversions % 2 === 1;
+    } else {
+      return inversions % 2 === 0;
+    }
+  }
+
+  function createBoard() {
+    boardElement.innerHTML = "";
+
+    board.forEach((number, index) => {
+      const tile = document.createElement("button");
+
+      tile.className = "tile";
+
+      if (number === 0) {
+        tile.classList.add("empty");
+        tile.disabled = true;
+      } else {
+        tile.textContent = number;
+        tile.addEventListener("click", () => moveTile(index));
+      }
+
+      boardElement.appendChild(tile);
+    });
+  }
+
+  function moveTile(index) {
+    const emptyIndex = board.indexOf(0);
+
+    const row = Math.floor(index / 4);
+    const col = index % 4;
+
+    const emptyRow = Math.floor(emptyIndex / 4);
+    const emptyCol = emptyIndex % 4;
+
+    const distance =
+      Math.abs(row - emptyRow) +
+      Math.abs(col - emptyCol);
+
+    if (distance !== 1) return;
+
+    if (!gameStarted) {
+      gameStarted = true;
+      startTimer();
+    }
+
+    [board[index], board[emptyIndex]] =
+      [board[emptyIndex], board[index]];
+
+    moves++;
+    movesElement.textContent = moves;
+
+    createBoard();
+
+    if (isSolved()) {
+      winGame();
+    }
+  }
+
+  function isSolved() {
+    for (let i = 0; i < 15; i++) {
+      if (board[i] !== i + 1) {
+        return false;
+      }
+    }
+
+    return board[15] === 0;
+  }
+
+  function shuffleBoard() {
+    stopTimer();
+
+    board = [1, 2, 3, 4,
+             5, 6, 7, 8,
+             9, 10, 11, 12,
+             13, 14, 15, 0];
+
+    do {
+      for (let i = board.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [board[i], board[j]] = [board[j], board[i]];
+      }
+    } while (
+      !isSolvable(board) ||
+      isSolved(board)
+    );
+
+    moves = 0;
+    seconds = 0;
+    gameStarted = false;
+
+    movesElement.textContent = "0";
+    timeElement.textContent = "00:00";
+    messageElement.textContent = "";
+
+    createBoard();
+  }
+
+  function newGame() {
+    shuffleBoard();
+  }
+
+  function winGame() {
+    stopTimer();
+
+    messageElement.textContent =
+      `🎉 Gratulálok! Megoldottad ${moves} lépésből!`;
+
+    if (!bestTime || seconds < Number(bestTime)) {
+      bestTime = seconds;
+
+      localStorage.setItem(
+        "puzzleBestTime",
+        bestTime
+      );
+
+      bestElement.textContent =
+        formatTime(bestTime);
+    }
+  }
+
+  // Billentyűzetes irányítás
+  document.addEventListener("keydown", (event) => {
+    const emptyIndex = board.indexOf(0);
+    const emptyRow = Math.floor(emptyIndex / 4);
+    const emptyCol = emptyIndex % 4;
+
+    let target = -1;
+
+    if (event.key === "ArrowUp" && emptyRow < 3) {
+      target = emptyIndex + 4;
+    }
+
+    if (event.key === "ArrowDown" && emptyRow > 0) {
+      target = emptyIndex - 4;
+    }
+
+    if (event.key === "ArrowLeft" && emptyCol < 3) {
+      target = emptyIndex + 1;
+    }
+
+    if (event.key === "ArrowRight" && emptyCol > 0) {
+      target = emptyIndex - 1;
+    }
+
+    if (target !== -1) {
+      event.preventDefault();
+      moveTile(target);
+    }
+  });
+
+  // Indítás
+  newGame();
+</script>
+
+</body>
+</html>
