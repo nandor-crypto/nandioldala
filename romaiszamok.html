@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"> <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap"> <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Coral+Pixels&display=swap"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <link rel="icon" ... <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" /> <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" /> <link rel="shortcut icon" href="favicon/favicon.ico" /> <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" /> <link rel="manifest" href="/site.webmanifest" /> <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Római Szám Kitalálós Játék</title>
@@ -42,7 +43,7 @@
         }
         button {
             font-size: 1.1rem;
-            padding: 10px 20px;
+            padding: 12px 20px;
             background: #28a745;
             color: white;
             border: none;
@@ -50,6 +51,7 @@
             cursor: pointer;
             width: 85%;
             transition: background 0.2s;
+            font-weight: bold;
         }
         button:hover { background: #218838; }
         .timer {
@@ -64,26 +66,35 @@
         }
         .success { color: #28a745; }
         .error { color: #dc3545; }
+        
+        /* Kezdeti rejtéshez szükséges stílusok */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h1>Római Számok</h1>
-    <p>Írd be a római szám arab megfelelőjét!</p>
+    <p id="gameInstruction">Kattints a start gombra a játék indításához!</p>
     
-    <div class="roman-number" id="romanDisplay">-</div>
+    <!-- Kezdő képernyő gombja -->
+    <button id="startBtn" onclick="initGame()" style="background: #007bff; font-size: 1.3rem; padding: 15px;">START</button>
+
+    <!-- Játék elemek (alapból rejtve) -->
+    <div id="gameArea" class="hidden">
+        <div class="roman-number" id="romanDisplay">-</div>
+        <input type="number" id="userInput" placeholder="Arab szám helye..." min="1">
+        <br>
+        <button id="actionBtn" onclick="checkAnswer()">Ellenőrzés</button>
+        <div class="timer">Idő: <span id="timeDisplay">0.0</span> másodperc</div>
+    </div>
     
-    <input type="number" id="userInput" placeholder="Arab szám helye..." min="1">
-    <br>
-    <button id="actionBtn" onclick="checkAnswer()">Ellenőrzés</button>
-    
-    <div class="timer">Idő: <span id="timeDisplay">0.0</span> másodperc</div>
     <div class="result" id="resultDisplay"></div>
 </div>
 
 <script>
-    // Római-arab szótár a generáláshoz (1-100 közötti tartományhoz)
     const romanMatrix = [
         [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
         [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
@@ -106,8 +117,15 @@
     let timerInterval;
     let isPlaying = false;
 
+    // Legelső indítás a START gombbal
+    function initGame() {
+        document.getElementById('startBtn').classList.add('hidden');
+        document.getElementById('gameArea').classList.remove('hidden');
+        document.getElementById('gameInstruction').innerText = 'Írd be a római szám arab megfelelőjét!';
+        startNewGame();
+    }
+
     function startNewGame() {
-        // Random szám 1 és 100 között
         currentArabic = Math.floor(Math.random() * 100) + 1;
         currentRoman = convertToRoman(currentArabic);
         
@@ -118,7 +136,6 @@
         document.getElementById('resultDisplay').innerText = '';
         document.getElementById('actionBtn').innerText = 'Ellenőrzés';
         
-        // Stopper indítása
         startTime = performance.now();
         isPlaying = true;
         
@@ -155,15 +172,11 @@
         isPlaying = false;
     }
 
-    // Enter gomb lenyomására is ellenőrizzen
     document.getElementById('userInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             checkAnswer();
         }
     });
-
-    // Első játék indítása betöltéskor
-    window.onload = startNewGame;
 </script>
 
 </body>
