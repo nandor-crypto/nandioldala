@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Római Szám Kitalálós Játék</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 { color: #333; margin-top: 0; }
+        .roman-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #007bff;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+        input[type="number"] {
+            font-size: 1.2rem;
+            padding: 10px;
+            width: 80%;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        button {
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 85%;
+            transition: background 0.2s;
+        }
+        button:hover { background: #218838; }
+        .timer {
+            font-size: 1rem;
+            color: #666;
+            margin: 15px 0;
+        }
+        .result {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Római Számok</h1>
+    <p>Írd be a római szám arab megfelelőjét!</p>
+    
+    <div class="roman-number" id="romanDisplay">-</div>
+    
+    <input type="number" id="userInput" placeholder="Arab szám helye..." min="1">
+    <br>
+    <button id="actionBtn" onclick="checkAnswer()">Ellenőrzés</button>
+    
+    <div class="timer">Idő: <span id="timeDisplay">0.0</span> másodperc</div>
+    <div class="result" id="resultDisplay"></div>
+</div>
+
+<script>
+    // Római-arab szótár a generáláshoz (1-100 közötti tartományhoz)
+    const romanMatrix = [
+        [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+        [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+    ];
+
+    function convertToRoman(num) {
+        let roman = '';
+        for (let i = 0; i < romanMatrix.length; i++) {
+            while (num >= romanMatrix[i][0]) {
+                roman += romanMatrix[i][1];
+                num -= romanMatrix[i][0];
+            }
+        }
+        return roman;
+    }
+
+    let currentArabic = 0;
+    let currentRoman = '';
+    let startTime;
+    let timerInterval;
+    let isPlaying = false;
+
+    function startNewGame() {
+        // Random szám 1 és 100 között
+        currentArabic = Math.floor(Math.random() * 100) + 1;
+        currentRoman = convertToRoman(currentArabic);
+        
+        document.getElementById('romanDisplay').innerText = currentRoman;
+        document.getElementById('userInput').value = '';
+        document.getElementById('userInput').disabled = false;
+        document.getElementById('userInput').focus();
+        document.getElementById('resultDisplay').innerText = '';
+        document.getElementById('actionBtn').innerText = 'Ellenőrzés';
+        
+        // Stopper indítása
+        startTime = performance.now();
+        isPlaying = true;
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            let elapsed = (performance.now() - startTime) / 1000;
+            document.getElementById('timeDisplay').innerText = elapsed.toFixed(1);
+        }, 100);
+    }
+
+    function checkAnswer() {
+        if (!isPlaying) {
+            startNewGame();
+            return;
+        }
+
+        clearInterval(timerInterval);
+        let endTime = performance.now();
+        let totalTime = ((endTime - startTime) / 1000).toFixed(2);
+        
+        let userInputValue = parseInt(document.getElementById('userInput').value);
+        let resultDiv = document.getElementById('resultDisplay');
+        
+        if (userInputValue === currentArabic) {
+            resultDiv.className = 'result success';
+            resultDiv.innerText = `Helyes! 🎉 Időd: ${totalTime} mp`;
+        } else {
+            resultDiv.className = 'result error';
+            resultDiv.innerText = `Hibás! ❌ A jó válasz: ${currentArabic} (Idő: ${totalTime} mp)`;
+        }
+        
+        document.getElementById('userInput').disabled = true;
+        document.getElementById('actionBtn').innerText = 'Következő szám';
+        isPlaying = false;
+    }
+
+    // Enter gomb lenyomására is ellenőrizzen
+    document.getElementById('userInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkAnswer();
+        }
+    });
+
+    // Első játék indítása betöltéskor
+    window.onload = startNewGame;
+</script>
+
+</body>
+</html>
