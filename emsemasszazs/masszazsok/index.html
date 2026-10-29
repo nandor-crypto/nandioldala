@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+ <link rel="icon" type="image/png" href="../kepek/fav/favicon-96x96.png" sizes="96x96">
+ <link rel="icon" type="image/svg+xml" href="../kepek/fav/favicon.svg">
+ <link rel="shortcut icon" href="../kepek/fav/favicon.ico">
+ <link rel="apple-touch-icon" sizes="180x180" href="../kepek/fav/apple-touch-icon.png">
+ <link rel="manifest" href="../kepek/fav/site.webmanifest">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Masszázsok | e-Mese Masszázs</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			color: #263333;
+			background: #fff;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		header {
+			padding: 22px max(24px, calc((100% - 1100px) / 2));
+			color: #fff;
+			background: #173c37;
+		}
+
+		header a {
+			color: inherit;
+			font-size: 20px;
+			font-weight: 700;
+			text-decoration: none;
+		}
+
+		main {
+			width: min(1100px, calc(100% - 40px));
+			margin: 0 auto;
+			padding: 64px 0;
+		}
+
+		h1,
+		h2 {
+			color: #173c37;
+		}
+
+		h1 {
+			margin: 0 0 12px;
+			font-size: clamp(34px, 6vw, 52px);
+		}
+
+		.intro {
+			margin: 0 0 34px;
+			color: #52625d;
+			font-size: 18px;
+			line-height: 1.7;
+		}
+
+		.cards {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 24px;
+		}
+
+		.card {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+			padding: 20px;
+			background: #fff;
+			border: 1px solid #dce6df;
+			border-radius: 8px;
+		}
+
+		.card img {
+			display: block;
+			width: 100%;
+			height: 220px;
+			object-fit: contain;
+			border-radius: 6px;
+			background: #f2f4f2;
+		}
+
+		.card h2 {
+			margin: 0 0 12px;
+			font-size: 28px;
+		}
+
+		.card p,
+		.details p {
+			color: #52625d;
+			font-size: 17px;
+			line-height: 1.7;
+		}
+
+		.card p {
+			margin: 0;
+		}
+
+		.button {
+			display: inline-flex;
+			min-height: 48px;
+			align-items: center;
+			justify-content: center;
+			padding: 12px 20px;
+			color: #fff;
+			background: #236b52;
+			border-radius: 6px;
+			font-weight: 700;
+			text-align: center;
+			text-decoration: none;
+		}
+
+		.button:hover {
+			background: #194e3c;
+		}
+
+		.details {
+			display: none;
+		}
+
+		.details:target {
+			position: fixed;
+			inset: 0;
+			z-index: 20;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow-y: auto;
+			padding: 32px 20px;
+			background: #fff;
+		}
+
+		body:has(.details:target) {
+			overflow: hidden;
+		}
+
+		.details-content {
+			width: min(760px, 100%);
+			margin: auto;
+		}
+
+		.details img {
+			display: block;
+			width: 100%;
+			max-height: 420px;
+			margin-bottom: 24px;
+			object-fit: contain;
+		}
+
+		.details .button {
+			margin-top: 12px;
+		}
+
+		.details h2 {
+			margin: 0 0 16px;
+			font-size: 32px;
+		}
+
+		.page-loader {
+			position: fixed;
+			inset: 0;
+			z-index: 2000;
+			display: grid;
+			place-items: center;
+			background: #fff;
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+			transition: opacity 0.25s ease, visibility 0.25s ease;
+		}
+
+		.page-loader.is-visible {
+			opacity: 1;
+			visibility: visible;
+			pointer-events: auto;
+		}
+
+		.page-loader img {
+			display: block;
+			width: min(220px, 60vw);
+			height: auto;
+		}
+
+		@media (max-width: 800px) {
+			main {
+				padding: 44px 0;
+			}
+
+			.cards {
+				grid-template-columns: 1fr;
+			}
+
+			.card img {
+				height: 240px;
+			}
+
+			.button {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="page-loader" id="page-loader" role="status" aria-label="Betöltés">
+		<img src="https://media.tenor.com/_62bXB8gnzoAAAAj/loading.gif" alt="Betöltés...">
+	</div>
+	<header>
+		<a href="../index.html">e-Mese Masszázs</a>
+	</header>
+
+	<main>
+		<h1>Masszázsok</h1>
+		<p class="intro">Válassz egy kártyát a részletek megnyitásához.</p>
+
+		<section class="cards" id="kartyak" aria-label="Masszázsok">
+			<article class="card">
+				<img src="../kepek/images.jpg" alt="Svéd masszázs">
+				<h2>Svéd masszázs</h2>
+				<p>Klasszikus, lazító masszázstechnika, amely segíthet az izmok ellazításában és a mindennapi feszültség oldásában.</p>
+				<a class="button" href="#svedmasszazs">Részletek</a>
+			</article>
+			<article class="card" id="kismama-kartya">
+				<img src="../kepek/images.jpg" alt="kismama masszázs">
+				<h2>Kismama masszázs</h2>
+				<p>A kismama masszázs egy gyengéd, pihentető kezelés, amely a várandósság időszakában segít ellazulni és enyhíteni a test fokozott terheléséből adódó feszültségeket. A kíméletes, személyre szabott mozdulatok hozzájárulhatnak a hát-, derék- és lábfájdalmak enyhítéséhez, miközben nyugodt, meghitt kikapcsolódást biztosítanak a leendő édesanyák számára.</p>
+				<a class="button" href="#kismamamasszazs">Részletek</a>
+			</article>
+			<article class="card">
+				<img src="../kepek/eszozeim1.jpg" alt="Eszközeim">
+				<h2>Itt vannak az eszközeim amiket nem félek használni!😈</h2>
+				<p>⚔ 🗡</p>
+				<a class="button" href="#eszkozeim">Részletek</a>
+			</article>
+		</section>
+
+	<section class="details" id="svedmasszazs">
+		<div class="details-content">
+			<img src="../kepek/unnamed.gif" alt="Svéd masszázs">
+			<h1>Svéd masszázs</h1>
+			<p>A svédmasszázs az egyik legismertebb klasszikus masszázstípus, amelynek középpontjában az izmok ellazítása, a testi feszültség oldása és a közérzet javítása áll. A kezelés során hosszú, simító mozdulatok, gyúrások, dörzsölések és finom ütögetések segítik a test ellazulását.
+
+A svédmasszázs különösen kellemes lehet a feszes, túlterhelt izmok számára, például hosszú ülőmunka, fizikai megterhelés vagy stresszes időszak után. A masszázs elősegítheti a helyi vérkeringést, enyhítheti az izomfeszülés érzetét, és támogathatja a regenerációt.
+
+A kezelés intenzitása és ritmusa az egyéni igényekhez igazítható, így a gyengéd, pihentető masszázstól a határozottabb izomlazító technikákig többféle élményt kínálhat. A kellemes környezet, a nyugodt légkör és a figyelmes érintés együttesen segítenek abban, hogy a vendég testileg és lelkileg is feltöltődjön.
+
+A svédmasszázs ideális választás lehet azoknak, akik szeretnének megszabadulni a mindennapok feszültségétől, több figyelmet fordítanának a testükre, és egy nyugodt, regeneráló élményre vágynak.</p>
+			<p>A kezelés kellemes kikapcsolódást nyújthat, és segíthet a mindennapi feszültség oldásában. Nem helyettesíti az orvosi vagy gyógytornászati kezelést.</p>
+			<a class="button" href="../index.html">Vissza a kártyákhoz</a>
+		</div> 
+	</section>
+	<section class="details" id="kismamamasszazs">
+		<div class="details-content"><img src="../kepek/unnamed.gif" alt=" Kismama masszázs"><h1>Kismama masszázs</h1><p>A várandósság csodálatos, ugyanakkor fizikailag és lelkileg is kihívásokkal teli időszak. A test folyamatosan változik, a növekvő pocak pedig egyre nagyobb terhelést jelenthet a hátnak, a deréknak, a vállaknak és a lábaknak. A kismama masszázs lehetőséget nyújt arra, hogy a leendő édesanya megpihenjen, ellazuljon, és egy kis időt kizárólag önmagára és a jóllétére fordítson.
+
+A kezelés során alkalmazott gyengéd, kíméletes mozdulatok segíthetnek enyhíteni az izomfeszültséget, csökkenteni a fáradtságérzetet, valamint elősegíteni a testi-lelki ellazulást. A masszázs során kiemelt figyelmet kapnak a várandósság alatt fokozottan igénybe vett testrészek, különösen a hát, a váll, a derék és a lábak.
+
+A kismama masszázs nem csupán a fizikai komfortérzetről szól. A nyugodt környezet, a figyelmes érintés és a pihenés lehetősége segíthet lelassulni, oldani a mindennapi stresszt, és meghittebb kapcsolatot kialakítani a változó testtel.
+
+Minden kismama és minden várandósság más, ezért a kezelés mindig az egyéni igényekhez és a várandósság aktuális szakaszához igazodik. A biztonság érdekében fontos a megfelelő kismamamasszázs-technika, a kényelmes testhelyzet és szükség esetén a kezelőorvossal vagy szülésznővel történő egyeztetés.
+
+Engedd meg magadnak a pihenést, a feltöltődést és a törődést! A kismama masszázs egy szeretetteljes kikapcsolódás, amely segíthet abban, hogy a várandósság időszakát még több nyugalommal és testi-lelki harmóniával élhesd meg.</p><a class="button" href="#kismama-kartya">Vissza a kártyához</a></div>
+	</section>
+	<section class="details" id="eszkozeim">
+		<div class="details-content"><img src="../kepek/eszozeim1.jpg" alt="Eszközeim"><h1>Itt vannak az eszközeim amiket nem félek használni!😈</h1><p>⚔🗡</p><a class="button" href="../index.html#szolgaltatasok">Vissza a kártyákhoz</a></div>
+	</section>
+	<section class="details" id="hiper-dj">
+		<div class="details-content"><img src="../kepek/eszozeim1.jpg" alt="Itt vannak az eszközeim"><h1>Itt vannak az eszközeim amiket nem félek használni!😈</h1><p>⚔</p><a class="button" href="../index.html#szolgaltatasok">Vissza a kártyákhoz</a></div>
+		<!--RÉSZLETEK-->
+	</section>
+	<script>
+		const pageLoader = document.getElementById("page-loader");
+		const loaderTimeout = window.setTimeout(function () {
+			pageLoader.classList.add("is-visible");
+		}, 1500);
+
+		window.addEventListener("load", function () {
+			window.clearTimeout(loaderTimeout);
+			pageLoader.classList.remove("is-visible");
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imádkozó kezek</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 38%, #34445b 0%, #1b2638 48%, #0b111d 100%);
+  font-family: Arial, sans-serif;
+}
+
+.scene {
+  width: min(94vw, 540px);
+  text-align: center;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+h1 {
+  color: #f0e4d7;
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  margin: 0 0 12px;
+}
+
+.skin {
+  fill: url(#skin);
+  stroke: #a96148;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+
+.nail {
+  fill: url(#nail);
+  stroke: #bc806a;
+  stroke-width: .7;
+}
+
+.crease {
+  fill: none;
+  stroke: #ad6c53;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  opacity: .55;
+}
+
+.finger {
+  transform-box: view-box;
+  transform-origin: 200px 280px;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.f1 { animation-name: finger1; }
+.f2 { animation-name: finger2; }
+.f3 { animation-name: finger3; }
+.f4 { animation-name: finger4; }
+
+@keyframes finger1 {
+  0%, 4%, 15%, 100% { transform: rotate(0deg) translateY(0); }
+  8%, 12% { transform: rotate(-9deg) translateY(-3px); }
+}
+@keyframes finger2 {
+  0%, 16%, 27%, 100% { transform: rotate(0deg) translateY(0); }
+  19%, 24% { transform: rotate(-7deg) translateY(-4px); }
+}
+@keyframes finger3 {
+  0%, 28%, 39%, 100% { transform: rotate(0deg) translateY(0); }
+  31%, 36% { transform: rotate(6deg) translateY(-4px); }
+}
+@keyframes finger4 {
+  0%, 40%, 51%, 100% { transform: rotate(0deg) translateY(0); }
+  43%, 48% { transform: rotate(10deg) translateY(-3px); }
+}
+
+.wrist {
+  animation: breathe 3s ease-in-out infinite;
+  transform-origin: 200px 350px;
+}
+@keyframes breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.page-loader.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.page-loader img {
+  display: block;
+  width: min(220px, 60vw);
+  height: auto;
+}
+</style>
+</head>
+<body>
+<div class="page-loader" id="page-loader" role="status" aria-label="Betöltés">
+  <img src="https://media.tenor.com/_62bXB8gnzoAAAAj/loading.gif" alt="Betöltés...">
+</div>
+<div class="scene">
+  <h1>IMÁDKOZÁS</h1>
+
+  <svg viewBox="0 0 400 440" role="img"
+       aria-label="Elölről ábrázolt, összetett imádkozó kezek, mozgó ujjakkal">
+    <defs>
+      <linearGradient id="skin" x1="0" y1="0" x2="1" y2=".2">
+        <stop offset="0" stop-color="#a85f46"/>
+        <stop offset=".24" stop-color="#d79570"/>
+        <stop offset=".48" stop-color="#f0b995"/>
+        <stop offset=".7" stop-color="#e8aa83"/>
+        <stop offset="1" stop-color="#b87354"/>
+      </linearGradient>
+      <linearGradient id="nail" x1="0" y1="0" x2="0" y2="1">
+        <stop stop-color="#f5cbb4"/>
+        <stop offset="1" stop-color="#d99b82"/>
+      </linearGradient>
+      <linearGradient id="shadow" x1="0" y1="0" x2="1" y2="0">
+        <stop stop-color="#5c302a" stop-opacity=".5"/>
+        <stop offset=".5" stop-color="#7b4435" stop-opacity=".05"/>
+        <stop offset="1" stop-color="#60372e" stop-opacity=".5"/>
+      </linearGradient>
+      <filter id="softShadow" x="-30%" y="-20%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="5"/>
+      </filter>
+    </defs>
+
+    <!-- Háttérárnyék -->
+    <ellipse cx="200" cy="380" rx="75" ry="20"
+             fill="#03070d" opacity=".35" filter="url(#softShadow)"/>
+
+    <!-- Csuklók -->
+    <g class="wrist">
+      <path class="skin" d="
+        M148 305 Q145 344 130 410
+        Q165 430 200 412
+        Q235 430 270 410
+        Q255 344 252 305 Z"/>
+      <path d="M164 353 Q200 366 236 353"
+            class="crease" opacity=".3"/>
+    </g>
+
+    <!-- Bal tenyér, hátul -->
+    <path class="skin" d="
+      M190 314
+      Q163 301 143 273
+      Q124 246 112 216
+      Q103 194 106 170
+      Q108 157 117 155
+      Q128 153 133 170
+      L155 216
+      L145 122
+      Q143 99 157 95
+      Q171 93 175 117
+      L190 202
+      L188 87
+      Q188 66 201 65
+      Q214 66 214 88
+      L218 201
+      L229 111
+      Q232 91 245 95
+      Q257 98 253 120
+      L246 218
+      Q258 204 267 188
+      Q277 170 288 179
+      Q298 188 285 211
+      Q269 246 247 277
+      Q231 299 210 314 Z"/>
+
+    <!-- Ujjvégek és körmök: finom részletek -->
+    <g>
+      <path class="nail" d="M191 91 Q201 81 211 92 L211 104 L192 104 Z"/>
+      <path class="nail" d="M149 119 Q158 107 168 120 L171 132 L151 134 Z"/>
+      <path class="nail" d="M232 116 Q242 107 251 119 L249 132 L231 131 Z"/>
+    </g>
+
+    <!-- Középső illesztés árnyéka -->
+    <path d="M200 68 Q197 140 200 214 L200 315"
+          stroke="url(#shadow)" stroke-width="5" fill="none"/>
+
+    <!-- Jobb tenyér, elöl: két egymáshoz simuló tenyér -->
+    <path class="skin" d="
+      M202 310
+      Q224 291 240 270
+      Q256 248 267 220
+      Q277 198 289 177
+      Q297 163 307 171
+      Q317 180 308 199
+      L291 238
+      Q312 218 327 202
+      Q341 188 351 200
+      Q360 210 346 226
+      Q325 253 306 274
+      Q286 296 263 314
+      Q239 332 218 337 Z"/>
+
+    <!-- A két tenyér találkozása -->
+    <path d="M199 214
+      Q207 240 216 267
+      Q224 288 218 337
+      Q201 347 184 335
+      Q181 302 187 274 Z"
+      fill="url(#skin)" stroke="#a96148" stroke-width="1"/>
+
+    <!-- Ujjak finom ízületi vonalai -->
+    <path class="crease" d="M153 155 Q161 159 170 154"/>
+    <path class="crease" d="M192 124 Q201 128 211 123"/>
+    <path class="crease" d="M231 148 Q241 151 250 146"/>
+    <path class="crease" d="M133 209 Q143 218 153 213"/>
+    <path class="crease" d="M270 238 Q279 243 287 235"/>
+
+    <!-- Elöl mozgó ujjformák -->
+    <g class="finger f1">
+      <path class="skin" d="
+        M157 100 Q153 85 160 76
+        Q168 68 176 79
+        L185 112 L181 184
+        Q177 202 166 194
+        Q160 188 162 169 Z"/>
+    </g>
+    <g class="finger f2">
+      <path class="skin" d="
+        M188 78 Q187 61 199 57
+        Q211 58 212 76
+        L215 165 Q214 187 203 189
+        Q192 187 192 166 Z"/>
+    </g>
+    <g class="finger f3">
+      <path class="skin" d="
+        M229 97 Q230 81 241 82
+        Q253 85 252 101
+        L246 177 Q243 196 233 193
+        Q224 191 225 173 Z"/>
+    </g>
+    <g class="finger f4">
+      <path class="skin" d="
+        M271 174 Q278 158 289 165
+        Q299 172 291 189
+        L267 231 Q256 247 247 238
+        Q240 231 252 214 Z"/>
+    </g>
+
+    <!-- Összezáródó hüvelykujjak -->
+    <path class="skin" d="
+      M111 183 Q101 167 91 177
+      Q83 187 98 206
+      Q126 244 158 266
+      Q173 275 185 263
+      Q195 251 180 239
+      Q144 213 111 183 Z"/>
+    <path class="skin" d="
+      M289 184 Q299 167 309 177
+      Q317 187 302 206
+      Q274 244 242 266
+      Q227 275 215 263
+      Q205 251 220 239
+      Q256 213 289 184 Z"/>
+
+    <!-- Körömfények -->
+    <path d="M194 70 Q201 65 207 72"
+          fill="none" stroke="#ffdfc5" stroke-width="2" opacity=".7"/>
+    <path d="M160 83 Q166 78 171 85"
+          fill="none" stroke="#ffdfc5" stroke-width="2" opacity=".7"/>
+    <path d="M237 90 Q243 86 247 92"
+          fill="none" stroke="#ffdfc5" stroke-width="2" opacity=".7"/>
+  </svg>
+</div>
+<script>
+  const pageLoader = document.getElementById("page-loader");
+  const loaderTimeout = window.setTimeout(function () {
+    pageLoader.classList.add("is-visible");
+  }, 1500);
+
+  window.addEventListener("load", function () {
+    window.clearTimeout(loaderTimeout);
+    pageLoader.classList.remove("is-visible");
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imádkozó kéz animáció</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: radial-gradient(circle, #26344c, #101522);
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+
+  h2 {
+    font-weight: 400;
+    letter-spacing: 2px;
+    margin-bottom: 35px;
+  }
+
+  .hand {
+    position: relative;
+    width: 240px;
+    height: 360px;
+  }
+
+  .palm {
+    position: absolute;
+    bottom: 0;
+    left: 65px;
+    width: 110px;
+    height: 165px;
+    background: linear-gradient(90deg, #d99068, #ffc49a, #d99068);
+    border-radius: 48% 48% 30% 30%;
+    box-shadow: inset 0 0 15px #a65f45;
+  }
+
+  .finger {
+    position: absolute;
+    bottom: 125px;
+    width: 39px;
+    height: 175px;
+    border-radius: 24px 24px 13px 13px;
+    transform-origin: 50% 100%;
+    background: linear-gradient(90deg, #cf805b, #ffd0a7, #d98e69);
+    box-shadow: inset -5px 0 7px #bd7656;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .finger::after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 7px;
+    width: 25px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f9d0b2;
+    opacity: 0.8;
+  }
+
+  /* Az ujjak hátulról előrefelé */
+  .f1 {
+    left: 45px;
+    height: 125px;
+    z-index: 1;
+    animation: open1 6s infinite;
+  }
+
+  .f2 {
+    left: 72px;
+    height: 170px;
+    z-index: 2;
+    animation: open2 6s infinite;
+  }
+
+  .f3 {
+    left: 99px;
+    height: 195px;
+    z-index: 3;
+    animation: open3 6s infinite;
+  }
+
+  .f4 {
+    left: 126px;
+    height: 165px;
+    z-index: 2;
+    animation: open4 6s infinite;
+  }
+
+  .f5 {
+    left: 150px;
+    height: 110px;
+    z-index: 1;
+    animation: open5 6s infinite;
+  }
+
+  .thumb {
+    position: absolute;
+    left: 35px;
+    bottom: 60px;
+    width: 42px;
+    height: 105px;
+    border-radius: 25px;
+    background: linear-gradient(90deg, #d28a64, #ffd0a7, #d28a64);
+    transform: rotate(-35deg);
+    transform-origin: bottom center;
+    z-index: 5;
+  }
+
+  @keyframes open1 {
+    0%, 5%, 16%, 100% { transform: rotate(0deg); }
+    9%, 13% { transform: rotate(-30deg) translateY(-5px); }
+  }
+
+  @keyframes open2 {
+    0%, 17%, 28%, 100% { transform: rotate(0deg); }
+    20%, 25% { transform: rotate(-22deg) translateY(-7px); }
+  }
+
+  @keyframes open3 {
+    0%, 29%, 40%, 100% { transform: rotate(0deg); }
+    32%, 37% { transform: rotate(-12deg) translateY(-8px); }
+  }
+
+  @keyframes open4 {
+    0%, 41%, 52%, 100% { transform: rotate(0deg); }
+    44%, 49% { transform: rotate(15deg) translateY(-7px); }
+  }
+
+  @keyframes open5 {
+    0%, 53%, 64%, 100% { transform: rotate(0deg); }
+    56%, 61% { transform: rotate(32deg) translateY(-5px); }
+  }
+
+  .wrist {
+    position: absolute;
+    left: 85px;
+    bottom: -35px;
+    width: 70px;
+    height: 80px;
+    border-radius: 10px 10px 25px 25px;
+    background: linear-gradient(90deg, #bd7656, #f3b18a, #cf805b);
+    z-index: -1;
+  }
+
+  p {
+    margin-top: 65px;
+    color: #c6ccdc;
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+
+  .page-loader.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .page-loader img {
+    display: block;
+    width: min(220px, 60vw);
+    height: auto;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="page-loader" id="page-loader" role="status" aria-label="Betöltés">
+  <img src="https://media.tenor.com/_62bXB8gnzoAAAAj/loading.gif" alt="Betöltés...">
+</div>
+<h2>🙏 Imádság</h2>
+
+<div class="hand">
+  <div class="finger f1"></div>
+  <div class="finger f2"></div>
+  <div class="finger f3"></div>
+  <div class="finger f4"></div>
+  <div class="finger f5"></div>
+  <div class="palm"></div>
+  <div class="thumb"></div>
+  <div class="wrist"></div>
+</div>
+
+<p>Végtelenített animáció</p>
+
+<script>
+  const pageLoader = document.getElementById("page-loader");
+  const loaderTimeout = window.setTimeout(function () {
+    pageLoader.classList.add("is-visible");
+  }, 1500);
+
+  window.addEventListener("load", function () {
+    window.clearTimeout(loaderTimeout);
+    pageLoader.classList.remove("is-visible");
+  });
+</script>
+</body>
+</html>
