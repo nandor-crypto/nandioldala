@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRECISION AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0e16;color:#edf0fa;font-family:Arial,sans-serif}
+button,input,textarea{font:inherit}
+.app{display:flex;height:100dvh}
+.sidebar{width:245px;background:#111725;border-right:1px solid #293146;padding:22px 16px;display:flex;flex-direction:column}
+.logo{font-size:20px;font-weight:bold;letter-spacing:2px;color:#aab5ff;margin-bottom:35px}
+.logo span{color:white}
+.new{background:#202a3d;color:white;border:1px solid #35415b;padding:13px;border-radius:10px;cursor:pointer;text-align:left}
+.label{font-size:10px;letter-spacing:2px;color:#7e8ba3;margin:32px 0 10px}
+.item{padding:12px;border-radius:9px;color:#b8c2d6;font-size:13px;margin-bottom:5px}
+.item.active{background:#202b40;color:#aab5ff}
+.bottom{margin-top:auto;color:#8591a6;font-size:11px;line-height:2}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:62px;border-bottom:1px solid #293146;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.top button,.settings-btn{background:transparent;color:#aab5ff;border:1px solid #39455d;padding:8px 12px;border-radius:8px;cursor:pointer}
+.chat{flex:1;overflow:auto;padding:25px 18px}
+.welcome{max-width:700px;text-align:center;margin:65px auto 30px}
+.orb{width:72px;height:72px;margin:auto;border-radius:50%;display:grid;place-items:center;background:linear-gradient(140deg,#bac3ff,#5969d1);color:#101426;font-size:32px;font-weight:bold;box-shadow:0 0 45px #8997ff35}
+h1{font-size:44px;line-height:1.1;margin:24px 0 15px}
+h1 span{color:#aab5ff}
+.welcome p{color:#8996ad;line-height:1.7}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:32px}
+.card{background:#151e2e;border:1px solid #303b52;color:white;text-align:left;padding:15px;border-radius:12px;cursor:pointer}
+.card:hover{border-color:#8b9aff}
+.card b{display:block;margin-bottom:8px}
+.card small{color:#8e9bb0}
+.messages{max-width:800px;margin:auto}
+.msg{padding:14px 16px;margin:15px 0;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:12px}
+.user{background:#1c2638;margin-left:10%;border:1px solid #303d55}
+.ai{background:#111725;border:1px solid #242e42}
+.tag{font-size:10px;color:#aab5ff;margin-bottom:8px;font-weight:bold}
+.meta{font-size:10px;color:#91a0ba;margin-top:12px}
+.composer-wrap{max-width:850px;width:100%;margin:auto;padding:10px 18px 16px}
+.controls{display:flex;gap:16px;flex-wrap:wrap;color:#9aa6bb;font-size:11px;margin-bottom:10px}
+.controls label{cursor:pointer}
+.composer{display:flex;align-items:flex-end;gap:10px;padding:12px;background:#171f2e;border:1px solid #39455d;border-radius:15px}
+textarea{flex:1;resize:none;min-height:36px;max-height:140px;background:transparent;border:0;outline:0;color:white;padding:8px;font-size:14px}
+textarea::placeholder{color:#78869e}
+.send{width:39px;height:39px;border:0;border-radius:10px;background:#aab5ff;color:#11172a;font-size:22px;cursor:pointer}
+.send:disabled{opacity:.5}
+.footer{text-align:center;font-size:10px;color:#68758c;margin-top:9px}
+.overlay{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px}
+.modal{width:100%;max-width:460px;background:#151e2e;border:1px solid #3b4862;border-radius:16px;padding:22px}
+.modal h2{margin-top:0}
+.modal p{font-size:12px;color:#98a5ba;line-height:1.6}
+.modal input{width:100%;padding:12px;background:#0d1420;color:white;border:1px solid #3a4660;border-radius:8px;margin:8px 0 13px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.modal button{padding:10px 14px;border-radius:8px;border:1px solid #3d4962;background:#222e45;color:white;cursor:pointer}
+.modal button.primary{background:#aab5ff;color:#11172a}
+@media(max-width:700px){.sidebar{display:none}.welcome{margin-top:30px}h1{font-size:35px}.cards{grid-template-columns:1fr}.top{padding:0 14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="logo">PRECISION <span>AI</span></div>
+ <button class="new" onclick="newChat()">＋ Új beszélgetés</button>
+ <div class="label">MUNKAMÓD</div>
+ <div class="item active">◈ Pontos válasz</div>
+ <div class="item">⌕ Kutatás</div>
+ <div class="item">⌘ Programozás</div>
+ <div class="item">◇ Elemzés</div>
+ <div class="bottom">● PRECISION ENGINE<br>Magyar nyelv<br>Szerver nélküli változat</div>
+</aside>
+<main class="main">
+ <header class="top">
+  <div style="color:#aab5ff;font-size:13px">PRECISION AI · Alapos mód</div>
+  <div>
+   <button onclick="openSettings()">⚙ Beállítások</button>
+   <button onclick="newChat()">Újra ↺</button>
+  </div>
+ </header>
+ <section class="chat" id="chat">
+  <div class="welcome" id="welcome">
+   <div class="orb">P</div>
+   <h1>Gondolkodjunk<br><span>pontosabban.</span></h1>
+   <p>Alapos elemzés, ellenőrzés és kutatás.<br>Magyarul, a pontosságra törekedve.</p>
+   <div class="cards">
+    <button class="card" onclick="quick('Vizsgálj meg egy tudományos témát, és adj hozzá ellenőrizhető forrásokat.')"><b>⌕ Kutatás</b><small>Információk és források ellenőrzése</small></button>
+    <button class="card" onclick="quick('Írj egy JavaScript programot, és ellenőrizd a lehetséges hibáit.')"><b>⌘ Programozás</b><small>Kódírás és hibakeresés</small></button>
+    <button class="card" onclick="quick('Segíts lépésenként megoldani egy összetett problémát.')"><b>◇ Elemzés</b><small>Többlépcsős problémamegoldás</small></button>
+   </div>
+  </div>
+  <div class="messages" id="messages"></div>
+ </section>
+ <div class="composer-wrap">
+  <div class="controls">
+   <label><input type="checkbox" id="web" checked> Internetes keresés</label>
+   <label><input type="checkbox" id="verify" checked> Automatikus újraellenőrzés</label>
+  </div>
+  <form class="composer" id="form">
+   <textarea id="prompt" rows="1" placeholder="Kérdezz bármit..." required></textarea>
+   <button class="send" id="send">↑</button>
+  </form>
+  <div class="footer">A beszélgetés nem kerül mentésre. Az API használata költséggel járhat.</div>
+ </div>
+</main>
+</div>
+
+<div class="overlay" id="overlay">
+ <div class="modal">
+  <h2>⚙ API beállítások</h2>
+  <p>Add meg az OpenAI API-kulcsodat. A kulcs csak a jelenlegi böngészőmunkamenetben marad meg, és közvetlenül a szolgáltatóhoz kerül továbbításra.</p>
+  <label>API-kulcs</label>
+  <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off">
+  <label>Modell neve</label>
+  <input id="model" type="text" value="gpt-5.4" placeholder="Az API-fiókodban elérhető modell">
+  <p>Soha ne tölts fel nyilvános GitHub-repozitóriumba API-kulcsot. Ez a böngészős megoldás nem biztonságos megosztott használatra.</p>
+  <div class="modal-actions">
+   <button onclick="closeSettings()">Mégse</button>
+   <button class="primary" onclick="saveSettings()">Mentés</button>
+  </div>
+ </div>
+</div>
+
+<script>
+let apiKey = "";
+let model = "gpt-5.4";
+let history = [];
+let busy = false;
+
+const $ = id => document.getElementById(id);
+
+function openSettings(){
+ $("apiKey").value = apiKey;
+ $("model").value = model;
+ $("overlay").style.display = "flex";
+}
+function closeSettings(){
+ $("overlay").style.display = "none";
+}
+function saveSettings(){
+ apiKey = $("apiKey").value.trim();
+ model = $("model").value.trim() || "gpt-5.4";
+ closeSettings();
+ alert(apiKey ? "Beállítások mentve a munkamenethez." : "Nincs megadva API-kulcs.");
+}
+
+function newChat(){
+ history = [];
+ $("messages").innerHTML = "";
+ $("welcome").style.display = "block";
+ $("prompt").value = "";
+}
+
+function quick(text){
+ $("prompt").value = text;
+ sendMessage();
+}
+
+function addMessage(role,text){
+ $("welcome").style.display = "none";
+ const box = document.createElement("div");
+ box.className = "msg " + role;
+ const tag = document.createElement("div");
+ tag.className = "tag";
+ tag.textContent = role === "user" ? "TE" : "PRECISION AI";
+ const content = document.createElement("div");
+ content.textContent = text;
+ box.append(tag,content);
+ $("messages").appendChild(box);
+ $("chat").scrollTop = $("chat").scrollHeight;
+ return content;
+}
+
+async function sendMessage(){
+ const text = $("prompt").value.trim();
+ if(!text || busy) return;
+
+ if(!apiKey){
+  openSettings();
+  alert("Először add meg az API-kulcsodat a beállításokban.");
+  return;
+ }
+
+ busy = true;
+ $("send").disabled = true;
+ $("prompt").value = "";
+ addMessage("user",text);
+ history.push({role:"user",content:text});
+
+ const output = addMessage("ai","A válasz előkészítése és ellenőrzése folyamatban...");
+
+ try{
+  const useWeb = $("web").checked;
+  const verify = $("verify").checked;
+
+  const instructions = `
+Te a PRECISION AI vagy. Magyarul válaszolj.
+A pontosság fontosabb a sebességnél.
+Összetett feladatnál bontsd részekre a problémát.
+Ellenőrizd a logikát, számításokat és a feltételezéseket.
+Ne találj ki adatokat vagy forrásokat.
+Ha bizonytalan vagy, mondd ki.
+Kódnál adj használható és ellenőrizhető megoldást.
+A válasz végén jelezd a bizonyosságot: Magas, Közepes vagy Alacsony.
+Ez becslés, nem statisztikailag kalibrált érték.
+Ne jeleníts meg rejtett belső gondolatmenetet.
+Röviden foglald össze az ellenőrzés lényegét.
+`;
+
+  async function callAI(input, tools = []){
+   const response = await fetch("https://api.openai.com/v1/responses",{
+    method:"POST",
+    headers:{
+     "Content-Type":"application/json",
+     "Authorization":"Bearer "+apiKey
+    },
+    body:JSON.stringify({
+     model:model,
+     reasoning:{effort:"high"},
+     instructions:instructions,
+     input:input,
+     ...(tools.length ? {tools:tools} : {})
+    })
+   });
+
+   const data = await response.json();
+   if(!response.ok) throw new Error(data.error?.message || "API hiba: "+response.status);
+
+   let result = "";
+   for(const item of (data.output || [])){
+    if(item.type === "message"){
+     for(const part of (item.content || [])){
+      if(part.type === "output_text") result += part.text;
+     }
+    }
+   }
+   return result || data.output_text || "Nem érkezett szöveges válasz.";
+  }
+
+  const conversation = history.map(m =>
+   (m.role === "user" ? "Felhasználó: " : "Asszisztens: ") + m.content
+  ).join("\n\n");
+
+  const tools = useWeb ? [{type:"web_search"}] : [];
+
+  let answer = await callAI(
+   conversation,
+   tools
+  );
+
+  if(verify){
+   output.textContent = "Első válasz elkészült. Második ellenőrzési kör...";
+   const reviewInput = `
+Felhasználói kérdés és előzmények:
+${conversation}
+
+Ellenőrizendő válasz:
+${answer}
+
+Vizsgáld meg a ténybeli állításokat, a logikát, a számításokat és az ellentmondásokat.
+Javítsd a hibákat, de ne találj ki forrásokat.
+A forráshivatkozásokat őrizd meg.
+Add vissza a teljes, javított végleges választ magyarul.
+`;
+   answer = await callAI(reviewInput);
+  }
+
+  output.textContent = answer;
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.textContent =
+   (verify ? "✓ Újraellenőrizve" : "Ellenőrzés nélkül") +
+   (useWeb ? " · Webes keresés engedélyezve" : " · Keresés kikapcsolva");
+  output.parentElement.appendChild(meta);
+
+  history.push({role:"assistant",content:answer});
+
+ }catch(error){
+  output.textContent = "Hiba: "+error.message;
+ }finally{
+  busy = false;
+  $("send").disabled = false;
+  $("prompt").focus();
+ }
+}
+
+$("form").addEventListener("submit",e=>{
+ e.preventDefault();
+ sendMessage();
+});
+
+$("prompt").addEventListener("keydown",e=>{
+ if(e.key === "Enter" && !e.shiftKey){
+  e.preventDefault();
+  sendMessage();
+ }
+});
+</script>
+</body>
+</html>
