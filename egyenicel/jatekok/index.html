@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Téglatörő Arcade 🎮</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Ikonok -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap');
+
+        body {
+            background-color: #05050d;
+            font-family: 'Rajdhani', sans-serif;
+            color: #ffffff;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .arcade-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .neon-box-cyan {
+            box-shadow: 0 0 15px #00f0ff, inset 0 0 10px #00f0ff;
+            border: 2px solid #00f0ff;
+        }
+
+        .neon-box-pink {
+            box-shadow: 0 0 15px #ff007f, inset 0 0 10px #ff007f;
+            border: 2px solid #ff007f;
+        }
+
+        .neon-box-green {
+            box-shadow: 0 0 15px #22c55e, inset 0 0 10px #22c55e;
+            border: 2px solid #22c55e;
+        }
+
+        .neon-text-cyan {
+            text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+        }
+
+        .neon-text-pink {
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+        }
+
+        .neon-text-green {
+            text-shadow: 0 0 10px #22c55e, 0 0 20px #22c55e;
+        }
+
+        .neon-text-yellow {
+            text-shadow: 0 0 10px #ffea00, 0 0 20px #ffea00;
+        }
+
+        canvas {
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.25), 0 0 10px rgba(255, 0, 127, 0.25);
+            background: radial-gradient(circle at center, #0a0a20 0%, #030308 100%);
+            border: 3px solid #00f0ff;
+            border-radius: 1rem;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.03); }
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-screen flex flex-col justify-between items-center p-2 sm:p-4 relative">
+
+    <!-- MENÜ ÉS JÁTÉKVÁLASZTÓ KÁRTYÁK -->
+    <div id="hubMenu" class="w-full max-w-4xl flex flex-col items-center justify-center min-h-[90vh] py-8">
+        <h1 class="arcade-font text-3xl sm:text-5xl text-cyan-400 neon-text-cyan text-center mb-8">ARCADE JÁTÉKKÖZPONT 🕹️</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full px-4">
+            <!-- TÉGLATÖRŐ KÁRTYA -->
+            <div class="bg-slate-900/90 border border-pink-500/40 rounded-3xl p-6 flex flex-col justify-between items-center text-center shadow-xl hover:scale-105 transition duration-300 neon-box-pink">
+                <div class="text-6xl mb-4 animate-bounce">🧱</div>
+                <h2 class="arcade-font text-xl text-pink-500 neon-text-pink mb-3">TÉGLATÖRŐ</h2>
+                <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                    Pusztítsd el a neon téglákat, indítsd a golyót Space-el, lézerrel lőj és sokszorozd a labdákat!
+                </p>
+                <a href="http://nandioldala.vercel.app/egyenicel/jatekok/teglatoro.html" target="_self" class="w-full arcade-font bg-pink-600 hover:bg-pink-500 text-white py-4 px-6 rounded-2xl neon-box-pink transition active:scale-95 flex items-center justify-center">
+                    TÉGLATÖRŐ INDÍTÁSA 🚀
+                </a>
+            </div>
+
+            <!-- SNAKE KÁRTYA -->
+            <div class="bg-slate-900/90 border border-green-500/40 rounded-3xl p-6 flex flex-col justify-between items-center text-center shadow-xl hover:scale-105 transition duration-300 neon-box-green">
+                <div class="text-6xl mb-4 animate-pulse">🐍</div>
+                <h2 class="arcade-font text-xl text-green-500 neon-text-green mb-3">SNAKE JÁTÉK</h2>
+                <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                    A klasszikus kígyós játék újjászületett! Gyűjtsd a pontokat, növekedj, és döntsd meg a saját rekordodat!
+                </p>
+                <a href="http://nandioldala.vercel.app/egyenicel/jatekok/kigyo.html" target="_self" class="w-full arcade-font bg-green-600 hover:bg-green-500 text-white py-4 px-6 rounded-2xl neon-box-green transition active:scale-95 flex items-center justify-center">
+                    SNAKE INDÍTÁSA 🐍
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TÉGLATÖRŐ JÁTÉKTÉR CONTAINER -->
+    <div id="breakoutGame" class="hidden w-full max-w-2xl flex-col items-center">
+        <!-- VISSZA A MENÜBE GOMB -->
+        <button onclick="returnToHub()" class="self-start mb-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-xl border border-slate-700 text-xs font-bold transition">
+            ⬅️ VISSZA A MENÜBE
+        </button>
+
+        <!-- JÁTÉK FEJLÉC / HUD -->
+        <header class="w-full bg-slate-900/80 backdrop-blur-md rounded-2xl p-3 border border-slate-800 flex justify-between items-center z-10 shadow-lg mb-2">
+            <!-- BAL OLDAL: PONTOK & REKORD -->
+            <div class="flex items-center gap-4">
+                <div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Pontszám</div>
+                    <div id="scoreDisplay" class="text-xl sm:text-2xl font-black text-cyan-400 font-mono">00000</div>
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Rekord</div>
+                    <div id="highscoreDisplay" class="text-xl sm:text-2xl font-black text-yellow-400 font-mono">00000</div>
+                </div>
+            </div>
+
+            <!-- KÖZÉP: SZINT & ÉLETEK -->
+            <div class="flex items-center gap-6">
+                <div class="text-center">
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Szint</div>
+                    <div id="levelDisplay" class="text-xl sm:text-2xl font-black text-pink-500 font-mono">1</div>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider text-center">Életek</div>
+                    <div id="livesDisplay" class="text-lg sm:text-xl text-rose-500 flex gap-1">
+                        ❤️ ❤️ ❤️
+                    </div>
+                </div>
+            </div>
+
+            <!-- JOBB OLDAL: GOMBOK -->
+            <div class="flex items-center gap-2">
+                <button id="btnSound" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 flex items-center justify-center transition border border-slate-700 active:scale-95">
+                    <i class="fa-solid fa-volume-high text-lg"></i>
+                </button>
+                <button id="btnPause" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-yellow-400 flex items-center justify-center transition border border-slate-700 active:scale-95">
+                    <i class="fa-solid fa-pause text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- KANVASZ KONTÉNER -->
+        <main class="relative flex-grow flex items-center justify-center my-2 w-full">
+            <canvas id="gameCanvas" width="600" height="750" class="w-full h-full max-h-[75vh] object-contain"></canvas>
+
+            <!-- START / OVERLAY -->
+            <div id="overlay" class="absolute inset-0 bg-black/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center z-20">
+                <h1 id="overlayTitle" class="arcade-font text-2xl sm:text-4xl text-cyan-400 neon-text-cyan mb-2">NEON TÉGLATÖRŐ</h1>
+                <p id="overlaySub" class="text-slate-300 font-bold text-base sm:text-lg mb-6 tracking-wide">
+                    Mozgasd az ütőt az egérrel, érintéssel vagy nyilakkal!<br>
+                    <span class="text-yellow-400 font-bold">Space: Golyó kilövése / Lézer | Shift: Gyorsítás</span>
+                </p>
+
+                <button id="startBtn" class="arcade-font bg-pink-600 hover:bg-pink-500 text-white text-base sm:text-lg py-4 px-10 rounded-2xl neon-box-pink animate-pulse-glow transition active:scale-95">
+                    JÁTÉK INDÍTÁSA 🚀
+                </button>
+            </div>
+        </main>
+
+        <!-- ÉRINTŐS IRÁNYÍTÓK MOBILE-RA -->
+        <footer id="mobileControls" class="w-full flex gap-3 sm:hidden mb-2 z-10">
+            <button id="btnLeft" class="flex-1 bg-slate-800/90 hover:bg-slate-700 text-cyan-400 border border-slate-700 py-3 rounded-2xl text-2xl active:bg-cyan-600 active:text-white transition">
+                ⬅️
+            </button>
+            <button id="btnLaunch" class="flex-1 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-300 border border-emerald-700 py-3 rounded-2xl text-sm font-bold active:bg-emerald-600 active:text-white transition">
+                🚀 INDÍTÁS
+            </button>
+            <button id="btnShift" class="flex-1 bg-yellow-900/80 hover:bg-yellow-800 text-yellow-300 border border-yellow-700 py-3 rounded-2xl text-sm font-bold active:bg-yellow-600 active:text-white transition">
+                ⚡ GYORSÍT
+            </button>
+            <button id="btnShoot" class="flex-1 bg-pink-900/80 hover:bg-pink-800 text-pink-300 border border-pink-700 py-3 rounded-2xl text-sm font-bold active:bg-pink-600 active:text-white transition">
+                🔥 LŐ (<span id="ammoDisplay">4</span>)
+            </button>
+            <button id="btnRight" class="flex-1 bg-slate-800/90 hover:bg-slate-700 text-cyan-400 border border-slate-700 py-3 rounded-2xl text-2xl active:bg-cyan-600 active:text-white transition">
+                ➡️
+            </button>
+        </footer>
+    </div>
+
+    <!-- JÁTÉK MOTOR LOGIKA JS -->
+    <script>
+        function launchBreakout() {
+            document.getElementById('hubMenu').classList.add('hidden');
+            document.getElementById('breakoutGame').classList.remove('hidden');
+            document.getElementById('breakoutGame').classList.add('flex');
+        }
+
+        function returnToHub() {
+            gameState = 'MENU';
+            document.getElementById('breakoutGame').classList.add('hidden');
+            document.getElementById('breakoutGame').classList.remove('flex');
+            document.getElementById('hubMenu').classList.remove('hidden');
+        }
+
+        /* WEB AUDIO API HANGGENERÁTOR */
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTone(freq, type = 'sine', duration = 0.1, vol = 0.1) {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            }
+
+            hitPaddle() { this.playTone(350, 'triangle', 0.08, 0.15); }
+            hitWall() { this.playTone(200, 'sine', 0.05, 0.12); }
+            hitBrick(freq = 450) { this.playTone(freq, 'square', 0.08, 0.1); }
+            laser() { this.playTone(850, 'sawtooth', 0.06, 0.08); }
+            lifeLost() {
+                this.playTone(220, 'sawtooth', 0.15, 0.2);
+                setTimeout(() => this.playTone(150, 'sawtooth', 0.25, 0.2), 150);
+            }
+            gameWin() {
+                const notes = [440, 554.37, 659.25, 880];
+                notes.forEach((n, i) => {
+                    setTimeout(() => this.playTone(n, 'triangle', 0.15, 0.2), i * 120);
+                });
+            }
+        }
+
+        const sound = new SoundEngine();
+
+        // CANVAS INITIALIZATION
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 750;
+
+        // GAME STATE VARIABLES
+        let score = 0;
+        let highscore = localStorage.getItem('neon_breakout_highscore') || 0;
+        let lives = 3;
+        let level = 1;
+        let gameState = 'MENU'; // 'MENU', 'PLAYING', 'GAMEOVER', 'WIN'
+        let isPaused = false;
+        let isShiftPressed = false;
+        let ballAttached = true; // Golyó rátapadva az ütőre kilövés előtt
+
+        // PADDLE
+        const paddle = {
+            width: 120,
+            height: 18,
+            x: canvas.width / 2 - 60,
+            y: canvas.height - 40,
+            dx: 9,
+            hasLaser: false,
+            ammo: 0 // Tárkapacitás a lézerhez
+        };
+
+        // BALLS
+        let balls = [];
+        function createBall(x, y, dx = 4, dy = -6) {
+            return { x, y, radius: 8, dx, dy };
+        }
+
+        // BRICKS CONFIG
+        let bricks = [];
+        const brickRows = 6;
+        const brickCols = 8;
+        const brickPadding = 8;
+        const brickOffsetTop = 60;
+        const brickOffsetLeft = 35;
+        const brickWidth = 65;
+        const brickHeight = 24;
+
+        const colors = ['#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4', '#a855f7'];
+
+        // LASERS & PARTICLES
+        let lasers = [];
+        let particles = [];
+        let powerups = []; // Leeső bónusz elemek
+        let levelExtraLivesSpawned = 0; // Pályánkénti szigorú extra élet korlát (max 2)
+
+        // TÉGLÁK INICIALIZÁLÁSA
+        function initBricks() {
+            bricks = [];
+            for (let r = 0; r < brickRows; r++) {
+                bricks[r] = [];
+                for (let c = 0; c < brickCols; c++) {
+                    const hp = (r === 0 && level > 1) ? 2 : 1;
+                    bricks[r][c] = {
+                        x: c * (brickWidth + brickPadding) + brickOffsetLeft,
+                        y: r * (brickHeight + brickPadding) + brickOffsetTop,
+                        status: hp,
+                        color: colors[r % colors.length]
+                    };
+                }
+            }
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 6; i++) {
+                particles.push({
+                    x, y,
+                    dx: (Math.random() - 0.5) * 5,
+                    dy: (Math.random() - 0.5) * 5,
+                    radius: Math.random() * 3 + 1,
+                    color,
+                    life: 15
+                });
+            }
+        }
+
+        // BÓNUSZ KAPSZULA GENERÁLÁSA SÚLYOZOTT ESÉLYEKKEL
+        function spawnPowerup(x, y) {
+            // 25% esély a bónusz leesésére
+            if (Math.random() < 0.25) {
+                const rand = Math.random();
+                let selectedType = 'MULTIBALL'; 
+
+                // Új finomhangolt arányok: A labda a leggyakoribb, az élet a legritkább!
+                if (rand < 0.50) {
+                    selectedType = 'MULTIBALL'; // 1. Több golyó (50% esély - LEGGYAKORIBB)
+                } else if (rand < 0.80) {
+                    selectedType = 'ENLARGE'; // 2. Tálca növelés (30% esély)
+                } else if (rand < 0.95) {
+                    selectedType = 'LASER'; // 3. Pisztoly (15% esély - ritkább)
+                } else {
+                    selectedType = 'LIFE'; // 4. Extra Élet (5% esély - legritkább)
+                }
+
+                const powerupMeta = {
+                    ENLARGE: { color: '#00f0ff', icon: '📐' },
+                    MULTIBALL: { color: '#ffea00', icon: '⚽' },
+                    LASER: { color: '#ff007f', icon: '🔫' },
+                    LIFE: { color: '#ef4444', icon: '❤️' }
+                }[selectedType];
+
+                powerups.push({
+                    x: x + brickWidth / 2,
+                    y: y + brickHeight / 2,
+                    type: selectedType,
+                    color: powerupMeta.color,
+                    icon: powerupMeta.icon,
+                    dy: 2.5
+                });
+            }
+        }
+
+        // CONTROLS & INPUT LISTENERS
+        let rightPressed = false;
+        let leftPressed = false;
+
+        function launchBall() {
+            if (ballAttached && gameState === 'PLAYING') {
+                ballAttached = false;
+                sound.hitPaddle();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            sound.init();
+            if (e.key === 'Right' || e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') rightPressed = true;
+            if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') leftPressed = true;
+            if (e.key === 'Shift') isShiftPressed = true;
+            if (e.key === ' ') {
+                if (ballAttached) {
+                    launchBall();
+                } else {
+                    shootLaser();
+                }
+            }
+            if (e.key === 'p' || e.key === 'P') togglePause();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Right' || e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') rightPressed = false;
+            if (e.key === 'Left' || e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') leftPressed = false;
+            if (e.key === 'Shift') {
+                isShiftPressed = false;
+            }
+        });
+
+        canvas.addEventListener('click', () => {
+            if (ballAttached && gameState === 'PLAYING') launchBall();
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            paddle.x = mouseX - paddle.width / 2;
+            if (paddle.x < 0) paddle.x = 0;
+            if (paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
+
+            if (ballAttached && balls.length > 0) {
+                balls[0].x = paddle.x + paddle.width / 2;
+                balls[0].y = paddle.y - balls[0].radius - 2;
+            }
+        });
+
+        // CANVAS TOUCH DRAG SUPPORT FOR PADDLE
+        canvas.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const touchX = (e.touches[0].clientX - rect.left) * scaleX;
+                paddle.x = touchX - paddle.width / 2;
+                if (paddle.x < 0) paddle.x = 0;
+                if (paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
+
+                if (ballAttached && balls.length > 0) {
+                    balls[0].x = paddle.x + paddle.width / 2;
+                    balls[0].y = paddle.y - balls[0].radius - 2;
+                }
+            }
+        });
+
+        // KORLÁTOZVA PONTOSAN MAX 4 LÖVÉSRE ÉS MAX 4 AKTÍV LÖVEDÉKRE
+        function shootLaser() {
+            if (paddle.hasLaser && paddle.ammo > 0 && lasers.length < 4) {
+                lasers.push({ x: paddle.x + 10, y: paddle.y - 5, dy: -10 });
+                lasers.push({ x: paddle.x + paddle.width - 10, y: paddle.y - 5, dy: -10 });
+                paddle.ammo--;
+                if (paddle.ammo <= 0) {
+                    paddle.hasLaser = false;
+                }
+                const ammoBtn = document.getElementById('ammoDisplay');
+                if (ammoBtn) ammoBtn.textContent = paddle.ammo;
+                sound.laser();
+            }
+        }
+
+        // MOBILE ON-SCREEN BUTTON HANDLERS
+        document.getElementById('btnLeft').addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; });
+        document.getElementById('btnLeft').addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; });
+        document.getElementById('btnRight').addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; });
+        document.getElementById('btnRight').addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; });
+        
+        document.getElementById('btnLaunch').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            sound.init();
+            launchBall();
+        });
+
+        const btnShift = document.getElementById('btnShift');
+        btnShift.addEventListener('touchstart', (e) => { e.preventDefault(); isShiftPressed = true; });
+        btnShift.addEventListener('touchend', (e) => { e.preventDefault(); isShiftPressed = false; });
+
+        document.getElementById('btnShoot').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            sound.init();
+            if (ballAttached) {
+                launchBall();
+            } else {
+                shootLaser();
+            }
+        });
+
+        document.getElementById('btnPause').addEventListener('click', togglePause);
+        
+        // START GOMB ESEMÉNYKEZELŐ BIZTONSÁGOSSÁ TÉTELE
+        const startBtn = document.getElementById('startBtn');
+        function handleStartGame(e) {
+            if (e) e.preventDefault();
+            sound.init();
+            score = 0;
+            lives = 3;
+            level = 1;
+            startLevel();
+        }
+        startBtn.addEventListener('click', handleStartGame);
+        startBtn.addEventListener('touchstart', handleStartGame);
+
+        const btnSound = document.getElementById('btnSound');
+        btnSound.addEventListener('click', () => {
+            sound.enabled = !sound.enabled;
+            btnSound.innerHTML = sound.enabled ? 
+                '<i class="fa-solid fa-volume-high text-lg"></i>' : 
+                '<i class="fa-solid fa-volume-xmark text-lg text-rose-500"></i>';
+        });
+
+        function togglePause() {
+            if (gameState !== 'PLAYING') return;
+            isPaused = !isPaused;
+            if (isPaused) {
+                ctx.fillStyle = 'rgba(5, 5, 13, 0.75)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '24px "Press Start 2P", sans-serif';
+                ctx.fillStyle = '#ffea00';
+                ctx.textAlign = 'center';
+                ctx.fillText('SZÜNET', canvas.width / 2, canvas.height / 2);
+            }
+        }
+
+        function startLevel() {
+            paddle.width = 120;
+            paddle.x = canvas.width / 2 - 60;
+            paddle.hasLaser = false;
+            paddle.ammo = 0;
+            levelExtraLivesSpawned = 0;
+            ballAttached = true;
+            balls = [createBall(paddle.x + paddle.width / 2, paddle.y - 10, 4, -6)];
+            lasers = [];
+            particles = [];
+            powerups = [];
+            initBricks();
+            gameState = 'PLAYING';
+            isPaused = false;
+            document.getElementById('overlay').classList.add('hidden');
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('scoreDisplay').textContent = String(score).padStart(5, '0');
+            if (score > highscore) {
+                highscore = score;
+                localStorage.setItem('neon_breakout_highscore', highscore);
+            }
+            document.getElementById('highscoreDisplay').textContent = String(highscore).padStart(5, '0');
+            
+            let hearts = '';
+            for (let i = 0; i < lives; i++) hearts += '❤️ ';
+            document.getElementById('livesDisplay').textContent = hearts || '💀';
+            document.getElementById('levelDisplay').textContent = level;
+            const ammoBtn = document.getElementById('ammoDisplay');
+            if (ammoBtn) ammoBtn.textContent = paddle.ammo;
+        }
+
+        // GAME LOGIC UPDATE LOOP
+        function update() {
+            if (gameState !== 'PLAYING' || isPaused) return;
+
+            // Move paddle via keyboard
+            if (rightPressed && paddle.x < canvas.width - paddle.width) paddle.x += paddle.dx;
+            if (leftPressed && paddle.x > 0) paddle.x -= paddle.dx;
+
+            // Follow paddle if attached
+            if (ballAttached && balls.length > 0) {
+                balls[0].x = paddle.x + paddle.width / 2;
+                balls[0].y = paddle.y - balls[0].radius - 2;
+                return;
+            }
+
+            // Update Balls
+            for (let bIndex = balls.length - 1; bIndex >= 0; bIndex--) {
+                const ball = balls[bIndex];
+                
+                // Nyomva tartás alatt 1.8x sebesség, elengedve azonnal 1.0x normál sebesség
+                const currentMultiplier = isShiftPressed ? 1.8 : 1.0;
+                ball.x += ball.dx * currentMultiplier;
+                ball.y += ball.dy * currentMultiplier;
+
+                // Wall collisions
+                if (ball.x + ball.radius > canvas.width) {
+                    ball.x = canvas.width - ball.radius;
+                    ball.dx = -ball.dx;
+                    sound.hitWall();
+                } else if (ball.x - ball.radius < 0) {
+                    ball.x = ball.radius;
+                    ball.dx = -ball.dx;
+                    sound.hitWall();
+                }
+
+                if (ball.y - ball.radius < 0) {
+                    ball.y = ball.radius;
+                    ball.dy = -ball.dy;
+                    sound.hitWall();
+                }
+
+                // Paddle collision
+                if (
+                    ball.y + ball.radius >= paddle.y &&
+                    ball.y - ball.radius <= paddle.y + paddle.height &&
+                    ball.x >= paddle.x &&
+                    ball.x <= paddle.x + paddle.width &&
+                    ball.dy > 0
+                ) {
+                    let hitPoint = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+                    const currentSpeed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
+                    ball.dx = hitPoint * (currentSpeed * 0.85);
+                    ball.dy = -Math.sqrt(Math.max(16, currentSpeed * currentSpeed - ball.dx * ball.dx));
+                    ball.y = paddle.y - ball.radius;
+                    sound.hitPaddle();
+                }
+
+                // Brick collisions
+                for (let r = 0; r < brickRows; r++) {
+                    if (!bricks[r]) continue;
+                    for (let c = 0; c < brickCols; c++) {
+                        const b = bricks[r][c];
+                        if (b && b.status > 0) {
+                            if (
+                                ball.x + ball.radius > b.x &&
+                                ball.x - ball.radius < b.x + brickWidth &&
+                                ball.y + ball.radius > b.y &&
+                                ball.y - ball.radius < b.y + brickHeight
+                            ) {
+                                ball.dy = -ball.dy;
+                                b.status--;
+                                score += 10 * level;
+                                updateUI();
+                                createParticles(b.x + brickWidth / 2, b.y + brickHeight / 2, b.color);
+                                sound.hitBrick(200 + r * 60);
+
+                                // Téglatöréskor eshet bónusz
+                                if (b.status === 0) {
+                                    spawnPowerup(b.x, b.y);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Check lost ball
+                if (ball.y - ball.radius > canvas.height) {
+                    balls.splice(bIndex, 1);
+                }
+            }
+
+            // Life lost check when all balls are gone
+            if (balls.length === 0) {
+                lives--;
+                updateUI();
+                sound.lifeLost();
+                if (lives > 0) {
+                    ballAttached = true;
+                    balls = [createBall(paddle.x + paddle.width / 2, paddle.y - 10, 4, -6)];
+                } else {
+                    gameOver(false);
+                }
+            }
+
+            // Update Powerups (Leeső bónuszok elkapása)
+            for (let pIndex = powerups.length - 1; pIndex >= 0; pIndex--) {
+                const p = powerups[pIndex];
+                p.y += p.dy;
+
+                // Ütővel való elkapás ellenőrzése
+                if (
+                    p.y + 12 >= paddle.y &&
+                    p.y - 12 <= paddle.y + paddle.height &&
+                    p.x >= paddle.x &&
+                    p.x <= paddle.x + paddle.width
+                ) {
+                    sound.hitPaddle();
+                    if (p.type === 'LASER') {
+                        paddle.hasLaser = true;
+                        paddle.ammo = 4; // Pontosan 4 lövés tölthető be!
+                    } else if (p.type === 'ENLARGE') {
+                        paddle.width = Math.min(200, paddle.width + 40);
+                    } else if (p.type === 'LIFE') {
+                        lives = Math.min(6, lives + 1); // Akár 6 életig is felmenhet az életek száma!
+                    } else if (p.type === 'MULTIBALL') {
+                        // Minden meglévő golyót MEGHÁROMSZOROZ:
+                        const newBalls = [];
+                        balls.forEach(b => {
+                            const speed = Math.sqrt(b.dx * b.dx + b.dy * b.dy) || 7;
+                            newBalls.push(createBall(b.x, b.y, b.dx * 0.8 + 2, -Math.abs(b.dy)));
+                            newBalls.push(createBall(b.x, b.y, b.dx * 0.8 - 2, -Math.abs(b.dy)));
+                        });
+                        balls.push(...newBalls);
+                    }
+                    updateUI(); // Azonnal frissíti a kijelzőt
+                    powerups.splice(pIndex, 1);
+                } else if (p.y > canvas.height) {
+                    powerups.splice(pIndex, 1);
+                }
+            }
+
+            // Update Laser Projectiles
+            for (let lIndex = lasers.length - 1; lIndex >= 0; lIndex--) {
+                const laser = lasers[lIndex];
+                laser.y += laser.dy;
+
+                if (laser.y < 0) {
+                    lasers.splice(lIndex, 1);
+                } else {
+                    let hit = false;
+                    for (let r = 0; r < brickRows; r++) {
+                        if (!bricks[r]) continue;
+                        for (let c = 0; c < brickCols; c++) {
+                            const b = bricks[r][c];
+                            if (b && b.status > 0 && laser.x > b.x && laser.x < b.x + brickWidth && laser.y < b.y + brickHeight && laser.y > b.y) {
+                                b.status--;
+                                score += 10 * level;
+                                updateUI();
+                                createParticles(b.x + brickWidth / 2, b.y + brickHeight / 2, b.color);
+                                sound.hitBrick(600);
+                                if (b.status === 0) spawnPowerup(b.x, b.y);
+                                lasers.splice(lIndex, 1);
+                                hit = true;
+                                break;
+                            }
+                        }
+                        if (hit) break;
+                    }
+                }
+            }
+
+            // Update Particles
+            for (let pIndex = particles.length - 1; pIndex >= 0; pIndex--) {
+                const p = particles[pIndex];
+                p.x += p.dx;
+                p.y += p.dy;
+                p.life--;
+                if (p.life <= 0) particles.splice(pIndex, 1);
+            }
+
+            // Level Clear Check
+            let allCleared = true;
+            for (let r = 0; r < brickRows; r++) {
+                if (!bricks[r]) continue;
+                for (let c = 0; c < brickCols; c++) {
+                    if (bricks[r][c] && bricks[r][c].status > 0) allCleared = false;
+                }
+            }
+            if (allCleared && bricks.length > 0) {
+                level++;
+                if (level > 4) {
+                    gameOver(true);
+                } else {
+                    sound.gameWin();
+                    startLevel();
+                }
+            }
+        }
+
+        function gameOver(win) {
+            gameState = win ? 'WIN' : 'GAMEOVER';
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('overlayTitle');
+            const sub = document.getElementById('overlaySub');
+
+            if (win) {
+                title.textContent = 'GYŐZELEM! 🏆';
+                sub.textContent = `Gratulálunk! Összegyűjtöttél ${score} pontot!`;
+                sound.gameWin();
+            } else {
+                title.textContent = 'JÁTÉK VÉGE 💀';
+                sub.textContent = `Elfogytak az életeid! Elért pontszám: ${score}`;
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        // RENDER LOOP
+        function draw() {
+            if (isPaused) return;
+
+            // Clear frame completely
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Bricks with safety checks
+            for (let r = 0; r < brickRows; r++) {
+                if (!bricks[r]) continue;
+                for (let c = 0; c < brickCols; c++) {
+                    const b = bricks[r][c];
+                    if (b && b.status > 0) {
+                        ctx.save();
+                        ctx.fillStyle = b.status === 2 ? '#ffffff' : b.color;
+                        ctx.shadowColor = b.color;
+                        ctx.shadowBlur = 10;
+                        ctx.beginPath();
+                        ctx.rect(b.x, b.y, brickWidth, brickHeight);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+            }
+
+            // Draw Rounded Paddle (Capsule shape)
+            ctx.save();
+            ctx.fillStyle = paddle.hasLaser ? '#ff007f' : '#00f0ff';
+            ctx.shadowColor = paddle.hasLaser ? '#ff007f' : '#00f0ff';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(paddle.x, paddle.y, paddle.width, paddle.height, paddle.height / 2);
+            } else {
+                ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+            }
+            ctx.fill();
+
+            // Laser cannons on paddle if unlocked
+            if (paddle.hasLaser) {
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(paddle.x + 10, paddle.y - 6, 4, 6);
+                ctx.fillRect(paddle.x + paddle.width - 14, paddle.y - 6, 4, 6);
+            }
+            ctx.restore();
+
+            // Draw Balls (Glow yellow when Shift is held)
+            balls.forEach(ball => {
+                ctx.save();
+                ctx.fillStyle = isShiftPressed ? '#ffea00' : '#ffffff';
+                ctx.shadowColor = isShiftPressed ? '#ffea00' : '#00f0ff';
+                ctx.shadowBlur = isShiftPressed ? 20 : 10;
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Draw Laser Projectiles
+            ctx.save();
+            ctx.fillStyle = '#ff007f';
+            ctx.shadowColor = '#ff007f';
+            ctx.shadowBlur = 10;
+            lasers.forEach(laser => {
+                ctx.fillRect(laser.x - 2, laser.y, 4, 14);
+            });
+            ctx.restore();
+
+            // Draw Falling Powerups (Leeső bónusz kapszulák)
+            powerups.forEach(p => {
+                ctx.save();
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(p.icon, p.x, p.y);
+                ctx.restore();
+            });
+
+            // Draw Particles
+            particles.forEach(p => {
+                ctx.save();
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life / 18;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        // MAIN GAME LOOP
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        // START GAME LOOP
+        loop();
+    </script>
+</body>
+</html>

@@ -164,6 +164,11 @@
                 SNAKE
             </h1>
             <p class="text-emerald-200 font-bold mt-2 text-lg">Klasszikus Kígyós Játék</p>
+
+            <div class="mt-6 w-full max-w-sm">
+                <label for="player-name-input" class="block text-left text-sm font-black uppercase tracking-[0.2em] text-yellow-200 mb-2">Nicknév</label>
+                <input id="player-name-input" type="text" maxlength="16" placeholder="Írd be a neved" value="Játékos" class="w-full rounded-2xl border-4 border-yellow-300 bg-slate-900/80 text-white text-xl font-bold text-center py-3 px-4 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-300/30" />
+            </div>
         </div>
 
         <button id="btn-start" class="mb-8 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-3xl py-5 px-16 rounded-full border-4 border-white shadow-[0_10px_25px_rgba(16,185,129,0.5)] transform transition hover:scale-105 active:scale-95">
@@ -189,6 +194,10 @@
             </div>
             <div class="text-lg font-bold text-yellow-300 flex items-center gap-1">
                 <span>🍎</span> <span id="apple-count">0 / 2</span>
+            </div>
+            <div class="text-sm font-bold text-slate-300 text-center">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400">Játékos</div>
+                <div id="player-name-display" class="text-emerald-400">Játékos</div>
             </div>
             <div class="text-sm font-bold text-slate-300">
                 Lvl: <span id="level-display" class="text-emerald-400">1</span>
@@ -227,6 +236,34 @@
         };
 
         let config = { music: true, effects: true, control: 'buttons' };
+        let playerName = 'Játékos';
+        const playerNameInput = document.getElementById('player-name-input');
+        const playerNameDisplay = document.getElementById('player-name-display');
+
+        function setPlayerName(value) {
+            const trimmed = (value || '').trim();
+            playerName = trimmed || 'Játékos';
+            if (playerNameInput) {
+                playerNameInput.value = playerName;
+            }
+            if (playerNameDisplay) {
+                playerNameDisplay.textContent = playerName;
+            }
+            localStorage.setItem('snake-player-name', playerName);
+        }
+
+        function ensurePlayerName() {
+            const value = (playerNameInput ? playerNameInput.value : '').trim();
+            if (!value) {
+                if (playerNameInput) {
+                    playerNameInput.focus();
+                    playerNameInput.placeholder = 'Kérlek add meg a nickneved!';
+                }
+                return false;
+            }
+            setPlayerName(value);
+            return true;
+        }
 
         function playSFX(name) {
             if (config.effects && audioList[name]) {
@@ -444,6 +481,7 @@
         }
 
         document.getElementById('btn-start').addEventListener('click', () => {
+            if (!ensurePlayerName()) return;
             document.getElementById('screen-main').classList.add('hidden');
             document.getElementById('screen-game').classList.remove('hidden');
             updateMusicState();
@@ -451,6 +489,13 @@
             updateControlUI();
             startCountdown();
         });
+
+        const savedPlayerName = localStorage.getItem('snake-player-name');
+        if (savedPlayerName) {
+            setPlayerName(savedPlayerName);
+        } else {
+            setPlayerName('Játékos');
+        }
 
         function startCountdown() {
             isAnimating = true;

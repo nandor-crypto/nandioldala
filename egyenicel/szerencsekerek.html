@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Szerencsekerék</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    text-align: center;
+    transition: 0.3s;
+}
+    @media screen and (max-width: 600px) {
+
+      /* Ide tehetsz még más mobil stílust is, pl: */
+      body {
+        font-size: 18px;
+      }
+    }
+
+/* SETUP */
+#setup { padding: 20px; }
+
+.inputRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px;
+}
+
+.inputRow input {
+    padding: 8px;
+    width: 220px;
+}
+
+/* 🔴 PIROS X */
+.deleteBtn {
+    margin-left: 8px;
+    background: #ff2d2d;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    transition: 0.2s;
+    font-size: 16px;
+}
+
+.deleteBtn:hover {
+    background: #b80000;
+    transform: scale(1.1);
+}
+
+/* GOMBOK */
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+}
+
+#addBtn { background: #ddd; }
+#readyBtn { background: #2196f3; color: white; }
+#spinBtn { background: orange; color: white; display:none; }
+#resetBtn { background: green; color: white; display:none; }
+
+#game { display:none; }
+
+/* KERÉK */
+#wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+canvas {
+    margin-top: 20px;
+}
+
+/* POINTER */
+#pointer {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 40px solid white;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    filter: drop-shadow(0 0 3px black);
+    z-index: 10;
+}
+
+/* OVERLAY */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+}
+
+#resultText div {
+    font-weight: bold;
+}
+
+/* CLOSE */
+#closeX {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 34px;
+    cursor: pointer;
+    display: none;
+    color: red;
+    font-weight: bold;
+}
+
+/* 📱 MOBILE */
+@media screen and (max-width: 600px) {
+
+    canvas {
+        width: 300px !important;
+        height: 300px !important;
+    }
+
+    #wrapper {
+        transform: scale(0.9);
+    }
+
+    #resultText div {
+        font-size: 12vw !important;
+    }
+
+    .inputRow input {
+        width: 160px;
+    }
+
+    button {
+        width: 80%;
+        max-width: 250px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SETUP -->
+<div id="setup">
+    <div id="inputs"></div>
+
+    <button id="addBtn">+</button>
+    <br>
+    <button id="readyBtn">Kész</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <div id="wrapper">
+        <div id="pointer"></div>
+        <canvas id="wheel" width="420" height="420"></canvas>
+    </div>
+
+    <br>
+    <button id="spinBtn">Pörgetés</button>
+    <button id="resetBtn">Újrakezdés</button>
+</div>
+
+<!-- RESULT -->
+<div id="overlay">
+    <div id="closeX">X</div>
+    <div id="resultText"></div>
+    <h3>
+        <a target="_self" href="https://nandioldala.vercel.app/egyenicel/romaiszamok.html" class="text-amber-400 hover:text-amber-300 transition-all"> kövi tab rómaiszámok
+        </a>
+    </h3>
+</div>
+
+<script>
+const inputs = document.getElementById("inputs");
+const addBtn = document.getElementById("addBtn");
+const readyBtn = document.getElementById("readyBtn");
+const spinBtn = document.getElementById("spinBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const setup = document.getElementById("setup");
+const game = document.getElementById("game");
+
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+
+const overlay = document.getElementById("overlay");
+const resultText = document.getElementById("resultText");
+const closeX = document.getElementById("closeX");
+const pingAudio = new Audio("ping.mp3");
+pingAudio.preload = "auto";
+
+function playPing() {
+    const ping = pingAudio.cloneNode();
+    ping.currentTime = 0;
+    ping.play().catch(() => {});
+}
+
+let words = [];
+let angle = 0;
+let spinning = false;
+
+/* INPUT */
+function addInput(value="") {
+    const row = document.createElement("div");
+    row.className = "inputRow";
+
+    const input = document.createElement("input");
+    input.placeholder = "Írd be a szót...";
+    input.value = value;
+
+    const del = document.createElement("button");
+    del.textContent = "X";
+    del.className = "deleteBtn";
+
+    del.onclick = () => {
+        if (inputs.children.length > 1) row.remove();
+    };
+
+    row.appendChild(input);
+    row.appendChild(del);
+    inputs.appendChild(row);
+}
+
+addInput();
+addBtn.onclick = () => addInput();
+
+/* START */
+readyBtn.onclick = () => {
+    words = [...document.querySelectorAll(".inputRow input")]
+        .map(i => i.value.trim())
+        .filter(v => v);
+
+    if (words.length < 2) {
+        alert("Legalább 2 szó kell!");
+        return;
+    }
+
+    setup.style.display = "none";
+    game.style.display = "block";
+    spinBtn.style.display = "inline-block";
+    resetBtn.style.display = "inline-block";
+
+    drawWheel();
+};
+
+/* WHEEL */
+function drawWheel(highlightIndex = -1) {
+    const n = words.length;
+    const arc = (2 * Math.PI) / n;
+
+    ctx.clearRect(0,0,420,420);
+
+    for (let i=0;i<n;i++) {
+
+        ctx.beginPath();
+        ctx.fillStyle = `hsl(${i*360/n},70%,60%)`;
+
+        ctx.moveTo(210,210);
+        ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
+        ctx.fill();
+
+        if (i === highlightIndex) {
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.beginPath();
+            ctx.moveTo(210,210);
+            ctx.arc(210,210,200,arc*i+angle,arc*(i+1)+angle);
+            ctx.fill();
+        }
+
+        ctx.save();
+        ctx.translate(210,210);
+        ctx.rotate(arc*i + arc/2 + angle);
+        ctx.fillStyle = "black";
+        ctx.font = "14px Arial";
+        ctx.textAlign = "right";
+        ctx.fillText(words[i], 180, 5);
+        ctx.restore();
+    }
+}
+
+/* INDEX FIX */
+function getIndexFromAngle() {
+    const n = words.length;
+    const arc = (2 * Math.PI) / n;
+
+    // A nyíl felfelé mutat
+    let pointer = (-Math.PI / 2 - angle) % (2 * Math.PI);
+
+    if (pointer < 0)
+        pointer += 2 * Math.PI;
+
+    return Math.floor(pointer / arc);
+    }
+/* SPIN */
+function spin() {
+    if (spinning) return;
+    spinning = true;
+    playPing();
+
+    let speed = 0.35;
+    const decel = 0.985;
+    let previousIndex = getIndexFromAngle();
+
+    const anim = setInterval(() => {
+        angle += speed;
+        speed *= decel;
+
+        drawWheel();
+
+        const currentIndex = getIndexFromAngle();
+        if (currentIndex !== previousIndex) {
+            playPing();
+            previousIndex = currentIndex;
+        }
+
+            const winner = getIndexFromAngle();
+        if (speed < 0.0001) {
+    clearInterval(anim);
+    spinning = false;
+
+    const winner = getIndexFromAngle();
+    showResult(winner);
+    }
+        
+    }, 16);
+}
+
+/* 🏆 RESULT + 2x FLASH */
+function showResult(index) {
+
+    document.body.style.background = "#ccc";
+
+    const win = words[index];
+
+    resultText.innerHTML = "";
+
+    const big = document.createElement("div");
+    big.textContent = win;
+    big.style.fontSize =
+        Math.min(window.innerWidth, window.innerHeight) * 0.12 + "px";
+    big.style.fontWeight = "bold";
+
+    resultText.appendChild(big);
+
+    overlay.style.display = "flex";
+
+    // 🎯 alap rajz
+    drawWheel(index);
+
+    // ✨ 2x FEHÉR VILLANÁS A NYERTES SZELETEN
+    let count = 0;
+
+    const flash = setInterval(() => {
+        drawWheel(index);
+
+        const n = words.length;
+        const arc = (2*Math.PI)/n;
+
+        const start = arc*index + angle;
+        const end = arc*(index+1) + angle;
+
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        ctx.beginPath();
+        ctx.moveTo(210,210);
+        ctx.arc(210,210,200,start,end);
+        ctx.fill();
+        
+
+        count++;
+        if (count >= 4) {
+            clearInterval(flash);
+            drawWheel(index);
+        }
+    }, 200);
+
+    setTimeout(() => {
+        closeX.style.display = "block";
+    }, 2000);
+}
+
+/* CLOSE */
+closeX.onclick = () => {
+    overlay.style.display = "none";
+    closeX.style.display = "none";
+    document.body.style.background = "white";
+};
+
+resetBtn.onclick = () => location.reload();
+spinBtn.onclick = spin;
+
+</script>
+
+</body>
+    </html>
+    
