@@ -1,0 +1,252 @@
+
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bubble Smile – online játék</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071b3c;color:#fff;font-family:Arial;display:flex;justify-content:center;min-height:100vh}
+.wrap{width:min(100vw,480px);padding:10px;background:linear-gradient(#70d4ef 0 8%,#164b91 8% 100%);display:flex;flex-direction:column;gap:8px}
+.top{height:86px;display:flex;align-items:center;justify-content:space-between;gap:5px}
+.logo{display:flex;align-items:center;font-weight:1000;font-size:clamp(19px,5vw,29px);letter-spacing:-2px;text-shadow:2px 3px #17233c,-1px -1px #fff}
+.logo span{display:inline-flex;align-items:center;justify-content:center;width:clamp(37px,10vw,55px);height:clamp(42px,11vw,60px);border:3px solid #26364e;border-radius:50%;box-shadow:inset 2px 3px 5px #ffffffaa,2px 3px 4px #07172d;color:#17314a}
+.logo span:nth-child(1){background:#44a9f1}
+.logo span:nth-child(2){background:#20cf53}
+.logo span:nth-child(3){background:#f3d52c}
+.logo span:nth-child(4){background:#f36b24}
+.score{text-align:center;font-weight:1000;line-height:.9;text-shadow:2px 3px #111;color:white}
+.score small{font-size:22px;letter-spacing:2px}
+.score strong{font-size:clamp(30px,8vw,42px)}
+.bar{height:12px;background:#071d45;border:2px solid #07152e;padding:1px}
+#progress{height:100%;width:100%;background:#20e34c;transition:width .2s}
+.timeLabel{align-self:flex-end;background:#344f9b;padding:1px 9px;font-size:20px;letter-spacing:3px;font-weight:bold}
+canvas{display:block;width:100%;height:auto;aspect-ratio:450/555;background:linear-gradient(#16539c,#276bd1);border:3px solid #142b5c;box-shadow:inset 0 0 0 2px #5b9ce5;touch-action:manipulation}
+.bottom{display:flex;align-items:center;justify-content:space-between;font-size:clamp(20px,5vw,27px);font-weight:1000;text-shadow:2px 2px #15264c}
+button{border:2px solid #d9e8ff;border-radius:8px;background:linear-gradient(#fff,#a9c9f7);color:#17345d;font-weight:bold;font-size:17px;padding:8px 13px;box-shadow:0 3px #152b55;cursor:pointer}
+button:active{transform:translateY(2px);box-shadow:0 1px #152b55}
+.hint{text-align:center;font-size:13px;color:#d7e8ff;margin:0 0 3px}
+#message{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#06173599;padding:20px}
+#message .panel{background:#173e7e;border:3px solid #b9d9ff;border-radius:15px;padding:24px;text-align:center;box-shadow:0 8px 30px #0009}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+<div class="logo"><span>B</span><span>u</span><span>b</span><span>e</span><span style="background:#f6cf32">☺</span></div>
+<div class="score"><small>SCORE</small><br><strong id="score">0000</strong></div>
+</div>
+<div class="bar"><div id="progress"></div></div>
+<div class="timeLabel">TIME</div>
+<canvas id="game" width="450" height="555"></canvas>
+<div class="bottom">
+<button id="shake">↔ Shake!!!</button>
+<span><span id="left">236</span> ☺</span>
+</div>
+<p class="hint">Kattints legalább 2 egymáshoz érő, azonos színű smiley-ra!</p>
+</div>
+<div id="message"><div class="panel"><h2 id="endtitle">Játék vége!</h2><p id="endtext"></p><button id="again">Új játék</button></div></div>
+
+<script>
+(()=>{
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const W=450,H=555,R=26,DX=52,DY=47,ROWS=11,COLS=8;
+const colors=['#f0443d','#ec38d5','#20d85b','#147ed0','#f0d72d','#176c45','#b78a61'];
+const faces=['angry','happy','cool','green','sleepy','sly','worried'];
+let grid=[],score=0,left=236,time=90,combo=0,ended=false,timer;
+const $=id=>document.getElementById(id);
+
+function rand(){return Math.floor(Math.random()*colors.length)}
+
+function reset(){
+grid=Array.from({length:ROWS},()=>Array.from({length:COLS},rand));
+score=0;left=236;time=90;combo=0;ended=false;
+$('message').style.display='none';
+update();draw();
+clearInterval(timer);
+timer=setInterval(()=>{
+if(ended)return;
+time--;
+$('progress').style.width=(time/90*100)+'%';
+if(time<=0)finish('Lejárt az idő!');
+},1000);
+}
+
+function update(){
+$('score').textContent=String(score).padStart(4,'0');
+$('left').textContent=left;
+$('progress').style.width=(time/90*100)+'%';
+}
+
+function shade(hex){
+let n=parseInt(hex.slice(1),16);
+return `rgb(${Math.floor((n>>16)*.58)},${Math.floor(((n>>8)&255)*.58)},${Math.floor((n&255)*.58)})`;
+}
+
+function circle(x,y,r,c){
+let g=ctx.createRadialGradient(x-r*.35,y-r*.45,2,x,y,r);
+g.addColorStop(0,'#ffffff');
+g.addColorStop(.18,c);
+g.addColorStop(1,shade(c));
+ctx.fillStyle=g;
+ctx.beginPath();
+ctx.arc(x,y,r,0,Math.PI*2);
+ctx.fill();
+ctx.strokeStyle='#17233d';
+ctx.lineWidth=3;
+ctx.stroke();
+}
+
+function face(x,y,r,type){
+ctx.save();
+ctx.translate(x,y);
+ctx.fillStyle='#17202a';
+ctx.strokeStyle='#17202a';
+ctx.lineWidth=2.5;
+
+const eye=(ex,ey,rx=4,ry=6)=>{
+ctx.beginPath();
+ctx.ellipse(ex,ey,rx,ry,0,0,Math.PI*2);
+ctx.fillStyle='#fff';
+ctx.fill();
+ctx.beginPath();
+ctx.arc(ex+1,ey+1,2.4,0,7);
+ctx.fillStyle='#17202a';
+ctx.fill();
+};
+
+if(type==='cool'){
+ctx.fillStyle='#101c32';
+ctx.fillRect(-16,-8,32,11);
+ctx.strokeRect(-16,-8,32,11);
+ctx.fillStyle='#a8e7ff';
+ctx.fillRect(-12,-5,9,5);
+ctx.fillRect(3,-5,9,5);
+}
+else if(type==='sleepy'){
+ctx.beginPath();ctx.arc(-9,-3,5,Math.PI,0);ctx.stroke();
+ctx.beginPath();ctx.arc(9,-3,5,Math.PI,0);ctx.stroke();
+}
+else if(type==='angry'){
+ctx.beginPath();
+ctx.moveTo(-16,-12);ctx.lineTo(-4,-7);
+ctx.moveTo(16,-12);ctx.lineTo(4,-7);
+ctx.stroke();
+eye(-9,-2,3,5);eye(9,-2,3,5);
+}
+else if(type==='sly'){
+eye(-9,-3,6,4);eye(9,-3,6,4);
+}
+else{
+eye(-9,-3,4,6);eye(9,-3,4,6);
+}
+
+ctx.beginPath();
+if(type==='angry'){
+ctx.moveTo(-11,13);ctx.lineTo(-6,9);
+ctx.lineTo(0,13);ctx.lineTo(6,9);
+ctx.lineTo(11,13);ctx.lineTo(11,17);
+ctx.lineTo(-11,17);ctx.closePath();
+ctx.fillStyle='#fff';ctx.fill();ctx.stroke();
+}
+else if(type==='worried'){
+ctx.arc(0,14,5,Math.PI,Math.PI*2);ctx.stroke();
+}
+else{
+ctx.beginPath();ctx.arc(0,4,11,.15,Math.PI-.15);ctx.stroke();
+}
+ctx.restore();
+}
+
+function draw(){
+ctx.clearRect(0,0,W,H);
+for(let y=0;y<ROWS;y++){
+for(let x=0;x<COLS;x++){
+let v=grid[y][x];
+if(v===null)continue;
+let px=R+x*DX+((y%2)?DX/2:0);
+let py=R+y*DY;
+if(px>W-R)px-=DX/2;
+circle(px,py,R-1,colors[v]);
+face(px,py,R-1,faces[v]);
+}
+}
+}
+
+function group(y,x){
+let v=grid[y][x];
+if(v===null)return [];
+let seen=new Set([y+','+x]),q=[[y,x]];
+while(q.length){
+let [a,b]=q.pop();
+for(let [dy,dx] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]]){
+let ny=a+dy,nx=b+dx,k=ny+','+nx;
+if(ny>=0&&ny<ROWS&&nx>=0&&nx<COLS&&!seen.has(k)&&grid[ny][nx]===v){
+seen.add(k);q.push([ny,nx]);
+}
+}
+}
+return [...seen].map(s=>s.split(',').map(Number));
+}
+
+function click(e){
+if(ended)return;
+let r=canvas.getBoundingClientRect();
+let x=(e.clientX-r.left)*W/r.width;
+let y=(e.clientY-r.top)*H/r.height;
+let row=Math.round((y-R)/DY);
+let col=Math.round((x-R-(row%2?DX/2:0))/DX);
+if(row<0||row>=ROWS||col<0||col>=COLS)return;
+let g=group(row,col);
+if(g.length<2)return;
+
+g.forEach(([a,b])=>grid[a][b]=null);
+combo++;
+score+=g.length*10+(g.length>=5?300:0);
+left=Math.max(0,left-g.length);
+
+for(let c=0;c<COLS;c++){
+let vals=[];
+for(let rr=ROWS-1;rr>=0;rr--)
+if(grid[rr][c]!==null)vals.push(grid[rr][c]);
+for(let rr=ROWS-1;rr>=0;rr--)
+grid[rr][c]=vals[ROWS-1-rr]??null;
+}
+
+for(let c=0;c<COLS;c++)
+for(let rr=0;rr<ROWS;rr++)
+if(grid[rr][c]===null)grid[rr][c]=rand();
+
+update();draw();
+if(left<=0)finish('Szép játék! Elfogytak a buborékok.');
+}
+
+function finish(msg){
+ended=true;
+$('endtitle').textContent='Játék vége!';
+$('endtext').textContent=msg+' Pontszám: '+score;
+$('message').style.display='flex';
+}
+
+function shake(){
+if(ended)return;
+for(let i=0;i<3;i++){
+let a=rand(),b=rand();
+for(let y=0;y<ROWS;y++)
+for(let x=0;x<COLS;x++)
+if(grid[y][x]===a)grid[y][x]=b;
+}
+left=Math.max(0,left-5);
+score=Math.max(0,score-50);
+update();draw();
+}
+
+canvas.addEventListener('pointerdown',click);
+$('shake').addEventListener('click',shake);
+$('again').addEventListener('click',reset);
+reset();
+})();
+</script>
+</body>
+</html>
