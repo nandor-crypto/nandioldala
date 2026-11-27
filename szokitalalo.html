@@ -1,0 +1,503 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magyar Szókitaláló</title>
+
+<style>
+:root {
+  --bg: #111827;
+  --text: #ffffff;
+  --green: #538d4e;
+  --yellow: #b59f3b;
+  --gray: #3a3a3c;
+  --key: #818384;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+main {
+  width: min(100%, 520px);
+  padding: 18px 14px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #4b5563;
+  padding-bottom: 14px;
+}
+
+h1 {
+  font-size: clamp(18px, 5vw, 27px);
+  text-align: center;
+}
+
+button {
+  cursor: pointer;
+}
+
+.iconbtn, .actions button {
+  background: transparent;
+  color: white;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 9px;
+}
+
+.sub {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+#board {
+  display: grid;
+  gap: 6px;
+  width: min(330px, 90vw);
+  margin: 20px auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.tile {
+  aspect-ratio: 1;
+  border: 2px solid #3a3a3c;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.tile.filled { border-color: #777; }
+
+.tile.correct {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.tile.present {
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
+.tile.absent {
+  background: var(--gray);
+  border-color: var(--gray);
+}
+
+#message {
+  height: 28px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#keyboard {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.keyrow {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.key {
+  height: 50px;
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  border-radius: 5px;
+  background: var(--key);
+  color: white;
+  font-size: clamp(11px, 3vw, 16px);
+  font-weight: bold;
+  padding: 0 2px;
+}
+
+.key.wide {
+  flex: 1.6;
+  font-size: 11px;
+}
+
+.key.correct { background: var(--green); }
+.key.present { background: var(--yellow); }
+.key.absent { background: var(--gray); }
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+details {
+  margin-top: 20px;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+summary {
+  color: white;
+  cursor: pointer;
+}
+
+@media(max-width: 360px) {
+  .key { height: 44px; }
+  .tile { font-size: 23px; }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<header>
+  <button class="iconbtn" id="help">?</button>
+  <h1>MAGYAR SZÓKITALÁLÓ</h1>
+  <button class="iconbtn" id="restart">↻</button>
+</header>
+
+<p class="sub">
+  Találd ki az 5 betűs szót 6 próbálkozásból!
+</p>
+
+<section id="board"></section>
+
+<div id="message">Sok sikert!</div>
+
+<section id="keyboard"></section>
+
+<div class="actions">
+  <button id="newgame">Új játék</button>
+  <button id="reveal">Megoldás</button>
+</div>
+
+<details id="rules">
+  <summary>Hogyan kell játszani?</summary>
+  <p>
+    🟩 Zöld: jó betű, jó helyen.<br>
+    🟨 Sárga: jó betű, rossz helyen.<br>
+    ⬛ Szürke: nincs benne a szóban.<br><br>
+    Hat próbálkozásod van.
+  </p>
+</details>
+
+</main>
+
+<script>
+(() => {
+
+const words = [
+"ablak","adott","ajtók","álmok","állat",
+"angol","aprók","árvíz","autók","bajok",
+"bálna","barát","barna","bátor","békés",
+"béka","bérlet","beteg","betűk","bíró",
+"borsó","borít","botok","cukor","csata",
+"csoki","csoda","csónak","csúcs","darab",
+"délut","diófa","doboz","dolog","drága",
+"egész","egyes","ember","erdő","ezüst",
+"falak","falat","falu","finom","fogak",
+"folyó","forma","főzés","füzet","gomba",
+"görbe","gyors","hajók","halak","halál",
+"harag","házak","hideg","hinta","homok",
+"húrok","ideje","illat","játék","jeges",
+"kacsa","kakas","kalap","kamra","karom",
+"kávés","kerek","keres","képek","kicsi",
+"kígyó","kocka","korán","kosár","közel",
+"körte","kövek","kulcs","kutya","labda",
+"lakás","lapos","leány","lecke","libák",
+"lusta","madár","magas","magok","malac",
+"málna","marad","mérce","mézes","mező",
+"minta","mosás","nagyok","napok","német",
+"nézés","nyári","nyelv","nyers","nyitó",
+"öböl","öcsém","öröm","őszi","ötlet",
+"padló","pakol","papír","párna","parti",
+"pékek","piros","pihen","pince","pizza",
+"posta","rádió","rajzok","rétes","rigó",
+"robot","római","ruha","saját","sálak",
+"sárga","sarok","séta","siker","sima",
+"sorok","sóska","sport","sugár","szoba",
+"szőlő","takar","talál","tarka","teher",
+"tejes","tenger","terem","tészta","tető",
+"tojás","torta","tudás","udvar","ujjak",
+"unoka","utca","ügyes","ünnep","üveg",
+"vadak","vágás","vajon","város","vasút",
+"vegyes","veréb","vidám","világ","virág",
+"vizes","vonat","zebra","zene","zokni","zöld"
+];
+
+const bank = [...new Set(
+  words.filter(w => [...w].length === 5)
+)];
+
+const board = document.querySelector("#board");
+const keyboard = document.querySelector("#keyboard");
+const message = document.querySelector("#message");
+
+const rows = [
+  "qwertzuiopőúö",
+  "asdfghjkléáű",
+  "íyxcvbnmü"
+];
+
+let answer = "";
+let guesses = [];
+let current = "";
+let over = false;
+let keyStates = {};
+
+function choose() {
+  answer = bank[Math.floor(Math.random() * bank.length)];
+}
+
+function say(text) {
+  message.textContent = text;
+}
+
+function build() {
+  board.innerHTML = "";
+
+  for (let r = 0; r < 6; r++) {
+    const row = document.createElement("div");
+    row.className = "row";
+
+    for (let c = 0; c < 5; c++) {
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.id = `t-${r}-${c}`;
+      row.append(tile);
+    }
+
+    board.append(row);
+  }
+
+  keyboard.innerHTML = "";
+
+  rows.forEach((letters, i) => {
+    const row = document.createElement("div");
+    row.className = "keyrow";
+
+    if (i === 2) {
+      addKey(row, "ENTER", "wide", submit);
+    }
+
+    [...letters].forEach(ch => {
+      addKey(row, ch, "", () => press(ch));
+    });
+
+    if (i === 2) {
+      addKey(row, "⌫", "wide", backspace);
+    }
+
+    keyboard.append(row);
+  });
+}
+
+function addKey(parent, label, extra, fn) {
+  const b = document.createElement("button");
+  b.className = "key " + extra;
+  b.textContent = label;
+  b.addEventListener("click", fn);
+  parent.append(b);
+}
+
+function paint() {
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 5; c++) {
+      const tile = document.getElementById(`t-${r}-${c}`);
+
+      const val =
+        guesses[r]?.word[c] ??
+        (r === guesses.length ? ([...current][c] || "") : "");
+
+      tile.textContent = val || "";
+
+      tile.className =
+        "tile" +
+        (val ? " filled" : "") +
+        (guesses[r]?.colors[c]
+          ? " " + guesses[r].colors[c]
+          : "");
+    }
+  }
+
+  document.querySelectorAll(".key").forEach(k => {
+    const ch = k.textContent.toLocaleLowerCase("hu-HU");
+
+    k.classList.remove("correct", "present", "absent");
+
+    if (keyStates[ch]) {
+      k.classList.add(keyStates[ch]);
+    }
+  });
+}
+
+function press(ch) {
+  if (over || [...current].length >= 5) return;
+
+  current += ch;
+  paint();
+}
+
+function backspace() {
+  if (over) return;
+
+  current = [...current].slice(0, -1).join("");
+  paint();
+}
+
+function score(guess) {
+  let a = [...answer];
+  let g = [...guess];
+  let colors = Array(5).fill("absent");
+
+  for (let i = 0; i < 5; i++) {
+    if (g[i] === a[i]) {
+      colors[i] = "correct";
+      a[i] = null;
+      g[i] = null;
+    }
+  }
+
+  for (let i = 0; i < 5; i++) {
+    if (g[i]) {
+      let j = a.indexOf(g[i]);
+
+      if (j !== -1) {
+        colors[i] = "present";
+        a[j] = null;
+      }
+    }
+  }
+
+  return colors;
+}
+
+function submit() {
+  if (over) return;
+
+  if ([...current].length !== 5) {
+    say("Pontosan 5 betűt írj be!");
+    return;
+  }
+
+  if (!bank.includes(current)) {
+    say("Ez a szó nincs a szótárban.");
+    return;
+  }
+
+  const colors = score(current);
+
+  guesses.push({
+    word: current,
+    colors
+  });
+
+  [...current].forEach((ch, i) => {
+    const old = keyStates[ch];
+    const next = colors[i];
+
+    if (
+      old !== "correct" &&
+      (
+        next === "correct" ||
+        (!old && next === "present") ||
+        (!old && next === "absent")
+      )
+    ) {
+      keyStates[ch] = next;
+    }
+  });
+
+  current = "";
+
+  if (colors.every(x => x === "correct")) {
+    over = true;
+    say(`Ügyes! ${guesses.length} próbából kitaláltad!`);
+  } else if (guesses.length === 6) {
+    over = true;
+    say("A megfejtés: " + answer.toLocaleUpperCase("hu-HU"));
+  } else {
+    say(`${6 - guesses.length} próbálkozásod maradt.`);
+  }
+
+  paint();
+}
+
+function reset() {
+  guesses = [];
+  current = "";
+  over = false;
+  keyStates = {};
+
+  choose();
+  say("Sok sikert!");
+  paint();
+}
+
+/* FIZIKAI BILLENTYŰZET */
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+  const k = e.key.toLocaleLowerCase("hu-HU");
+
+  if (k === "enter") {
+    e.preventDefault();
+    submit();
+  } else if (k === "backspace") {
+    e.preventDefault();
+    backspace();
+  } else if (
+    [...k].length === 1 &&
+    /[a-záéíóöőúüű]/i.test(k)
+  ) {
+    press(k);
+  }
+});
+
+/* GOMBOK */
+document.querySelector("#newgame").onclick = reset;
+document.querySelector("#restart").onclick = reset;
+
+document.querySelector("#reveal").onclick = () => {
+  if (!over) {
+    over = true;
+    say("A megfejtés: " + answer.toLocaleUpperCase("hu-HU"));
+  }
+};
+
+document.querySelector("#help").onclick = () => {
+  const rules = document.querySelector("#rules");
+  rules.open = !rules.open;
+};
+
+build();
+reset();
+
+})();
+</script>
+
+</body>
+  </html>
+  
